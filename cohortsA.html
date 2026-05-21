@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cohort Manager - Admin Space</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --cq-clay: #C56C64;
+            --cq-gold: #E39224;
+            --cq-cream: #FFF5E9;
+            --cq-dark: #3A2312;
+            --cq-light: #FFFBF7;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-dark);
+        }
+
+        /* Mobile Header Navigation banner */
+        .mobile-header {
+            display: none;
+            background-color: var(--cq-clay);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Persistent Sidebar Component */
+        .cq-sidebar {
+            background-color: var(--cq-clay);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-clay);
+            font-weight: 600;
+        }
+
+        .main-workspace {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        /* Content Card Panel Container styling based on wireframe layout */
+        .cohort-manager-container {
+            background-color: #FFFFFF;
+            border: 1px solid var(--cq-cream);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        /* Sidebar actions inside cohort workspace */
+        .cohort-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--cq-clay);
+            font-weight: 600;
+            padding: 12px 15px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .cohort-action-btn:hover, .cohort-action-btn.active-tab {
+            background-color: var(--cq-cream);
+            color: var(--cq-gold);
+        }
+
+        /* Scrollable list of Cohorts */
+        .cohort-scroll-list {
+            max-height: 280px;
+            overflow-y: auto;
+            border-left: 2px solid var(--cq-cream);
+            padding-left: 15px;
+        }
+
+        .cohort-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #F5F5F5;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 6px;
+        }
+
+        .cohort-list-item:hover, .cohort-list-item.selected-item {
+            background-color: var(--cq-cream);
+        }
+
+        .delete-cohort-icon {
+            color: var(--cq-clay);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .delete-cohort-icon:hover {
+            background-color: rgba(197, 108, 100, 0.1);
+        }
+
+        /* Right/Lower details block wrappers */
+        .details-workspace-card {
+            background-color: var(--cq-cream);
+            border-radius: 14px;
+            padding: 24px;
+            height: 100%;
+        }
+
+        /* Screen Size Breakpoint Adjustments */
+        @media (max-width: 991.98px) {
+            .mobile-header { display: flex; }
+            .cq-sidebar { transform: translateX(-100%); }
+            .cq-sidebar.show-sidebar { transform: translateX(0); }
+            .main-workspace { margin-left: 0; padding-top: 80px; }
+            .cohort-scroll-list { border-left: none; padding-left: 0; margin-top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <span class="text-white fw-bold">Cohort Manager Space</span>
+        <button class="btn text-white fs-3 p-0" id="mobile-sidebar-toggle"><i class="bi bi-list"></i></button>
+    </div>
+
+    <div class="cq-sidebar" id="app-sidebar">
+        <div>
+            <div class="text-center pb-3 mb-3 border-bottom border-light border-opacity-25">
+                <h5 class="fw-bold text-white mb-0">CODEQUEEN</h5>
+                <small class="text-white opacity-75">Admin Space</small>
+            </div>
+            <nav class="nav flex-column gap-1">
+                <a href="admin.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a href="badgesA.html" class="cq-nav-link"><i class="bi bi-award"></i> Badges</a>
+                <a href="cohortsA.html" class="cq-nav-link active"><i class="bi bi-people"></i> Cohorts</a>
+                <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
+                <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
+                <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
+                <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
+                <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="main-workspace">
+        
+        <div class="row align-items-center mb-4 g-3">
+            <div class="col-sm-7">
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-people-fill text-clay me-2"></i>Cohort manager</h3>
+                <small class="text-muted text-uppercase tracking-wider">Ecosystem Scheduling & Student Distribution Logs</small>
+            </div>
+            <div class="col-sm-5 d-flex justify-content-sm-end align-items-center gap-3">
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-semibold"><i class="bi bi-shield-lock me-1"></i>Admin</span>
+            </div>
+        </div>
+
+        <div class="cohort-manager-container shadow-sm mb-4">
+            <div class="row g-4 mb-4">
+                <div class="col-md-4 col-lg-3">
+                    <div class="d-flex flex-column gap-2">
+                        <button class="cohort-action-btn active-tab" onclick="switchRightWorkspaceTab('view-cohort', this)">
+                            <i class="bi bi-eye"></i> View Cohort Details
+                        </button>
+                        <button class="cohort-action-btn" onclick="switchRightWorkspaceTab('add-cohort', this)">
+                            <i class="bi bi-plus-circle"></i> Add Cohort
+                        </button>
+                        <button class="cohort-action-btn" onclick="switchRightWorkspaceTab('add-student', this)">
+                            <i class="bi bi-person-plus"></i> Add Student to Cohort
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-8 col-lg-9">
+                    <h6 class="fw-bold text-muted text-uppercase tracking-wider small mb-2">Cohort List</h6>
+                    <div class="cohort-scroll-list" id="cohorts-master-index-list">
+                        <div class="text-center py-5 text-muted small">
+                            <div class="spinner-border spinner-border-sm text-secondary mb-2"></div>
+                            <div>Syncing cohort registry profiles matrix...</div>
+                        </div>
+                    </div>
+                    <div class="text-end mt-2">
+                        <small class="text-clay cursor-pointer fw-semibold" id="load-more-records-trigger" style="font-size: 0.85rem;">more <i class="bi bi-chevron-down"></i></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    
+                    <div id="tab-pane-view-cohort" class="workspace-tab-panel">
+                        <div class="details-workspace-card" id="cohort-data-profile-viewframe">
+                            <div class="text-center py-5 text-muted">
+                                <i class="bi bi-arrow-up-circle fs-2 d-block mb-2 text-clay"></i>
+                                Select any cohort tracking instance from the catalog list row above to look up member profiles.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-pane-add-cohort" class="workspace-tab-panel d-none">
+                        <div class="details-workspace-card">
+                            <h5 class="fw-bold text-dark text-center mb-4">Add Cohort</h5>
+                            <form id="form-create-cohort-record" onsubmit="executeCohortCreationPipeline(event)">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8 col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Name:</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="new-cohort-name-field" placeholder="Enter name" required>
+                                                <span class="input-group-text bg-white text-clay"><i class="bi bi-person"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Year:</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="new-cohort-year-field" placeholder="Select year" min="2015" max="2035" required>
+                                                <span class="input-group-text bg-white text-clay"><i class="bi bi-calendar3"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Graduation Year / Date:</label>
+                                            <div class="input-group">
+                                                <input type="date" class="form-control" id="new-cohort-grad-field" required>
+                                                <span class="input-group-text bg-white text-clay"><i class="bi bi-calendar-check"></i></span>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-warning text-white w-100 py-2 fw-bold rounded-3 shadow-sm" style="background-color: var(--cq-gold); border:none;">
+                                            <i class="bi bi-check-lg me-1"></i> Save Cohort Entry
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="tab-pane-add-student" class="workspace-tab-panel d-none">
+                        <div class="details-workspace-card">
+                            <h5 class="fw-bold text-dark text-center mb-1">Add a Student to Cohort</h5>
+                            <p class="text-muted text-center small mb-4">Registers student profile through system base accounts models and attaches target grouping tags mappings.</p>
+                            
+                            <form id="form-register-assign-student" onsubmit="executeStudentRegistrationPipeline(event)">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8 col-lg-6">
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Assign to Cohort Target:</label>
+                                            <select class="form-select" id="assign-student-cohort-select" required>
+                                                <option value="">Choose cohort matrix path...</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Full Name:</label>
+                                            <input type="text" class="form-control" id="student-register-name" placeholder="Enter student legal name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Email Address:</label>
+                                            <input type="email" class="form-control" id="student-register-email" placeholder="student@example.com" required>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label small fw-bold text-uppercase text-muted">Account Access Role Group Allocation:</label>
+                                            <select class="form-select" id="student-register-role" required>
+                                                <option value="student" selected>Student</option>
+                                                <option value="alumna">Alumna</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-warning text-white w-100 py-2 fw-bold rounded-3 shadow-sm" style="background-color: var(--cq-gold); border:none;">
+                                            <i class="bi bi-person-plus-fill me-1"></i> Register & Enroll Student
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="cohortsA.js"></script>
+</body>
+</html>

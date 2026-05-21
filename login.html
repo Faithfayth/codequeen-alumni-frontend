@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codequeen - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --cq-brand-gold: #E39224;   /* Exact background color from the layout */
+            --cq-card-cream: #FFF5E9;   /* Soft warm background of the login box */
+            --cq-btn-terracotta: #C56C64;/* Core button tone */
+            --cq-text-dark: #3A2312;    /* Warm dark text color */
+        }
+
+        body {
+            background-color: var(--cq-brand-gold);
+            font-family: 'Fredoka', 'Quicksand', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container-card {
+            width: 100%;
+            max-width: 950px;
+            background-color: var(--cq-brand-gold);
+        }
+
+        /* BRANDING BLOCK LOGO LAYER */
+        .brand-logo-pane {
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bee-logo-svg {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 20px;
+        }
+
+        .brand-text-title {
+            font-size: 3.5rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: #FFFFFF;
+        }
+
+        /* LOGIN INPUT FORM CONTAINER BOX */
+        .login-box-card {
+            background-color: var(--cq-card-cream);
+            border-radius: 32px;
+            padding: 40px 35px;
+            border: 2px solid var(--cq-btn-terracotta);
+            max-width: 440px;
+            margin-left: auto;
+        }
+
+        .login-box-card h2 {
+            color: var(--cq-btn-terracotta);
+            font-size: 2.8rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-label-custom {
+            color: var(--cq-btn-terracotta);
+            font-size: 1.25rem;
+            margin-bottom: 6px;
+            font-weight: 400;
+        }
+
+        .form-control-custom {
+            background-color: #FFFFFF;
+            border: 2px solid var(--cq-btn-terracotta);
+            border-radius: 14px;
+            padding: 10px 16px;
+            font-size: 1.05rem;
+            color: var(--cq-text-dark);
+            box-shadow: none !important;
+        }
+
+        .form-control-custom:focus {
+            border-color: var(--cq-brand-gold);
+        }
+
+        .btn-login-custom {
+            background-color: var(--cq-btn-terracotta);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 14px;
+            padding: 10px 40px;
+            font-size: 1.4rem;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-login-custom:hover {
+            opacity: 0.9;
+            color: #FFFFFF;
+        }
+
+        /* UTILITY BANNER BELOW CARD */
+        .signup-toggle-link {
+            display: block;
+            text-align: center;
+            color: #FFFFFF;
+            font-size: 2rem;
+            text-decoration: none;
+            margin-top: 25px;
+            font-weight: 400;
+        }
+
+        .signup-toggle-link span {
+            margin-right: 15px;
+            font-weight: 300;
+        }
+
+        /* ALERT BANNER WRAPPER */
+        #error-banner-view {
+            display: none;
+            font-size: 0.95rem;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container-card">
+    <div class="row align-items-center g-4">
+        
+        <div class="col-md-6 text-center text-md-start">
+            <div class="brand-logo-pane">
+                <svg class="bee-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 35 C40 20, 25 25, 35 45 C45 45, 48 38, 50 35 Z" fill="#FFFFFF"/>
+                    <path d="M50 35 C60 20, 75 25, 65 45 C55 45, 52 38, 50 35 Z" fill="#FFFFFF"/>
+                    <path d="M48 48 C30 45, 25 60, 42 62 C45 55, 46 50, 48 48 Z" fill="#FFFFFF"/>
+                    <polygon points="50,42 55,45 55,51 50,54 45,51 45,45" fill="#1A1A1A"/>
+                    <path d="M54 44 C72 35, 78 50, 62 56 C58 52, 56 48, 54 44 Z" fill="#1A1A1A"/>
+                    <path d="M50 54 C55 72, 40 78, 38 60 C42 56, 46 55, 50 54 Z" fill="#1A1A1A"/>
+                    <path d="M46 51 C32 65, 48 78, 52 62 C50 58, 48 54, 46 51 Z" fill="#C56C64"/>
+                    <path d="M55 48 C68 45, 72 58, 54 53 Z" fill="#1A1A1A"/>
+                    <path d="M58 47.5 C64 46, 66 52, 56.5 52 Z" fill="#E39224"/>
+                </svg>
+                <h1 class="brand-text-title">&lt; Codequeen &gt;</h1>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="login-box-card shadow">
+                <h2>Login</h2>
+                
+                <div class="alert alert-danger p-2 mb-3 text-center" id="error-banner-view"></div>
+
+                <form id="login-form-element" novalidate>
+                    <div class="mb-3">
+                        <label for="input-user-email" class="form-label form-label-custom">email</label>
+                        <input type="email" class="form-control form-control-custom" id="input-user-email" required autocomplete="email">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="input-user-password" class="form-label form-label-custom">password</label>
+                        <input type="password" class="form-control form-control-custom" id="input-user-password" required autocomplete="current-password">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="input-user-confirm-password" class="form-label form-label-custom">confirm password</label>
+                        <input type="password" class="form-control form-control-custom" id="input-user-confirm-password" required autocomplete="new-password">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login-custom shadow-sm" id="submit-btn-spinner-target">
+                        Login
+                    </button>
+                </form>
+            </div>
+            
+            <a href="signup.html" class="signup-toggle-link">
+                <span>|</span> Signup
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script src="login.js"></script>
+</body>
+</html>

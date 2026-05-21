@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CodeQueen Alumnae</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --cq-sidebar-bg: #C56C64;   /* Earthy rose / clay sidebar */
+            --cq-gold-bg: #E39224;      /* Gold accent tone */
+            --cq-card-soft: #FFF5E9;    /* Warm cream container fill */
+            --cq-text-dark: #3A2312;    /* Soft deep dark typography */
+            --cq-bg-light: #FFFBF7;     /* Page background modifier */
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* MOBILE HEADER CONTAINER */
+        .mobile-admin-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* SIDEBAR COMPONENT SYSTEM */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-header-branding {
+            color: #FFFFFF;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .close-sidebar-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            border-radius: 6px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 2px 8px;
+        }
+
+        .sidebar-scrollable-menu {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-top: 15px;
+            padding-right: 4px;
+        }
+
+        /* Custom Scrollbar for Sidebar Navigation */
+        .sidebar-scrollable-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scrollable-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            border-radius: 8px;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        /* MAIN MASTER WORKSPACE */
+        .admin-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* SUMMARY COUNT CARDS (TOP ROW TABS) */
+        .stat-summary-card {
+            background-color: var(--cq-card-soft);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--cq-text-dark);
+            display: block;
+            border: 1px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-summary-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--cq-gold-bg);
+            color: var(--cq-text-dark);
+        }
+
+        .stat-icon-wrapper {
+            font-size: 1.8rem;
+            color: var(--cq-gold-bg);
+            margin-bottom: 5px;
+        }
+
+        .stat-counter-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* SOCIAL CHANNELS LIST PACK */
+        .social-channel-item {
+            background-color: var(--cq-card-soft);
+            border-radius: 14px;
+            padding: 14px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--cq-text-dark);
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .social-channel-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            color: var(--cq-text-dark);
+        }
+
+        .social-icon-circle {
+            width: 40px;
+            height: 40px;
+            background-color: var(--cq-gold-bg);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* APPROVAL SIDEBAR INTERACTION TREE */
+        .approval-category-btn {
+            background: transparent;
+            border: none;
+            color: var(--cq-text-dark);
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .approval-category-btn:hover, .approval-category-btn.active-target {
+            background-color: var(--cq-card-soft);
+            color: var(--cq-gold-bg);
+            font-weight: 600;
+        }
+
+        /* PROCESSING QUEUE DATA HOUSING */
+        .dynamic-queue-display-tray {
+            background-color: #FFFFFF;
+            border: 1px solid #EAEAEA;
+            border-radius: 16px;
+            min-height: 250px;
+            padding: 20px;
+        }
+
+        .approval-data-row {
+            border-bottom: 1px solid #F5F5F5;
+            padding: 14px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .approval-data-row:last-child {
+            border-bottom: none;
+        }
+
+        /* RESPONSIVE RESPONSIVENESS OVERRIDES */
+        @media (max-width: 991.98px) {
+            .mobile-admin-header {
+                display: flex;
+            }
+
+            .cq-sidebar {
+                transform: translateX(-100%);
+                box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+            }
+
+            .cq-sidebar.show-sidebar {
+                transform: translateX(0);
+            }
+
+            .close-sidebar-btn {
+                display: block;
+            }
+
+            .admin-workspace {
+                margin-left: 0;
+                padding: 90px 15px 40px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-admin-header">
+        <span class="text-white fw-bold">CQ Admin Management</span>
+        <button class="hamburger-btn" id="sidebar-open-toggle-trigger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="cq-sidebar" id="app-navigation-sidebar-container">
+        <div>
+            <div class="sidebar-header-branding">
+                <h5 class="fw-bold mb-0">CODEQUEEN</h5>
+                <small class="opacity-75">Alumni Administrative Space</small>
+                <button class="close-sidebar-btn" id="sidebar-close-toggle-trigger"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <div class="sidebar-scrollable-menu">
+                <nav class="nav flex-column">
+                    <a href="admin.html" class="cq-nav-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="badgesA.html" class="cq-nav-link"><i class="bi bi-award"></i> Badges</a>
+                    <a href="cohortsA.html" class="cq-nav-link"><i class="bi bi-people"></i> Cohorts</a>
+                    <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
+                    <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
+                    <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
+                    <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                    <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
+                    <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                    <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
+                </nav>
+            </div>
+        </div>
+        
+        <button onclick="logoutSession()" class="btn btn-light text-danger w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 mt-3 shadow-sm border-0">
+            <i class="bi bi-box-arrow-left"></i> Logout !
+        </button>
+    </div>
+
+    <div class="admin-workspace">
+        
+        <div class="row align-items-center mb-4 g-3">
+            <div class="col-sm-6">
+                <h3 class="fw-bold text-dark mb-0" id="admin-welcome-string">Welcome Back, Loading...</h3>
+                <small class="text-muted">ADMIN DASHBOARD</small>
+            </div>
+            <div class="col-sm-6 d-flex justify-content-sm-end align-items-center gap-3">
+                <a href="messagesA.html" class="btn bg-light border rounded-circle position-relative p-2" style="width:42px; height:42px;">
+                    <i class="bi bi-envelope text-dark"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                </a>
+                <a href="profileA.html" class="d-flex align-items-center gap-2 text-decoration-none bg-light p-2 pe-3 rounded-pill border">
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white font-weight-bold" style="width:34px; height:34px;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div style="line-height: 1.2;">
+                        <div class="fw-bold text-dark small" id="admin-meta-name">Admin Profile</div>
+                        <small class="text-muted block style-text-offset" id="admin-meta-email">fetching email...</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-5">
+            <div class="col-6 col-md-3">
+                <a href="opportunitiesA.html" class="stat-summary-card">
+                    <div class="stat-icon-wrapper"><i class="bi bi-lightbulb"></i></div>
+                    <div class="small fw-semibold text-muted text-uppercase">Opportunities</div>
+                    <div class="stat-counter-value" id="count-opportunities">-</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="resourcesA.html" class="stat-summary-card">
+                    <div class="stat-icon-wrapper"><i class="bi bi-folder2-open"></i></div>
+                    <div class="small fw-semibold text-muted text-uppercase">Resources</div>
+                    <div class="stat-counter-value" id="count-resources">-</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="projectsA.html" class="stat-summary-card">
+                    <div class="stat-icon-wrapper"><i class="bi bi-file-earmark-code"></i></div>
+                    <div class="small fw-semibold text-muted text-uppercase">Projects</div>
+                    <div class="stat-counter-value" id="count-projects">-</div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="profilesA.html" class="stat-summary-card">
+                    <div class="stat-icon-wrapper"><i class="bi bi-person-vcard"></i></div>
+                    <div class="small fw-semibold text-muted text-uppercase">Profile</div>
+                    <div class="stat-counter-value" id="count-profiles">-</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            
+            <div class="col-lg-5">
+                <h5 class="fw-bold mb-3 text-uppercase tracking-wider text-muted small">Socials</h5>
+                
+                <a href="blogsA.html" class="social-channel-item">
+                    <div class="social-icon-circle"><i class="bi bi-chat-right-quote"></i></div>
+                    <span>Blogs</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                </a>
+                <a href="general-groupA.html" class="social-channel-item">
+                    <div class="social-icon-circle"><i class="bi bi-chat-left-text"></i></div>
+                    <span>General Group</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                </a>
+                <a href="galleryA.html" class="social-channel-item">
+                    <div class="social-icon-circle"><i class="bi bi-images"></i></div>
+                    <span>Gallery</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                </a>
+                <a href="eventsA.html" class="social-channel-item">
+                    <div class="social-icon-circle"><i class="bi bi-calendar3"></i></div>
+                    <span>Events</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                </a>
+                <a href="wall-of-fameA.html" class="social-channel-item">
+                    <div class="social-icon-circle"><i class="bi bi-star"></i></div>
+                    <span>Wall of fame</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                </a>
+                <a href="mentorship-attributesA.html" class="social-channel-item">
+                    <div class="social-icon-circle"><i class="bi bi-diagram-3"></i></div>
+                    <span>Mentorship attributes</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                </a>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-clock-history text-warning fs-5"></i>
+                    <h5 class="fw-bold mb-0 text-uppercase tracking-wider text-muted small">Pending Approvals</h5>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-sm-5 border-end-sm">
+                        <div class="d-flex flex-column gap-1">
+                            <button class="approval-category-btn active-target" onclick="switchApprovalQueue('enrollments', this)">
+                                <span>Enrollments</span> <i class="bi bi-arrow-right-short"></i>
+                            </button>
+                            <button class="approval-category-btn" onclick="switchApprovalQueue('events', this)">
+                                <span>Events</span> <i class="bi bi-arrow-right-short"></i>
+                            </button>
+                            <button class="approval-category-btn" onclick="switchApprovalQueue('resources', this)">
+                                <span>Resources</span> <i class="bi bi-arrow-right-short"></i>
+                            </button>
+                            <button class="approval-category-btn" onclick="switchApprovalQueue('opportunities', this)">
+                                <span>Opportunities</span> <i class="bi bi-arrow-right-short"></i>
+                            </button>
+                            <button class="approval-category-btn" onclick="switchApprovalQueue('partners', this)">
+                                <span>Partners</span> <i class="bi bi-arrow-right-short"></i>
+                            </button>
+                            <button class="approval-category-btn" onclick="switchApprovalQueue('mentorship', this)">
+                                <span>Mentorship</span> <i class="bi bi-arrow-right-short"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-7">
+                        <div class="dynamic-queue-display-tray" id="approval-queue-render-box">
+                            <div class="text-center py-5 text-muted">
+                                <div class="spinner-border spinner-border-sm text-secondary mb-2" role="status"></div>
+                                <div class="small">Fetching pipeline assets...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

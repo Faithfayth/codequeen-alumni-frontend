@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Badge Manager - Admin Space</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --cq-clay: #C56C64;
+            --cq-gold: #E39224;
+            --cq-cream: #FFF5E9;
+            --cq-dark: #3A2312;
+            --cq-light: #FFFBF7;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-dark);
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            display: none;
+            background-color: var(--cq-clay);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Sidebar Navigation */
+        .cq-sidebar {
+            background-color: var(--cq-clay);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-clay);
+            font-weight: 600;
+        }
+
+        .main-workspace {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        /* Summary Stats Mini Cards */
+        .summary-mini-card {
+            background-color: var(--cq-cream);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .summary-mini-icon {
+            font-size: 1.6rem;
+            color: var(--cq-gold);
+        }
+
+        /* Custom Section Nav Tabs buttons */
+        .badge-tab-btn {
+            background-color: var(--cq-cream);
+            border: 1px solid transparent;
+            color: var(--cq-dark);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .badge-tab-btn:hover {
+            border-color: var(--cq-gold);
+        }
+
+        .badge-tab-btn.active {
+            background-color: var(--cq-clay);
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        /* Badge Matrix Display Display Grid */
+        .badge-render-card {
+            background-color: var(--cq-cream);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            height: 100%;
+            border: 1px solid transparent;
+        }
+
+        .badge-avatar-placeholder {
+            width: 55px;
+            height: 55px;
+            background-color: #FFFFFF;
+            color: var(--cq-clay);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            font-size: 1.4rem;
+            border: 2px solid var(--cq-clay);
+        }
+
+        /* Image Selection Upload Box */
+        .upload-dropzone-box {
+            border: 2px dashed #D1D1D1;
+            background-color: var(--cq-cream);
+            border-radius: 14px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .alumni-search-result-scroll {
+            max-height: 280px;
+            overflow-y: auto;
+            background-color: #FFFFFF;
+            border: 1px solid #EAEAEA;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .search-profile-row {
+            padding: 8px;
+            border-bottom: 1px solid #F5F5F5;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .search-profile-row:hover {
+            background-color: var(--cq-cream);
+        }
+
+        /* Responsiveness view transformations */
+        @media (max-width: 991.98px) {
+            .mobile-header { display: flex; }
+            .cq-sidebar { transform: translateX(-100%); }
+            .cq-sidebar.show-sidebar { transform: translateX(0); }
+            .main-workspace { margin-left: 0; padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <span class="text-white fw-bold">Alumni Badge Manager</span>
+        <button class="btn text-white fs-3 p-0" id="mobile-sidebar-toggle"><i class="bi bi-list"></i></button>
+    </div>
+
+    <div class="cq-sidebar" id="app-sidebar">
+        <div>
+            <div class="text-center pb-3 mb-3 border-bottom border-light border-opacity-25">
+                <h5 class="fw-bold text-white mb-0">CODEQUEEN</h5>
+                <small class="text-white opacity-75">Admin Space</small>
+            </div>
+            <nav class="nav flex-column gap-1">
+                <a href="admin.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a href="badgesA.html" class="cq-nav-link active"><i class="bi bi-award"></i> Badges</a>
+                <a href="cohortsA.html" class="cq-nav-link"><i class="bi bi-people"></i> Cohorts</a>
+                <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
+                <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
+                <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
+                <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
+                <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="main-workspace">
+        
+        <div class="row align-items-center mb-4 g-3">
+            <div class="col-sm-7">
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-award text-clay me-2"></i>Alumni badge manager</h3>
+                <small class="text-muted text-uppercase tracking-wider">Recognition & achievement platform</small>
+            </div>
+            <div class="col-sm-5 d-flex justify-content-sm-end align-items-center gap-3">
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-semibold"><i class="bi bi-shield-lock me-1"></i>Admin</span>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="summary-mini-card">
+                    <div class="summary-mini-icon"><i class="bi bi-award-fill"></i></div>
+                    <div>
+                        <div class="fw-bold fs-5" id="metric-total-badges">0</div>
+                        <small class="text-muted">Total badges</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="summary-mini-card">
+                    <div class="summary-mini-icon"><i class="bi bi-people-fill"></i></div>
+                    <div>
+                        <div class="fw-bold fs-5" id="metric-total-alumni">0</div>
+                        <small class="text-muted">Alumni</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="summary-mini-card">
+                    <div class="summary-mini-icon"><i class="bi bi-check2-circle"></i></div>
+                    <div>
+                        <div class="fw-bold fs-5" id="metric-total-awarded">0</div>
+                        <small class="text-muted">Awarded</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="summary-mini-card">
+                    <div class="summary-mini-icon"><i class="bi bi-calendar-event"></i></div>
+                    <div>
+                        <div class="fw-bold fs-5" id="metric-current-month">May</div>
+                        <small class="text-muted">Current Month</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-4 p-2 bg-light rounded-3 border">
+            <button class="badge-tab-btn active" onclick="switchBadgeViewSection('badges-list', this)">
+                <i class="bi bi-grid-3x3-gap me-1"></i> Badges
+            </button>
+            <button class="badge-tab-btn" onclick="switchBadgeViewSection('create-badge', this)">
+                <i class="bi bi-plus-circle me-1"></i> Create badge
+            </button>
+            <button class="badge-tab-btn" onclick="switchBadgeViewSection('award-badge', this)">
+                <i class="bi bi-gift me-1"></i> Award badge
+            </button>
+            <button class="badge-tab-btn" id="tab-update-badge" onclick="switchBadgeViewSection('update-badge', this)" disabled>
+                <i class="bi bi-pencil-square me-1"></i> Update badge
+            </button>
+        </div>
+
+        <div id="section-badges-list" class="badge-view-container">
+            <h4 class="fw-bold mb-1">Alumni badges</h4>
+            <p class="text-muted small mb-4">All active achievement badges assigned throughout the network.</p>
+            
+            <div class="row g-3" id="badges-grid-container">
+                </div>
+            
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-warning text-dark border-2 px-4 py-2 fw-semibold" onclick="triggerCreateNewBadgeTab()">
+                    <i class="bi bi-plus-lg me-1"></i> Create new badge
+                </button>
+            </div>
+        </div>
+
+        <div id="section-create-badge" class="badge-view-container d-none">
+            <h4 class="fw-bold mb-3">Create a new badge</h4>
+            <p class="text-muted small">Design and publish an official merit badge for alumni excellence matching.</p>
+            
+            <form id="form-create-badge" onsubmit="executeCreateBadgeForm(event)">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="upload-dropzone-box" onclick="document.getElementById('input-badge-icon').click()">
+                            <i class="bi bi-image text-muted fs-1 mb-2"></i>
+                            <div class="fw-bold small text-uppercase">Image/Badge Icon</div>
+                            <input type="file" id="input-badge-icon" accept="image/*" class="d-none" onchange="previewUploadImage(this, 'create-preview-img')">
+                            <img id="create-preview-img" class="img-fluid mt-2 d-none rounded" style="max-height: 120px;">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Badge Name:</label>
+                            <input type="text" class="form-control" id="create-badge-name" placeholder="e.g. Excellence Award" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Category:</label>
+                            <select class="form-select" id="create-badge-category" required>
+                                <option value="Achievements">Achievements</option>
+                                <option value="Leadership">Leadership</option>
+                                <option value="Innovation">Innovation</option>
+                                <option value="Community Support">Community Support</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Description:</label>
+                            <textarea class="form-control" id="create-badge-description" rows="3" placeholder="Describe what this badge recognizes and who it is for..." required></textarea>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-light px-4" onclick="resetToListView()">Save as draft</button>
+                            <button type="submit" class="btn btn-warning text-white px-4 fw-bold" style="background-color: var(--cq-gold); border:none;">
+                                <i class="bi bi-check-lg me-1"></i> Create a badge
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="section-award-badge" class="badge-view-container d-none">
+            <h4 class="fw-bold mb-1">Award a badge</h4>
+            <p class="text-muted small mb-4">Select alumni and choose which badge to award for notable community contributions.</p>
+            
+            <form id="form-award-badge" onsubmit="executeAwardBadgeForm(event)">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0 fw-bold small text-uppercase"><i class="bi bi-people text-clay me-1"></i> Search alumna</label>
+                                <span class="badge bg-warning text-dark" id="search-results-counter">0 results</span>
+                            </div>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="search-alumni-input" placeholder="Search by name..." onkeyup="performAlumniSearch()">
+                            </div>
+                            <div class="alumni-search-result-scroll" id="search-results-output">
+                                <div class="text-center text-muted py-4 small">Type above to find community members...</div>
+                            </div>
+                            <input type="hidden" id="selected-alumna-id" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <label class="form-label fw-bold small text-uppercase mb-3"><i class="bi bi-award text-clay me-1"></i> Choose a badge</label>
+                            <div class="d-flex flex-column gap-2" id="award-badge-radio-group">
+                                <div class="text-center py-4 text-muted small">Loading options list...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Awardnote (Optional)</label>
+                            <input type="text" class="form-control" id="award-badge-note" placeholder="Write a brief custom note or reason for this award recognition...">
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-light px-4" onclick="resetToListView()">Cancel</button>
+                            <button type="submit" class="btn btn-warning text-white px-4 fw-bold" style="background-color: var(--cq-gold); border:none;">
+                                <i class="bi bi-gift me-1"></i> Award Badge
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="section-update-badge" class="badge-view-container d-none">
+            <h4 class="fw-bold mb-3">Update a badge</h4>
+            <p class="text-muted small">Edit badge details or remove it completely from the ecosystem datastore matrix models.</p>
+            
+            <form id="form-update-badge" onsubmit="executeUpdateBadgeForm(event)">
+                <input type="hidden" id="update-badge-id">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 text-center border">
+                            <div class="badge-avatar-placeholder" id="update-current-icon-avatar" style="width:70px; height:70px; font-size:1.8rem;"><i class="bi bi-award"></i></div>
+                            <div class="small text-muted fw-bold mb-2">Change Image file</div>
+                            <input type="file" id="input-update-badge-icon" accept="image/*" class="form-control form-control-sm" onchange="previewUploadImage(this, 'update-preview-img')">
+                            <img id="update-preview-img" class="img-fluid mt-2 d-none rounded" style="max-height: 100px;">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Edit Details</label>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted mb-1">Badge Name:</label>
+                                <input type="text" class="form-control" id="update-badge-name" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted mb-1">Category:</label>
+                            <select class="form-select" id="update-badge-category" required>
+                                <option value="Achievements">Achievements</option>
+                                <option value="Leadership">Leadership</option>
+                                <option value="Innovation">Innovation</option>
+                                <option value="Community Support">Community Support</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small text-muted mb-1">Description:</label>
+                            <textarea class="form-control" id="update-badge-description" rows="3" required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-danger px-3 d-flex align-items-center gap-1" id="btn-delete-badge" onclick="executeDeleteBadge()">
+                                <i class="bi bi-trash3"></i> Delete
+                            </button>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-light px-4" onclick="resetToListView()">Cancel</button>
+                                <button type="submit" class="btn btn-warning text-white px-4 fw-bold" style="background-color: var(--cq-gold); border:none;">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="badgesA.js"></script>
+</body>
+</html>
