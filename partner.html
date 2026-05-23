@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Partner Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-orange: #E39224;
+            --cq-burgundy: #C56C64;
+            --cq-cream: #FFF5E9;
+            --cq-cream-dark: #FCEFD2;
+            --cq-text-dark: #3A2312;
+            --cq-sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation Design System */
+        .sidebar-wrapper {
+            width: var(--cq-sidebar-width);
+            background-color: var(--cq-burgundy);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0 0 30px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            color: #FFFFFF;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+            list-style: none;
+            margin: 0;
+            width: 100%;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #FFFFFF !important;
+            text-decoration: none;
+            font-weight: 600;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            color: #FFFFFF !important;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--cq-burgundy) !important;
+            background-color: #FFFFFF !important;
+        }
+
+        .sidebar-link:hover i, .sidebar-link.active i {
+            color: var(--cq-burgundy) !important;
+        }
+
+        .btn-logout-sidebar {
+            background-color: #FFFFFF;
+            color: var(--cq-burgundy) !important;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: calc(100% - 40px);
+            margin: 0 auto;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout-sidebar:hover {
+            background-color: var(--cq-cream);
+            color: var(--cq-burgundy) !important;
+        }
+
+        /* Content Framing Workspace */
+        .main-content-pane {
+            margin-left: var(--cq-sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-cream);
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Profile Block Styling */
+        .partner-profile-header-card {
+            background-color: #FFFDFB;
+            border: 1px solid rgba(227, 146, 36, 0.15);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 35px;
+        }
+
+        .partner-logo-placeholder {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background-color: #FFF5E9;
+            border: 1px solid rgba(227, 146, 36, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cq-orange);
+            font-weight: 700;
+        }
+
+        .partner-meta-table td {
+            padding: 6px 12px;
+            color: var(--cq-text-dark);
+            vertical-align: top;
+        }
+        
+        .partner-meta-table td:first-child {
+            font-weight: 700;
+            width: 150px;
+        }
+
+        /* Form & Tab Management Systems */
+        .nav-tabs-cq {
+            border-bottom: 2px solid var(--cq-cream-dark);
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        .nav-tabs-cq .nav-link {
+            border: none;
+            color: var(--cq-text-dark);
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            background: transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-tabs-cq .nav-link.active {
+            color: var(--cq-orange);
+            border-bottom: 3px solid var(--cq-orange);
+        }
+
+        .image-uploader-frame-box {
+            background-color: #FFFFFF;
+            border: 1px dashed rgba(197, 108, 100, 0.4);
+            border-radius: 14px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(58, 35, 18, 0.6);
+            padding: 20px;
+        }
+
+        .btn-cq-orange {
+            background-color: var(--cq-orange);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 24px;
+        }
+
+        .btn-cq-orange:hover {
+            background-color: #cb801b;
+            color: #FFFFFF;
+        }
+
+        .btn-cq-outline-danger {
+            border: 1px solid var(--cq-burgundy);
+            color: var(--cq-burgundy);
+            background-color: transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 24px;
+        }
+
+        .btn-cq-outline-danger:hover {
+            background-color: var(--cq-burgundy);
+            color: #FFFFFF;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid rgba(197, 108, 100, 0.25);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--cq-orange);
+            box-shadow: 0 0 0 0.25rem rgba(227, 146, 36, 0.15);
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-wrapper { left: -var(--cq-sidebar-width); }
+            .sidebar-wrapper.show { left: 0; }
+            .main-content-pane { margin-left: 0; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-wrapper" id="sidebarMenu">
+        <div>
+            <div class="sidebar-brand">
+                <h4 class="m-0 text-white fw-bold text-uppercase">CodeQueen</h4>
+                <small class="text-white-50">Alumni Administrative Space</small>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="sidebar-link active"><i class="fa-solid fa-house"></i> HOME</a></li>
+                <li><a href="alumniProfiles.html" class="sidebar-link"><i class="fa-solid fa-user-graduate"></i> Alumna Profiles</a></li>
+                <li><a href="projects.html" class="sidebar-link"><i class="fa-solid fa-laptop-code"></i> Community Projects</a></li>
+                <li><a href="achievements.html" class="sidebar-link"><i class="fa-solid fa-trophy"></i> Achievements</a></li>
+                <li><a href="partners.html" class="sidebar-link"><i class="fa-solid fa-handshake"></i> Other partners</a></li>
+                <li><a href="leadership.html" class="sidebar-link"><i class="fa-solid fa-users-gear"></i> Leadership</a></li>
+                <li><a href="wallOfFame.html" class="sidebar-link"><i class="fa-solid fa-star"></i> Wall of Fame</a></li>
+                <li><a href="eventsSpace.html" class="sidebar-link"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
+            </ul>
+        </div>
+
+        <button class="btn btn-logout-sidebar" id="btnSidebarSignout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </button>
+    </nav>
+
+    <main class="main-content-pane">
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-lg-none me-3" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h3 class="fw-bold m-0 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-handshake text-warning"></i> Colequeen Partnership
+                </h3>
+            </div>
+        </header>
+
+        <div id="alertNotificationAnchor"></div>
+
+        <section class="partner-profile-header-card">
+            <div class="row align-items-center g-4">
+                <div class="col-12 col-md-3 d-flex flex-column align-items-center justify-content-center border-end border-md-none">
+                    <div class="partner-logo-placeholder mb-3">Logo</div>
+                    <button class="btn btn-action-outline btn-sm shadow-sm border px-3" style="border-radius: 8px;" id="btnUpdateProfileTrigger">
+                        <i class="fa-solid fa-user-pen me-1"></i> Update profile
+                    </button>
+                </div>
+                <div class="col-12 col-md-9">
+                    <table class="partner-meta-table w-100">
+                        <tr>
+                            <td>Company Name</td>
+                            <td>: <span id="lblCompanyName" class="text-muted">Loading...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td>: <span id="lblDescription" class="text-muted">Loading...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Contact</td>
+                            <td>: <span id="lblContact" class="text-muted">Loading...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Website</td>
+                            <td>: <span id="lblWebsite" class="text-muted">Loading...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>: <span id="lblEmail" class="text-muted">Loading...</span></td>
+                        </tr>
+                        <tr>
+                            <td>Location</td>
+                            <td>: <span id="lblLocation" class="text-muted">Loading...</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <ul class="nav nav-tabs nav-tabs-cq border-0" id="opportunityEventToggleTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="opportunity-tab" data-bs-toggle="tab" data-bs-target="#panelOpportunity" type="button" role="tab">Add opportunity</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="event-tab" data-bs-toggle="tab" data-bs-target="#panelEvent" type="button" role="tab">Add event</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            
+            <div class="tab-pane fade show active" id="panelOpportunity" role="tabpanel">
+                <div class="cq-container-card">
+                    <h5 class="fw-bold mb-4 text-uppercase tracking-wider" style="color: var(--cq-orange);">New Opportunity</h5>
+                    <form id="formCreateOpportunity">
+                        <div class="row g-4">
+                            <div class="col-12 col-md-4">
+                                <div class="image-uploader-frame-box text-center" id="oppImageZone">
+                                    <i class="fa-solid fa-images fa-3x mb-2 text-warning" id="oppPlaceholderIcon"></i>
+                                    <img id="oppPreviewImg" src="" class="img-fluid rounded mb-2 d-none" style="max-height: 130px; object-fit: contain;">
+                                    <span class="d-block small text-muted mb-2">Add photo URL (png/jpg/jpeg)</span>
+                                    <input type="url" class="form-control form-control-sm text-center" id="inputOppImageUrl" placeholder="https://link-to-image.com/pic.png">
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted mb-1">Title</label>
+                                        <input type="text" class="form-control" id="inputOppTitle" required placeholder="Enter opportunity title">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted mb-1">Description</label>
+                                        <textarea class="form-control" id="inputOppDescription" rows="3" required placeholder="Enter description"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted mb-1">URL</label>
+                                        <input type="url" class="form-control" id="inputOppUrl" required placeholder="Enter URL">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted mb-1">Category</label>
+                                        <select class="form-select" id="inputOppCategory" required>
+                                            <option value="" selected disabled>Select category</option>
+                                            <option value="Job">Job Placement</option>
+                                            <option value="Internship">Internship</option>
+                                            <option value="Mentorship">Mentorship</option>
+                                            <option value="Grant">Grant / Funding</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted mb-1">Deadline</label>
+                                        <input type="date" class="form-control" id="inputOppDeadline" required>
+                                    </div>
+                                </div>
+                                <div class="text-end mt-4">
+                                    <button type="submit" class="btn btn-cq-orange">
+                                        <i class="fa-solid fa-paper-plane me-2"></i>Publish
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="panelEvent" role="tabpanel">
+                <div class="cq-container-card">
+                    <h5 class="fw-bold mb-4 text-uppercase tracking-wider" style="color: var(--cq-orange);">Add event</h5>
+                    <form id="formCreateEvent">
+                        <div class="row g-4">
+                            <div class="col-12 col-md-4">
+                                <div class="image-uploader-frame-box text-center" id="eventImageZone">
+                                    <i class="fa-solid fa-calendar-image fa-3x mb-2 text-warning d-none" id="eventPlaceholderIcon"></i>
+                                    <i class="fa-solid fa-file-image fa-3x mb-2 text-warning" id="eventFallbackIcon"></i>
+                                    <img id="eventPreviewImg" src="" class="img-fluid rounded mb-2 d-none" style="max-height: 130px; object-fit: contain;">
+                                    <span class="d-block small text-muted mb-2">Event Image URL</span>
+                                    <input type="url" class="form-control form-control-sm text-center" id="inputEventImageUrl" placeholder="https://link-to-event-image.com/banner.jpg">
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted mb-1">Title</label>
+                                        <input type="text" class="form-control" id="inputEventTitle" required placeholder="Enter event title">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted mb-1">Description</label>
+                                        <textarea class="form-control" id="inputEventDescription" rows="2" required placeholder="Enter event description"></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label small fw-bold text-muted mb-1">Category</label>
+                                        <input type="text" class="form-control" id="inputEventCategory" required placeholder="e.g. Technical Workshop, Networking, Hackathon">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted mb-1">Start Date</label>
+                                        <input type="date" class="form-control" id="inputEventStartDate" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-muted mb-1">End Date</label>
+                                        <input type="date" class="form-control" id="inputEventEndDate" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold text-muted mb-1">Location</label>
+                                        <input type="text" class="form-control" id="inputEventLocation" required placeholder="Enter location">
+                                    </div>
+                                    <div class="col-12 d-none">
+                                        <label class="form-label small fw-bold text-muted mb-1">Attendees Target Count</label>
+                                        <input type="number" class="form-control" id="inputEventAttendeesCount" placeholder="Enter number of attendees">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end gap-3 mt-4">
+                                    <button type="button" class="btn btn-cq-outline-danger" id="btnResetEventForm">
+                                        <i class="fa-solid fa-trash me-2"></i>Delete
+                                    </button>
+                                    <button type="submit" class="btn btn-cq-orange">
+                                        <i class="fa-solid fa-user-plus me-2"></i>Register
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="partner.js"></script>
+</body>
+</html>

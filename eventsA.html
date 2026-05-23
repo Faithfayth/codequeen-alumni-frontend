@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Manage Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --cq-sidebar-bg: #C56C64;   /* Earthy rose clay */
+            --cq-gold-bg: #E39224;      /* UI Amber accent */
+            --cq-card-soft: #FFF5E9;    /* Container soft cream */
+            --cq-text-dark: #3A2312;    /* Soft deep charcoal text */
+            --cq-bg-light: #FFFBF7;     /* Warm underlying layout tint */
+            --cq-border-color: #F7E5D4;
+        }
+
+        body {
+            background-color: var(--cq-bg-light);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* MOBILE HEADER ACTION */
+        .mobile-admin-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* STRUCTURAL NAVIGATION SIDEBAR */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-header-branding {
+            color: #FFFFFF;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .close-sidebar-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            border-radius: 6px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 2px 8px;
+        }
+
+        .sidebar-scrollable-menu {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-top: 15px;
+            padding-right: 4px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-scrollable-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-scrollable-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            border-radius: 8px;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        .sidebar-footer-action {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 15px;
+        }
+
+        /* CORE WORKSPACE */
+        .admin-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .events-manager-canvas {
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            border: 1px solid var(--cq-border-color);
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(58, 35, 18, 0.02);
+        }
+
+        /* NAVIGATION INTERACTIVE TABS */
+        .cq-tab-heading {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #A0A0A0;
+            cursor: pointer;
+            padding-bottom: 8px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .cq-tab-heading.active {
+            color: var(--cq-gold-bg);
+            border-bottom-color: var(--cq-gold-bg);
+        }
+
+        /* CARD WRAPPERS */
+        .event-section-card {
+            background: #FFFFFF;
+            border: 1px solid var(--cq-border-color);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+        }
+
+        .event-graphic-box {
+            background-color: var(--cq-card-soft);
+            border: 1px solid var(--cq-border-color);
+            border-radius: 12px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--cq-gold-bg);
+            text-align: center;
+            padding: 15px;
+        }
+
+        .event-graphic-box img {
+            max-width: 100%;
+            max-height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* FORM FIELD LAYOUT STYLING */
+        .form-display-label {
+            font-weight: 600;
+            min-width: 110px;
+            color: var(--cq-text-dark);
+            font-size: 0.95rem;
+            padding-top: 6px;
+        }
+
+        .form-control-cq {
+            background-color: var(--cq-bg-light);
+            border: 1px solid #FAF0E6;
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: var(--cq-text-dark);
+            font-size: 0.95rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .form-control-cq:focus {
+            outline: none;
+            border-color: var(--cq-gold-bg);
+            background-color: #FFFFFF;
+        }
+
+        /* COMPACT INTERACTIVE BUTTON PILLS */
+        .btn-action-amber {
+            border: 1px solid var(--cq-gold-bg);
+            background-color: #FFFFFF;
+            color: var(--cq-gold-bg);
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 6px 18px;
+            transition: all 0.2s;
+        }
+
+        .btn-action-amber:hover {
+            background-color: var(--cq-card-soft);
+        }
+
+        .btn-action-rose {
+            border: 1px solid #C56C64;
+            background-color: #FFFFFF;
+            color: #C56C64;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 6px 18px;
+            transition: all 0.2s;
+        }
+
+        .btn-action-rose:hover {
+            background-color: #FDF1F0;
+        }
+
+        .counter-badge-box {
+            background-color: var(--cq-card-soft);
+            border: 1px solid var(--cq-border-color);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            color: var(--cq-text-dark);
+        }
+
+        @media (max-width: 991.98px) {
+            .mobile-admin-header { display: flex; }
+            .cq-sidebar { transform: translateX(-100%); box-shadow: 4px 0 15px rgba(0,0,0,0.15); }
+            .cq-sidebar.show-sidebar { transform: translateX(0); }
+            .close-sidebar-btn { display: block; }
+            .admin-workspace { margin-left: 0; padding: 90px 15px 40px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-admin-header">
+        <span class="text-white fw-bold">CQ Admin Management</span>
+        <button class="hamburger-btn" id="sidebar-open-toggle-trigger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="cq-sidebar" id="app-navigation-sidebar-container">
+        <div>
+            <div class="sidebar-header-branding">
+                <h5 class="fw-bold mb-0">CODEQUEEN</h5>
+                <small class="opacity-75">Alumni Administrative Space</small>
+                <button class="close-sidebar-btn" id="sidebar-close-toggle-trigger"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <div class="sidebar-scrollable-menu">
+                <nav class="nav flex-column">
+                    <a href="admin.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="badgesA.html" class="cq-nav-link"><i class="bi bi-award"></i> Badges</a>
+                    <a href="cohortsA.html" class="cq-nav-link"><i class="bi bi-people"></i> Cohorts</a>
+                    <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
+                    <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
+                    <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
+                    <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                    <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
+                    <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                    <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
+                    <a href="profilesA.html" class="cq-nav-link"><i class="bi bi-person-vcard"></i> Profiles</a>
+                </nav>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer-action">
+            <button onclick="logoutSession()" class="btn btn-light text-danger w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm border-0">
+                <i class="bi bi-box-arrow-left"></i> Logout !
+            </button>
+        </div>
+    </div>
+
+    <main class="admin-workspace">
+        <div class="events-manager-canvas">
+            
+            <div class="row align-items-center mb-4 g-3">
+                <div class="col-12 col-md-6">
+                    <h4 class="fw-bold m-0 d-flex align-items-center gap-2" style="color: var(--cq-text-dark)">
+                        <i class="bi bi-calendar-event" style="color: var(--cq-gold-bg)"></i> Manage Events
+                    </h4>
+                </div>
+                <div class="col-12 col-md-6 d-flex justify-content-md-end">
+                    <div id="unverifiedCounterBox" class="counter-badge-box fw-bold d-none">
+                        Pending unapproved Events : <span class="text-danger" id="unverifiedCountText">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-4 align-items-center mb-4 border-bottom pb-2">
+                <span id="tab-upcoming-toggle" class="cq-tab-heading active" onclick="switchEventViewTab('upcoming')">
+                    <i class="bi bi-calendar-check me-1"></i> Upcoming Events
+                </span>
+                <span id="tab-past-toggle" class="cq-tab-heading" onclick="switchEventViewTab('past')">
+                    <i class="bi bi-clock-history me-1"></i> Past Events
+                </span>
+                <span id="tab-create-toggle" class="cq-tab-heading" onclick="switchEventViewTab('create')">
+                    <i class="bi bi-plus-circle-fill text-warning me-1"></i> Add Event
+                </span>
+            </div>
+
+            <div id="loadingStatusSpinner" class="text-center my-4"><div class="spinner-border text-warning" role="status"></div></div>
+            <div id="eventsRenderDisplayDeck" class="mb-4"></div>
+
+            <div id="adminReviewWrapperSection" class="mt-4 mb-5 d-none">
+                <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-shield-lock-fill me-1"></i> Pending Administrative Verification Queue</h5>
+                <div id="unverifiedEventsDeck"></div>
+            </div>
+
+            <div class="event-section-card shadow-sm mt-5 d-none" id="creationFormSection">
+                <div class="border-bottom pb-2 mb-4">
+                    <h5 class="fw-bold m-0" style="color: var(--cq-gold-bg)"><i class="bi bi-pencil-square me-2"></i>Propose New Alumnae Event</h5>
+                </div>
+
+                <form id="proposeEventForm">
+                    <div class="row g-4">
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="event-graphic-box">
+                                <i class="bi bi-calendar4-week fs-1 mb-2"></i>
+                                <small class="text-muted">Dynamic Web Preview Link</small>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-8 col-lg-9">
+                            <div class="d-flex flex-column gap-3">
+                                <div class="d-flex align-items-center"><span class="form-display-label">Title :</span><input type="text" class="form-control-cq" id="eventTitle" required placeholder="Enter event title"></div>
+                                <div class="d-flex align-items-start"><span class="form-display-label">Description :</span><textarea class="form-control-cq" rows="3" id="eventDescription" required placeholder="Enter description"></textarea></div>
+                                <div class="d-flex align-items-center"><span class="form-display-label">Category :</span>
+                                    <select class="form-control-cq" id="eventCategory" required>
+                                        <option value="" disabled selected>Select category</option>
+                                        <option value="Technical Workshop">Technical Workshop</option>
+                                        <option value="Networking Networking">Web3/Tech Mixer</option>
+                                        <option value="Career Mentorship">Career Mentorship</option>
+                                    </select>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-12 col-md-6 d-flex align-items-center"><span class="form-display-label">Start Date :</span><input type="datetime-local" class="form-control-cq" id="eventStartDate" required></div>
+                                    <div class="col-12 col-md-6 d-flex align-items-center"><span class="form-display-label">End Date :</span><input type="datetime-local" class="form-control-cq" id="eventEndDate" required></div>
+                                </div>
+                                <div class="d-flex align-items-center"><span class="form-display-label">Location :</span><input type="text" class="form-control-cq" id="eventLocation" required placeholder="Enter location"></div>
+                                <div class="d-flex align-items-center"><span class="form-display-label">Image URL :</span><input type="url" class="form-control-cq" id="eventImageUrl" placeholder="Optional network image connection path URL"></div>
+                                
+                                <div class="d-flex justify-content-end gap-2 mt-2">
+                                    <button type="submit" class="btn btn-action-amber px-4"><i class="bi bi-person-plus me-1"></i> Register</button>
+                                    <button type="button" class="btn btn-action-rose px-4" onclick="document.getElementById('proposeEventForm').reset()"><i class="bi bi-trash3 me-1"></i> Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="eventsA.js"></script>
+</body>
+</html>

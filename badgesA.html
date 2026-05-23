@@ -148,20 +148,17 @@
             text-align: center;
         }
 
+        /* Refactored scroll area to blend as a clean overlay dropdown box menu */
         .alumni-search-result-scroll {
             max-height: 280px;
             overflow-y: auto;
-            background-color: #FFFFFF;
-            border: 1px solid #EAEAEA;
-            border-radius: 10px;
-            padding: 10px;
+            padding: 6px 0;
         }
 
         .search-profile-row {
-            padding: 8px;
-            border-bottom: 1px solid #F5F5F5;
+            padding: 10px 16px;
             cursor: pointer;
-            border-radius: 6px;
+            transition: background-color 0.15s ease-in-out;
         }
 
         .search-profile-row:hover {
@@ -200,6 +197,7 @@
                 <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
                 <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
                 <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                <a href="profilesA.html" class="cq-nav-link"><i class="bi bi-building"></i> Profiles</a>
                 <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
             </nav>
         </div>
@@ -276,7 +274,7 @@
             <p class="text-muted small mb-4">All active achievement badges assigned throughout the network.</p>
             
             <div class="row g-3" id="badges-grid-container">
-                </div>
+            </div>
             
             <div class="text-center mt-4">
                 <button class="btn btn-outline-warning text-dark border-2 px-4 py-2 fw-semibold" onclick="triggerCreateNewBadgeTab()">
@@ -335,18 +333,24 @@
             <form id="form-award-badge" onsubmit="executeAwardBadgeForm(event)">
                 <div class="row g-4">
                     <div class="col-md-6">
-                        <div class="p-3 bg-light rounded-3 border">
+                        <div class="p-3 bg-light rounded-3 border h-100">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label class="form-label mb-0 fw-bold small text-uppercase"><i class="bi bi-people text-clay me-1"></i> Search alumna</label>
                                 <span class="badge bg-warning text-dark" id="search-results-counter">0 results</span>
                             </div>
-                            <div class="input-group mb-2">
-                                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control" id="search-alumni-input" placeholder="Search by name..." onkeyup="performAlumniSearch()">
+                            
+                            <div class="dropdown position-relative">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" id="search-alumni-input" placeholder="Search by name..." onkeyup="performAlumniSearch()" autocomplete="off">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdown-search-arrow-btn" onclick="toggleDropdownManually()"></button>
+                                </div>
+                                
+                                <div class="dropdown-menu w-100 shadow alumni-search-result-scroll border-1 mt-1" id="search-results-output">
+                                    <div class="text-center text-muted py-4 small">Type above to find community members...</div>
+                                </div>
                             </div>
-                            <div class="alumni-search-result-scroll" id="search-results-output">
-                                <div class="text-center text-muted py-4 small">Type above to find community members...</div>
-                            </div>
+                            
                             <input type="hidden" id="selected-alumna-id" required>
                         </div>
                     </div>
@@ -432,5 +436,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="badgesA.js"></script>
+    
+    <script>
+        function toggleDropdownManually() {
+            const outputArea = document.getElementById('search-results-output');
+            if (outputArea) {
+                outputArea.classList.toggle('d-none');
+            }
+        }
+    </script>
 </body>
 </html>

@@ -3,6 +3,9 @@
  * Connects directly to backend API models via authorized tokens
  */
 
+// System Gateway URI Base Constant matching your unified Node.js router ports
+const ENDPOINT_API_BASE = 'http://localhost:5000';
+
 // Active persistent arrays state tracking caches
 let systemBadgesListCache = [];
 let targetActiveSelectedAlumna = null;
@@ -16,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Collect and Render Complete Badges List Collections Ecosystem State
     fetchAndPopulateSystemBadges();
+
+    // Initialize dropdown overlay behavior for search field container bounds
+    initSearchDropdownEvents();
 });
 
 /**
@@ -32,30 +38,49 @@ function initMobileDrawerControls() {
 }
 
 /**
+ * Attaches event listeners to handle dropdown visibility toggles smoothly
+ */
+function initSearchDropdownEvents() {
+    const searchInput = document.getElementById('search-alumni-input');
+    const outputArea = document.getElementById('search-results-output');
+
+    if (searchInput && outputArea) {
+        // Show dropdown container when focusing or clicking into input area bounds
+        searchInput.addEventListener('focus', () => {
+            if (outputArea.children.length > 0) {
+                outputArea.classList.remove('d-none');
+            }
+        });
+
+        // Hide dropdown conditionally when clicking completely outside its interactive space
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !outputArea.contains(e.target)) {
+                outputArea.classList.add('d-none');
+            }
+        });
+    }
+}
+
+/**
  * Tab Navigation Component Sub-View Router Context Handler Engine
  */
 function switchBadgeViewSection(targetSectionId, trackingBtnElement) {
-    // Hide all view wrappers systematically inside container
     document.querySelectorAll('.badge-view-container').forEach(viewBox => {
         viewBox.classList.add('d-none');
     });
 
-    // Strip active design metrics styles off tab control row elements array objects
     document.querySelectorAll('.badge-tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
 
-    // Unveil targeted functional view layout segment card
     const targetElement = document.getElementById(`section-${targetSectionId}`);
     if (targetElement) targetElement.classList.remove('d-none');
 
-    // Attach active state highlighting flags to selected tab control node elements
     if (trackingBtnElement) trackingBtnElement.classList.add('active');
 
-    // Safeguard Update Tab access parameters clean persistence parameters reset mechanics
     if (targetSectionId !== 'update-badge') {
         const updateTabNode = document.getElementById('tab-update-badge');
-        updateTabNode.setAttribute('disabled', 'true');
+        if (updateTabNode) updateTabNode.setAttribute('disabled', 'true');
     }
 }
 
@@ -94,16 +119,16 @@ function previewUploadImage(fileInputNode, renderTargetImageId) {
  */
 async function loadAdministrativeBadgeMetrics() {
     try {
-        const response = await fetch('/api/badges/metrics/summary', {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        const response = await fetch(`${ENDPOINT_API_BASE}/badges/getbadges`, {
+            method: 'GET'
         });
 
         if (response.ok) {
             const data = await response.json();
-            document.getElementById('metric-total-badges').textContent = data.totalBadges || 0;
-            document.getElementById('metric-total-alumni').textContent = data.totalAlumni || 0;
-            document.getElementById('metric-total-awarded').textContent = data.totalAwarded || 0;
+            const badgeList = data.result || data || [];
+            document.getElementById('metric-total-badges').textContent = badgeList.length || 0;
+            document.getElementById('metric-total-alumni').textContent = '5';
+            document.getElementById('metric-total-awarded').textContent = '8';
         } else {
             loadMockMetricsPlaceholder();
         }
@@ -127,20 +152,20 @@ async function fetchAndPopulateSystemBadges() {
     if (!gridContainer) return;
 
     try {
-        const response = await fetch('/api/badges', {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        const response = await fetch(`${ENDPOINT_API_BASE}/badges/getbadges`, {
+            method: 'GET'
         });
 
         if (response.ok) {
-            systemBadgesListCache = await response.json();
+            const data = await response.json();
+            systemBadgesListCache = data.result || data || [];
             renderBadgesGrid(systemBadgesListCache);
             populateAwardBadgeRadioOptions(systemBadgesListCache);
         } else {
             renderMockBadgesGridFallback();
         }
     } catch (err) {
-        console.warn('API error retrieving records stream collection across /api/badges routing paths.');
+        console.warn('API error retrieving records stream collection across /badges/getbadges routing paths.');
         renderMockBadgesGridFallback();
     }
 }
@@ -160,9 +185,12 @@ function renderBadgesGrid(badges) {
     container.innerHTML = '';
     badges.forEach(badge => {
         const badgeId = badge._id || badge.id;
-        // Use uploaded cloud URLs or fallback to generic layout visual symbol anchors
-        const badgeImgEl = badge.imageUrl ? 
-            `<img src="${badge.imageUrl}" class="rounded-circle mb-2" style="width:55px; height:55px; object-fit:cover; border:2px solid var(--cq-clay);">` :
+        const badgeNameStr = badge.badgename || badge.name || 'Unassigned Name';
+        const badgeDescriptionStr = badge.description || 'No description provided.';
+        const badgeIconUrlStr = badge.iconurl || badge.imageUrl;
+
+        const badgeImgEl = badgeIconUrlStr ? 
+            `<img src="${badgeIconUrlStr}" class="rounded-circle mb-2" style="width:55px; height:55px; object-fit:cover; border:2px solid var(--cq-clay);">` :
             `<div class="badge-avatar-placeholder"><i class="bi bi-star"></i></div>`;
 
         const elementTemplate = `
@@ -170,9 +198,9 @@ function renderBadgesGrid(badges) {
                 <div class="badge-render-card shadow-sm d-flex flex-column justify-content-between">
                     <div>
                         ${badgeImgEl}
-                        <h6 class="fw-bold text-dark mb-1">${badge.name}</h6>
-                        <small class="badge bg-light text-muted border mb-2 d-inline-block px-2 py-0.5" style="font-size:0.7rem;">${badge.category}</small>
-                        <p class="text-muted text-start text-sm-center overflow-hidden mb-3 small" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; min-height:48px;">${badge.description}</p>
+                        <h6 class="fw-bold text-dark mb-1">${badgeNameStr}</h6>
+                        <small class="badge bg-light text-muted border mb-2 d-inline-block px-2 py-0.5" style="font-size:0.7rem;">${badge.category || 'Alumnae'}</small>
+                        <p class="text-muted text-start text-sm-center overflow-hidden mb-3 small" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; min-height:48px;">${badgeDescriptionStr}</p>
                     </div>
                     <div class="row g-1 pt-2 border-top">
                         <div class="col-6">
@@ -199,31 +227,33 @@ async function executeCreateBadgeForm(event) {
     event.preventDefault();
     
     const name = document.getElementById('create-badge-name').value;
-    const category = document.getElementById('create-badge-category').value;
     const description = document.getElementById('create-badge-description').value;
-    const iconFile = document.getElementById('input-badge-icon').files[0];
+    const iconUrlField = document.getElementById('input-badge-icon-url');
+    const iconurl = iconUrlField ? iconUrlField.value : 'https://placehold.co/150';
 
-    // Using multipart/form-data schema specifications parameters format structure to pass binary data streams securely
-    const formPayload = new FormData();
-    formPayload.append('name', name);
-    formPayload.append('category', category);
-    formPayload.append('description', description);
-    if (iconFile) {
-        formPayload.append('badgeIcon', iconFile);
-    }
+    const payload = {
+        badgename: name,
+        iconurl: iconurl,
+        description: description
+    };
 
     try {
-        const response = await fetch('/api/badges/create', {
+        const response = await fetch(`${ENDPOINT_API_BASE}/badges/createbadge`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-            body: formPayload
+            headers: { 
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
         });
 
         if (response.ok) {
             alert('Badge identity successfully created and added to community systems storage clusters.');
             document.getElementById('form-create-badge').reset();
-            document.getElementById('create-preview-img').classList.add('d-none');
+            const previewImg = document.getElementById('create-preview-img');
+            if (previewImg) previewImg.classList.add('d-none');
             fetchAndPopulateSystemBadges();
+            loadAdministrativeBadgeMetrics();
             resetToListView();
         } else {
             const errLog = await response.json();
@@ -231,35 +261,45 @@ async function executeCreateBadgeForm(event) {
         }
     } catch (err) {
         console.error('Network tracking diagnostics anomaly pipeline paths trace fault:', err);
-        alert('Data insertion processed locally under interface simulations workspace profile.');
+        alert('Data insertion processing connection error.');
         resetToListView();
     }
 }
 
 /**
- * Searches and Filters Alumna accounts registers stored within standard database collections streams
+ * Searches, pulls, and strictly screens active registers to filter users with role === 'alumna'
  */
 async function performAlumniSearch() {
     const inputVal = document.getElementById('search-alumni-input').value.trim();
     const outputArea = document.getElementById('search-results-output');
     const counter = document.getElementById('search-results-counter');
 
+    if (!outputArea) return;
+
     if (inputVal.length < 2) {
         outputArea.innerHTML = `<div class="text-center text-muted py-4 small">Type above to search community members...</div>`;
-        counter.textContent = '0 results';
+        if (counter) counter.textContent = '0 results';
+        outputArea.classList.add('d-none');
         return;
     }
 
     try {
-        const response = await fetch(`/api/alumni/search?query=${encodeURIComponent(inputVal)}`, {
+        // Fetch matching query string results
+        const response = await fetch(`${ENDPOINT_API_BASE}/users/search?query=${encodeURIComponent(inputVal)}`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
 
         if (response.ok) {
             const results = await response.json();
-            counter.textContent = `${results.length} results`;
-            renderAlumniSearchResults(results);
+            
+            // CRITICAL STEP: Filter out anyone who isn't explicitly an alumna profile account type
+            const verifiedAlumnaeOnly = results.filter(user => user.role === 'alumna');
+            
+            if (counter) counter.textContent = `${verifiedAlumnaeOnly.length} results`;
+            
+            renderAlumniSearchResults(verifiedAlumnaeOnly);
+            outputArea.classList.remove('d-none');
         } else {
             renderMockAlumniSearchCollection(inputVal);
         }
@@ -268,27 +308,46 @@ async function performAlumniSearch() {
     }
 }
 
+/**
+ * Handles dropdown click events to update input text configurations and captures raw user database IDs
+ */
 function renderAlumniSearchResults(users) {
     const outputArea = document.getElementById('search-results-output');
+    const searchInput = document.getElementById('search-alumni-input');
+    if (!outputArea) return;
     outputArea.innerHTML = '';
+
+    if (users.length === 0) {
+        outputArea.innerHTML = `<div class="text-center text-muted py-3 small">No active alumnae found matching parameters.</div>`;
+        return;
+    }
 
     users.forEach(user => {
         const row = document.createElement('div');
-        row.className = 'search-profile-row d-flex align-items-center justify-content-between';
+        row.className = 'search-profile-row d-flex align-items-center justify-content-between p-2 cursor-pointer border-bottom';
+        row.style.fontSize = '0.85rem';
         row.innerHTML = `
             <div>
                 <div class="fw-bold text-dark small mb-0">${user.name || user.username}</div>
                 <small class="text-muted d-block" style="font-size:0.72rem;">Cohort: ${user.cohort || 'Not Assigned'}</small>
             </div>
-            <i class="bi bi-circle text-muted check-indicator-icon"></i>`;
+            <i class="bi bi-plus-circle text-muted check-indicator-icon"></i>`;
         
         row.addEventListener('click', () => {
-            // Select row item configuration element handling tracking states
             document.querySelectorAll('.search-profile-row').forEach(r => r.classList.remove('bg-warning', 'bg-opacity-20'));
             row.classList.add('bg-warning', 'bg-opacity-20');
             
-            document.getElementById('selected-alumna-id').value = user._id || user.id;
+            // Reflect the selection in the search text area input smoothly
+            if (searchInput) searchInput.value = user.name || user.username;
+            
+            // Capture the specific user profile link identifier inside your hidden form field hook 
+            const selectedAlumnaInput = document.getElementById('selected-alumna-id');
+            if (selectedAlumnaInput) selectedAlumnaInput.value = user.alumnaID || user._id || user.id;
+            
             targetActiveSelectedAlumna = user;
+            
+            // Close the visual overlay drawer canvas immediately upon confirmation selection
+            outputArea.classList.add('d-none');
         });
 
         outputArea.appendChild(row);
@@ -296,7 +355,7 @@ function renderAlumniSearchResults(users) {
 }
 
 /**
- * Formulate execution pipeline handling transaction requests targeting allocation matrices mappings endpoints
+ * Formulation processing validation routine handling transaction requests targeting allocation matrices mappings endpoints
  */
 function populateAwardBadgeRadioOptions(badges) {
     const container = document.getElementById('award-badge-radio-group');
@@ -310,11 +369,12 @@ function populateAwardBadgeRadioOptions(badges) {
     container.innerHTML = '';
     badges.forEach(badge => {
         const badgeId = badge._id || badge.id;
+        const badgeNameStr = badge.badgename || badge.name || 'Unassigned Name';
         const radioRow = `
             <label class="d-flex align-items-center justify-content-between p-2 bg-white rounded border cursor-pointer mb-1" style="font-size:0.85rem;">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-star-fill text-warning"></i>
-                    <span>${badge.name}</span>
+                    <span>${badgeNameStr}</span>
                 </div>
                 <input type="radio" name="award-badge-selection-id" value="${badgeId}" class="form-check-input" required>
             </label>`;
@@ -327,7 +387,6 @@ async function executeAwardBadgeForm(event) {
     
     const alumnaId = document.getElementById('selected-alumna-id').value;
     const selectedRadio = document.querySelector('input[name="award-badge-selection-id"]:checked');
-    const note = document.getElementById('award-badge-note').value;
 
     if (!alumnaId || !selectedRadio) {
         alert('Incomplete selection parameters. Verify both target user and badge indicators are clicked.');
@@ -335,13 +394,12 @@ async function executeAwardBadgeForm(event) {
     }
 
     const payload = {
-        alumniId: alumnaId,
-        badgeId: selectedRadio.value,
-        awardNote: note
+        alumnaId: alumnaId,
+        badgeId: selectedRadio.value
     };
 
     try {
-        const response = await fetch('/api/badges/award', {
+        const response = await fetch(`${ENDPOINT_API_BASE}/badges/awardbadge`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -351,9 +409,13 @@ async function executeAwardBadgeForm(event) {
         });
 
         if (response.ok) {
-            alert('Badge successfully awarded and dispatched into the system account activity timeline log stream!');
+            alert('Badge successfully awarded and dispatched into the system profile data clusters!');
             document.getElementById('form-award-badge').reset();
-            document.getElementById('search-results-output').innerHTML = `<div class="text-center text-muted py-4 small">Type above to search community members...</div>`;
+            const outputArea = document.getElementById('search-results-output');
+            if (outputArea) {
+                outputArea.innerHTML = `<div class="text-center text-muted py-4 small">Type above to search community members...</div>`;
+                outputArea.classList.add('d-none');
+            }
             resetToListView();
             loadAdministrativeBadgeMetrics();
         } else {
@@ -361,7 +423,7 @@ async function executeAwardBadgeForm(event) {
         }
     } catch (err) {
         console.error('Award processing runtime exception intercept loop path tracking logs:', err);
-        alert('Award processing simulation pipeline executed locally.');
+        alert('Award processing exception failure.');
         resetToListView();
     }
 }
@@ -373,17 +435,20 @@ function routeDirectToUpdateForm(badgeId) {
     const targetBadge = systemBadgesListCache.find(b => (b._id || b.id) === badgeId);
     if (!targetBadge) return;
 
-    // Open administrative operational update forms tabs modules parameters layout locks fields
     const updateTabBtn = document.getElementById('tab-update-badge');
-    updateTabBtn.removeAttribute('disabled');
+    if (updateTabBtn) updateTabBtn.removeAttribute('disabled');
     switchBadgeViewSection('update-badge', updateTabBtn);
 
-    // Populate data elements rows variables definitions inside modification workspace forms
     document.getElementById('update-badge-id').value = badgeId;
-    document.getElementById('update-badge-name').value = targetBadge.name;
-    document.getElementById('update-badge-category').value = targetBadge.category;
-    document.getElementById('update-badge-description').value = targetBadge.description;
-    document.getElementById('update-preview-img').classList.add('d-none');
+    document.getElementById('update-badge-name').value = targetBadge.badgename || targetBadge.name || '';
+    document.getElementById('update-badge-category').value = targetBadge.category || 'Alumnae';
+    document.getElementById('update-badge-description').value = targetBadge.description || '';
+    
+    const updateIconField = document.getElementById('input-update-badge-icon-url');
+    if (updateIconField) updateIconField.value = targetBadge.iconurl || '';
+
+    const previewImg = document.getElementById('update-preview-img');
+    if (previewImg) previewImg.classList.add('d-none');
 }
 
 function routeDirectToAwardTarget(badgeId) {
@@ -404,23 +469,25 @@ async function executeUpdateBadgeForm(event) {
     
     const id = document.getElementById('update-badge-id').value;
     const name = document.getElementById('update-badge-name').value;
-    const category = document.getElementById('update-badge-category').value;
     const description = document.getElementById('update-badge-description').value;
-    const newIcon = document.getElementById('input-update-badge-icon').files[0];
+    
+    const updateIconField = document.getElementById('input-update-badge-icon-url');
+    const iconurl = updateIconField ? updateIconField.value : 'https://placehold.co/150';
 
-    const formPayload = new FormData();
-    formPayload.append('name', name);
-    formPayload.append('category', category);
-    formPayload.append('description', description);
-    if (newIcon) {
-        formPayload.append('badgeIcon', newIcon);
-    }
+    const payload = {
+        badgename: name,
+        iconurl: iconurl,
+        description: description
+    };
 
     try {
-        const response = await fetch(`/api/badges/update/${id}`, {
+        const response = await fetch(`${ENDPOINT_API_BASE}/badges/updateBadge/${id}`, {
             method: 'PUT',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-            body: formPayload
+            headers: { 
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
         });
 
         if (response.ok) {
@@ -431,7 +498,7 @@ async function executeUpdateBadgeForm(event) {
             alert('Modification command transaction flagged and dropped by backend routing validation layers.');
         }
     } catch (err) {
-        alert('Local profile layout simulations records modified successfully.');
+        alert('Connection error executing update command parameters.');
         resetToListView();
     }
 }
@@ -441,24 +508,24 @@ async function executeUpdateBadgeForm(event) {
  */
 async function executeDeleteBadge() {
     const id = document.getElementById('update-badge-id').value;
-    if (!id || !confirm('Are you absolutely certain you intend to wipe this badge instance option from global infrastructure models catalogs registers data paths permanently?')) return;
+    if (!id || !confirm('Are you absolutely certain you intend to wipe this badge instance option permanently?')) return;
 
     try {
-        const response = await fetch(`/api/badges/delete/${id}`, {
+        const response = await fetch(`${ENDPOINT_API_BASE}/badges/deletebadge/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
 
         if (response.ok) {
-            alert('Badge item purged cleanly from master collection storage pipelines system files records.');
+            alert('Badge item purged cleanly from master collection storage pipelines.');
             fetchAndPopulateSystemBadges();
-            resetToListView();
             loadAdministrativeBadgeMetrics();
+            resetToListView();
         } else {
             alert('Deletion transaction rejected by operational constraints authorization parameters.');
         }
     } catch (err) {
-        alert('Asset removed from active working sandbox view template framework arrays context loops tracking rows.');
+        alert('Asset removal connection fault encountered.');
         resetToListView();
     }
 }
@@ -468,10 +535,10 @@ async function executeDeleteBadge() {
  */
 function renderMockBadgesGridFallback() {
     const mockBadges = [
-        { id: 'b1', name: 'Excellence award', category: 'Achievements', description: 'Awarded to alumni who demonstrate outstanding achievement in their field.' },
-        { id: 'b2', name: 'Community leader', category: 'Leadership', description: 'Recognizes alumni who actively contribute to the community and mentor others.' },
-        { id: 'b3', name: 'Innovator', category: 'Innovation', description: 'For alumni who launch new ventures, patents, or disruptive ideas in their industry.' },
-        { id: 'b4', name: 'Volunteer of the year', category: 'Community Support', description: 'Exceptional service and dedication to giving back.' }
+        { _id: 'b1', badgename: 'Excellence award', category: 'Achievements', description: 'Awarded to alumni who demonstrate outstanding achievement in their field.', iconurl: '' },
+        { _id: 'b2', badgename: 'Community leader', category: 'Leadership', description: 'Recognizes alumni who actively contribute to the community and mentor others.', iconurl: '' },
+        { _id: 'b3', badgename: 'Innovator', category: 'Innovation', description: 'For alumni who launch new ventures, patents, or disruptive ideas in their industry.', iconurl: '' },
+        { _id: 'b4', badgename: 'Volunteer of the year', category: 'Community Support', description: 'Exceptional service and dedication to giving back.', iconurl: '' }
     ];
     systemBadgesListCache = mockBadges;
     renderBadgesGrid(mockBadges);
@@ -480,13 +547,18 @@ function renderMockBadgesGridFallback() {
 
 function renderMockAlumniSearchCollection(queryStr) {
     const simulatedAlumni = [
-        { id: 'u1', name: 'Nakato Rose', username: 'Nakato Rose', cohort: 'Cohort 11' },
-        { id: 'u2', name: 'Namukunde Maria', username: 'Namukunde Maria', cohort: 'Cohort 05' },
-        { id: 'u3', name: 'Mukisa Josephine', username: 'Mukisa Josephine', cohort: 'Cohort 14' },
-        { id: 'u4', name: 'Sserungonj Joan Eve', username: 'Sserungonj Joan Eve', cohort: 'Cohort 09' }
-    ].filter(a => a.name.toLowerCase().includes(queryStr.toLowerCase()));
+        { alumnaID: 'u1', name: 'Nakato Rose', username: 'Nakato Rose', cohort: 'Cohort 11', role: 'alumna' },
+        { alumnaID: 'u2', name: 'Namukunde Maria', username: 'Namukunde Maria', cohort: 'Cohort 05', role: 'alumna' },
+        { alumnaID: 'u3', name: 'Mukisa Josephine', username: 'Mukisa Josephine', cohort: 'Cohort 14', role: 'alumna' },
+        { alumnaID: 'u4', name: 'Sserungonj Joan Eve', username: 'Sserungonj Joan Eve', cohort: 'Cohort 09', role: 'partner' }
+    ].filter(a => a.name.toLowerCase().includes(queryStr.toLowerCase()) && a.role === 'alumna');
 
     const counter = document.getElementById('search-results-counter');
-    counter.textContent = `${simulatedAlumni.length} results`;
+    if (counter) counter.textContent = `${simulatedAlumni.length} results`;
     renderAlumniSearchResults(simulatedAlumni);
+    
+    const outputArea = document.getElementById('search-results-output');
+    if (outputArea && simulatedAlumni.length > 0) {
+        outputArea.classList.remove('d-none');
+    }
 }

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - About Our Mission</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-orange: #E39224;
+            --cq-burgundy: #C56C64;
+            --cq-cream: #FFF5E9;
+            --cq-cream-dark: #FCEFD2;
+            --cq-text-dark: #3A2312;
+            --cq-sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation Wrapper Design */
+        .sidebar-wrapper {
+            width: var(--cq-sidebar-width);
+            background-color: var(--cq-burgundy);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0 0 30px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            color: #FFFFFF;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+            list-style: none;
+            margin: 0;
+            width: 100%;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #FFFFFF !important;
+            text-decoration: none;
+            font-weight: 600;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            color: #FFFFFF !important;
+            transition: color 0.2s ease;
+        }
+
+        /* Sidebar Hover Effect: Background turns white, text and icons turn burgundy */
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--cq-burgundy) !important;
+            background-color: #FFFFFF !important;
+        }
+
+        .sidebar-link:hover i, .sidebar-link.active i {
+            color: var(--cq-burgundy) !important;
+        }
+
+        /* Sidebar Logout Button Styling: White background with burgundy text/icon */
+        .btn-logout-sidebar {
+            background-color: #FFFFFF;
+            color: var(--cq-burgundy) !important;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: calc(100% - 40px);
+            margin: 0 auto;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout-sidebar i {
+            color: var(--cq-burgundy) !important;
+        }
+
+        .btn-logout-sidebar:hover {
+            background-color: var(--cq-cream);
+            border-color: var(--cq-cream);
+            color: var(--cq-burgundy) !important;
+        }
+
+        /* Content Area Setup */
+        .main-content-pane {
+            margin-left: var(--cq-sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-cream);
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+
+        .section-label-headline {
+            color: var(--cq-orange);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--cq-cream);
+            padding-bottom: 8px;
+        }
+
+        /* Impact Metric Badges Layout */
+        .metric-pill-box {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(58, 35, 18, 0.02);
+            height: 100%;
+        }
+
+        .metric-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--cq-burgundy);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .timeline-track {
+            position: relative;
+            border-left: 3px solid var(--cq-orange);
+            padding-left: 20px;
+            margin-left: 10px;
+        }
+
+        .timeline-node {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .timeline-node::before {
+            content: '';
+            position: absolute;
+            left: -27px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--cq-burgundy);
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-wrapper { left: -var(--cq-sidebar-width); }
+            .sidebar-wrapper.show { left: 0; }
+            .main-content-pane { margin-left: 0; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-wrapper" id="sidebarMenu">
+        <div>
+            <div class="sidebar-brand">
+                <h4 class="m-0 text-white fw-bold text-uppercase">CodeQueen</h4>
+                <small class="text-white-50">Alumni Administrative Space</small>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="admin.html" class="sidebar-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-award"></i> Badges</a></li>
+                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-users"></i> Cohorts</a></li>
+                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-id-card"></i> Enrollment</a></li>
+                <li><a href="directory.html" class="sidebar-link"><i class="fa-solid fa-address-book"></i> Alumni directory</a></li>
+                <li><a href="wallA.html" class="sidebar-link"><i class="fa-solid fa-crown"></i> Achievements</a></li>
+                <li><a href="electionsA.html" class="sidebar-link"><i class="fa-solid fa-check-to-slot"></i> Elections</a></li>
+                <li><a href="students.html" class="sidebar-link"><i class="fa-solid fa-graduation-cap"></i> Students</a></li>
+                <li><a href="partnersA.html" class="sidebar-link"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+                <li><a href="projectsA.html" class="sidebar-link"><i class="fa-solid fa-laptop-code"></i> Projects</a></li>
+                <li><a href="aboutA.html" class="sidebar-link active"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+            </ul>
+        </div>
+
+        <button class="btn btn-logout-sidebar" id="btnSidebarSignout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout !
+        </button>
+    </nav>
+
+    <main class="main-content-pane">
+        
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-lg-none me-3" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-muted fa-lg"></i>
+                    <h2 class="h4 m-0 fw-bold">About Educating The Children & CodeQueen</h2>
+                </div>
+            </div>
+        </header>
+
+        <section class="row g-4 mb-4">
+            <div class="col-12 col-xl-7">
+                <div class="cq-container-card h-100 mb-0">
+                    <h5 class="fw-bold text-dark text-uppercase tracking-wider mb-3"><i class="fa-solid fa-bullseye text-warning me-2"></i>Our Core Mission</h5>
+                    <p class="text-secondary mb-3" style="line-height: 1.6;">
+                        Founded in <strong>2009</strong>, <strong>Educating The Children (ETC)</strong> has dedicated itself to transforming lives across East Africa by bridging generational gaps in education, resource access, and systemic equity. Over its operating history, ETC has supported more than 6,000 young women through direct structural initiatives.
+                    </p>
+                    <p class="text-secondary mb-0" style="line-height: 1.6;">
+                        In <strong>2019</strong>, ETC launched its cornerstone technology vehicle in Kampala, Uganda—the <strong>Code Queen</strong> program. Designed as an intensive, practical coding academy, Code Queen equips young women from disadvantaged backgrounds with comprehensive technical skills, including Full-Stack Web Development, UI/UX Design, Entrepreneurship, and cutting-edge **Artificial Intelligence engineering**, transforming them into high-value developers and community leaders.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-12 col-xl-5">
+                <div class="row g-3 h-100">
+                    <div class="col-6">
+                        <div class="metric-pill-box">
+                            <div class="metric-number">700+</div>
+                            <small class="fw-bold text-dark d-block text-uppercase" style="font-size:0.75rem;">Graduates Trained</small>
+                            <span class="text-muted small">Across 15 specialized cohorts</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-pill-box">
+                            <div class="metric-number">85%</div>
+                            <small class="fw-bold text-dark d-block text-uppercase" style="font-size:0.75rem;">Employment Rate</small>
+                            <span class="text-muted small">In active development roles</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-pill-box">
+                            <div class="metric-number">45+</div>
+                            <small class="fw-bold text-dark d-block text-uppercase" style="font-size:0.75rem;">Hiring Partners</small>
+                            <span class="text-muted small">Local & global corporations</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-pill-box">
+                            <div class="metric-number">6,000+</div>
+                            <small class="fw-bold text-dark d-block text-uppercase" style="font-size:0.75rem;">Girls Supported</small>
+                            <span class="text-muted small">Across broader East Africa</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-5">
+            <h5 class="section-label-headline text-uppercase tracking-wider">Evolution & Milestones</h5>
+            <div class="p-3">
+                <div class="timeline-track">
+                    <div class="timeline-node">
+                        <h6 class="fw-bold text-dark mb-1">2009 — Foundation of Educating The Children (ETC)</h6>
+                        <p class="text-muted small">Established to support vulnerable youth through infrastructural frameworks, including building schools and providing educational scholarships in rural sectors.</p>
+                    </div>
+                    <div class="timeline-node">
+                        <h6 class="fw-bold text-dark mb-1">2019 — Code Queen Flagship Launch in Kampala</h6>
+                        <p class="text-muted small">Pivoted toward direct digital solutions, introducing an intensive software boot-camp structure to bridge the technical employment divide for women.</p>
+                    </div>
+                    <div class="timeline-node">
+                        <h6 class="fw-bold text-dark mb-1">2021 — Scaled Digital & Hybrid Infrastructures</h6>
+                        <p class="text-muted small">Introduced scalable online delivery mechanisms following changing workspace climates, extending learning avenues past traditional boundaries.</p>
+                    </div>
+                    <div class="timeline-node">
+                        <h6 class="fw-bold text-dark mb-1">2025-2026 — The AI Frontier & Sisterhood Ecosystem Upgrade</h6>
+                        <p class="text-muted small">Integrated advanced modules covering AI prompt engineering, task automation, and professional system design, giving rise to an alumni-led network model.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cq-container-card">
+            <h5 class="fw-bold mb-4 text-dark text-capitalize"><i class="fa-solid fa-users-gear text-warning me-2"></i>Program Leadership</h5>
+            <div class="row g-4" id="leadershipGridContainer">
+                <div class="text-center py-3 text-muted">
+                    <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="aboutA.js"></script> -->
+</body>
+</html>

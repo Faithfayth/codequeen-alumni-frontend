@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Elections Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --cq-brand-gold: #E39224;
+            --cq-brand-burgundy: #C56C64;
+            --cq-bg-cream: #FFF5E9;
+            --cq-text-dark: #3A2312;
+            --cq-sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FAFAFA;
+            color: var(--cq-text-dark);
+            margin: 0;
+            padding: 0;
+            display: block; 
+            min-height: 100vh;
+        }
+
+        .sidebar-wrapper {
+            width: var(--cq-sidebar-width);
+            background-color: var(--cq-brand-burgundy);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1030;
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            color: #FFFFFF;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: #FFFFFF;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .main-content-pane {
+            margin-left: var(--cq-sidebar-width);
+            padding: 40px 30px;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .cq-card {
+            background-color: var(--cq-bg-cream);
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(58, 35, 18, 0.02);
+        }
+
+        .candidate-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            border: 1px solid rgba(197, 108, 100, 0.12);
+            padding: 24px 20px;
+            text-align: center;
+            height: 100%;
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(197, 108, 100, 0.08);
+        }
+
+        .candidate-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 14px;
+            border: 3px solid var(--cq-brand-gold);
+        }
+
+        .vote-badge {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--cq-brand-gold);
+            margin-top: 4px;
+            display: block;
+        }
+
+        .btn-gold {
+            background-color: var(--cq-brand-gold);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 8px 18px;
+            transition: opacity 0.2s;
+        }
+        .btn-gold:hover {
+            opacity: 0.9;
+            color: #FFFFFF;
+        }
+
+        .btn-outline-burgundy {
+            border: 1px solid var(--cq-brand-burgundy);
+            color: var(--cq-brand-burgundy);
+            background: transparent;
+            border-radius: 10px;
+            padding: 6px 14px;
+        }
+        .btn-outline-burgundy:hover {
+            background-color: var(--cq-brand-burgundy);
+            color: #FFFFFF;
+        }
+
+        .form-switch .form-check-input:checked {
+            background-color: var(--cq-brand-gold);
+            border-color: var(--cq-brand-gold);
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+            }
+            .sidebar-wrapper.show {
+                transform: translateX(0);
+            }
+            .main-content-pane {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-wrapper" id="sidebarMenu">
+        <div class="sidebar-brand">
+            <h4 class="m-0 text-white fw-bold">&lt; CodeQueen &gt;</h4>
+            <small class="text-white-50">Alumni Ecosystem</small>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin.html" class="sidebar-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-award"></i> Badges</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-users"></i> Cohorts</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-address-book"></i> Alumni Directory</a></li>
+            <li><a href="electionsA.html" class="sidebar-link active"><i class="fa-solid fa-check-to-slot"></i> Elections</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content-pane">
+        
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-lg-none me-3" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1 class="h3 m-0 fw-bold">Elections Management</h1>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <button class="btn btn-gold me-3" id="btnOpenCreateElectionModal">
+                    <i class="fa-solid fa-plus"></i> New Election
+                </button>
+                <div class="d-flex align-items-center bg-light p-2 rounded-3 border">
+                    <div class="bg-secondary rounded-circle text-white d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div class="small d-none d-sm-block">
+                        <span class="d-block fw-bold" id="headerProfileName">Admin</span>
+                        <span class="text-muted" id="headerProfileEmail">admin@codequeen.com</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="loadingIndicator" class="text-center my-5 d-none">
+            <div class="spinner-border text-warning" role="status"></div>
+            <p class="mt-2 text-muted">Running network handshakes for synchronized JSON matrices...</p>
+        </div>
+
+        <div id="noElectionPlaceholder" class="text-center my-5 py-5 cq-card d-none">
+            <i class="fa-solid fa-box-archive fa-3x text-muted mb-3"></i>
+            <h3>No Live Election Sequence Found</h3>
+            <p class="text-muted">Initialize standard operations by creating an election structure above.</p>
+        </div>
+
+        <section id="activeElectionWorkspace" class="d-none">
+            <div class="cq-card">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                    <div>
+                        <span class="badge bg-danger mb-2">Active Cycle</span>
+                        <h2 class="fw-bold m-0" id="txtElectionName">--</h2>
+                        <p class="text-muted mt-1 mb-2" id="txtElectionDescription">--</p>
+                        <small class="text-secondary d-block">
+                            <i class="fa-solid fa-calendar-days"></i> 
+                            Ballot Tracking: <span id="txtStartDate">--/--/----</span> to <span id="txtEndDate">--/--/----</span>
+                        </small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="form-check form-switch me-2 bg-white px-3 py-2 rounded-3 border">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchElectionActive">
+                            <label class="form-check-label small fw-bold" for="switchElectionActive">Live Switch</label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" style="border-color: rgba(197,108,100,0.2);">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold m-0 text-uppercase" style="letter-spacing: 0.5px; font-size: 1.1rem;">Electoral Seats</h4>
+                    <button class="btn btn-sm btn-outline-burgundy" id="btnTriggerAddPostModal">
+                        <i class="fa-solid fa-folder-plus"></i> Add New Seat Position
+                    </button>
+                </div>
+
+                <div id="postsDynamicDOMContainer"></div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="modalElectionSetup" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px;">
+                <div class="modal-header border-0 bg-light" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold" id="modalElectionTitle">Initialize Election Structure</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formElectionSetup">
+                    <div class="modal-body py-4">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Election Context Name</label>
+                            <input type="text" class="form-control" id="inputElectionName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Scope Guidelines Description</label>
+                            <textarea class="form-control" id="inputElectionDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold text-uppercase">Start Date</label>
+                                <input type="date" class="form-control" id="inputStartDate" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold text-uppercase">End Date</label>
+                                <input type="date" class="form-control" id="inputEndDate" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 20px 20px;">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-gold px-4">Save Structure</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAddPost" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="border-radius: 16px;">
+                <div class="modal-header border-0">
+                    <h6 class="modal-title fw-bold text-uppercase">Add Post Position</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formAddPost">
+                    <div class="modal-body py-2">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Position Title Name</label>
+                            <input type="text" class="form-control" id="inputPostName" placeholder="e.g., General Secretary" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="submit" class="btn btn-sm btn-gold w-100">Initialize Position</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAddCandidate" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px;">
+                <div class="modal-header border-0 bg-light" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold">Register Candidate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formAddCandidate">
+                    <div class="modal-body py-4">
+                        <input type="hidden" id="fieldTargetPostName">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Target Post Context</label>
+                            <input type="text" class="form-control bg-white" id="displayPostContext" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Link User Account Reference</label>
+                            <select class="form-select" id="selectUserAccountID" required>
+                                <option value="">-- Fetching Alumnae Indexes --</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Campaign Display Name</label>
+                            <input type="text" class="form-control" id="inputCandidateName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Image URL Link Asset</label>
+                            <input type="url" class="form-control" id="inputCandidateImageUrl" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Campaign Manifesto Statement</label>
+                            <textarea class="form-control" id="inputCandidateManifesto" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 20px 20px;">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-gold px-4">Append Candidate Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="electionsA.js"></script>
+</body>
+</html>

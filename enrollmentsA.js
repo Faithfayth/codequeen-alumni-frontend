@@ -1,23 +1,16 @@
 /**
- * Admin Enrollment Tracker Controller & Interaction Logic Framework Engine
- * Interacts directly with enrollment endpoints, validating state synchronization changes
+ * Admin Enrollment Tracker - Integrated Logic
+ * Handles: Attendance toggles, Project status badges, and Admin Verifications.
  */
 
-// Global volatile active memory matrix variables cache rows layout parameters structures
-let trackingEnrollmentRegistryCache = [];
-let operationalActiveQueryFilterState = 'all';
+let studentRegistryCache = [];
+const BASE_URL = 'http://localhost:5000';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobilize navigation responsive handler binding contexts setup
     initResponsiveMobileToggle();
-
-    // Pull database matrices structures pipelines configurations arrays
-    fetchMasterEnrollmentTrackerRecords();
+    fetchAllStudents();
 });
 
-/**
- * Mobile navigation setup
- */
 function initResponsiveMobileToggle() {
     const triggerBtn = document.getElementById('mobile-sidebar-toggle');
     const sidebarContainer = document.getElementById('app-sidebar');
@@ -29,265 +22,195 @@ function initResponsiveMobileToggle() {
 }
 
 /**
- * Pull entries data streams directly across assigned controller collection models routers paths
+ * FETCH: Retrieve student data from backend
  */
-async function fetchMasterEnrollmentTrackerRecords() {
+async function fetchAllStudents() {
     try {
-        const response = await fetch('/api/enrollments', {
+        const response = await fetch(`${BASE_URL}/users/getallstudents`, {
             method: 'GET',
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            headers: { 
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
         });
 
+        const data = await response.json();
+
         if (response.ok) {
-            trackingEnrollmentRegistryCache = await response.json();
-            renderEnrollmentMatrixGridTable(trackingEnrollmentRegistryCache);
-            populatePendingProjectsValidationCards(trackingEnrollmentRegistryCache);
+            // Using 'result' field as per your backend controller
+            studentRegistryCache = data.result || []; 
+            renderStudentTable(studentRegistryCache);
         } else {
-            renderMockFallbackTrackerMatrixSchema();
+            console.error('Failed to fetch students:', data.message);
         }
     } catch (err) {
-        console.warn('API connection faulted across paths /api/enrollments. Failsafe mock sequence activated safely.');
-        renderMockFallbackTrackerMatrixSchema();
+        console.error('Connection to backend failed:', err);
     }
 }
 
 /**
- * Builds table grid element rows structures iteratively into DOM workspace elements structures view
+ * RENDER: Build the table rows with dynamic status logic
  */
-function renderEnrollmentMatrixGridTable(recordsList) {
+function renderStudentTable(students) {
     const tbody = document.getElementById('enrollment-matrix-body-rows');
     if (!tbody) return;
 
-    if (recordsList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4 small">No matching student enrollment records exist in current scope views.</td></tr>`;
+    if (!students || students.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5">No matching records found.</td></tr>`;
         return;
     }
 
     tbody.innerHTML = '';
-    recordsList.forEach(record => {
-        const recordId = record._id || record.id;
-        const studentName = record.studentName || (record.studentId ? record.studentId.name : 'Unknown Alumna');
-        const userIdToken = record.userIdSymbol || (record.studentId ? record.studentId._id : '000X00');
-        const cohortLabel = record.cohortCode || record.cohortId || 'COGE11';
+    students.forEach(student => {
+        const userId = student._id;
 
-        // Evaluate evaluation markers states properties targets assertions rules parameters configurations
-        const isAttending = record.attendance === true || record.attendance === 'Passed';
-        const isProjectDone = record.projectStatus === true || record.projectStatus === 'Approved';
-        const isGraduated = record.graduateStatus === true || record.graduateStatus === 'Confirmed';
+        // 1. Project Submission Badge Logic
+        let projectBadge = '';
+        const pStatus = (student.projectsubmission || 'not-eligible').toLowerCase();
+        
+        if (pStatus === 'approved') {
+            projectBadge = `<span class="badge bg-success text-uppercase">Approved</span>`;
+        } else if (pStatus === 'pending') {
+            projectBadge = `<span class="badge bg-warning text-dark text-uppercase">Pending</span>`;
+        } else {
+            projectBadge = `<span class="badge bg-danger text-uppercase">Not-Eligible</span>`;
+        }
+
+        // 2. Attendance Toggle UI (Tick/Cross + Button)
+        const attendanceHTML = student.attendance 
+            ? `<div class="d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                <button class="status-toggle-btn btn-reject" onclick="updateStatus('${userId}', 'attendance', false)">Mark Absent</button>
+               </div>`
+            : `<div class="d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-x-circle text-danger fs-5"></i>
+                <button class="status-toggle-btn" onclick="updateStatus('${userId}', 'attendance', true)">Mark Present</button>
+               </div>`;
+
+        // 3. Verification & Graduation Columns
+        const verifiedIcon = student.adminverified 
+            ? `<i class="bi bi-shield-check text-primary fs-5" title="Admin Verified"></i>` 
+            : `<i class="bi bi-shield-exclamation text-muted fs-5" title="Unverified"></i>`;
+
+        const graduateLabel = student.graduate 
+            ? `<span class="badge bg-dark px-3">GRADUATED</span>` 
+            : `<span class="text-muted small fw-bold">IN-PROGRESS</span>`;
 
         const rowHTML = `
-            <tr id="tracker-row-node-${recordId}">
-                <td class="fw-bold text-dark">${studentName}</td>
-                <td class="text-muted small">${userIdToken.substring(0, 7).toUpperCase()}</td>
-                <td class="fw-medium text-secondary">${cohortLabel}</td>
-                
-                <td class="text-center">
-                    <div class="d-inline-flex gap-1">
-                        <button class="status-toggle-btn ${isAttending ? 'state-active' : ''}" onclick="executeUpdateMetricState('${recordId}', 'attendance', true)">✓</button>
-                        <button class="status-toggle-btn btn-reject ${!isAttending ? 'state-active' : ''}" onclick="executeUpdateMetricState('${recordId}', 'attendance', false)">✕</button>
-                    </div>
+            <tr>
+                <td>
+                    <div class="fw-bold">${student.username}</div>
+                    <div class="text-muted" style="font-size: 0.7rem;">${student.email}</div>
                 </td>
-
+                <td class="small text-muted font-monospace">${userId.substring(0, 8)}...</td>
                 <td class="text-center">
-                    <div class="d-inline-flex gap-1">
-                        <button class="status-toggle-btn ${isProjectDone ? 'state-active' : ''}" onclick="executeUpdateMetricState('${recordId}', 'project', true)">✓</button>
-                        <button class="status-toggle-btn btn-reject ${!isProjectDone ? 'state-active' : ''}" onclick="executeUpdateMetricState('${recordId}', 'project', false)">✕</button>
-                    </div>
+                    <span class="badge bg-light text-dark border">Cohort ${student.cohort || 'N/A'}</span>
                 </td>
-
+                <td class="text-center">${attendanceHTML}</td>
+                <td class="text-center">${projectBadge}</td>
                 <td class="text-center">
-                    <div class="d-inline-flex gap-1">
-                        <button class="status-toggle-btn ${isGraduated ? 'state-active' : ''}" onclick="executeUpdateMetricState('${recordId}', 'graduate', true)">✓</button>
-                        <button class="status-toggle-btn btn-reject ${!isGraduated ? 'state-active' : ''}" onclick="executeUpdateMetricState('${recordId}', 'graduate', false)">✕</button>
+                    <div class="d-flex flex-column align-items-center gap-1">
+                        ${verifiedIcon}
+                        ${graduateLabel}
+                        <button class="btn btn-sm btn-link text-clay p-0 text-decoration-none" 
+                                style="font-size: 0.7rem;" 
+                                onclick="approveEnrollment('${userId}')">Verify Student</button>
                     </div>
                 </td>
             </tr>`;
+        
         tbody.insertAdjacentHTML('beforeend', rowHTML);
     });
 }
 
 /**
- * Filter items selectively across submission structures to extract incomplete project configurations files
+ * UPDATE STATUS: Generic function for boolean toggles (Attendance, etc.)
  */
-function populatePendingProjectsValidationCards(records) {
-    const listContainer = document.getElementById('pending-projects-wrapper-list');
-    if (!listContainer) return;
-
-    // Filter down array targeting explicitly elements containing pending files structures
-    const pendingItems = records.filter(r => r.projectStatus === 'Pending' || r.hasPendingSubmission === true);
-
-    if (pendingItems.length === 0) {
-        listContainer.innerHTML = '<div class="text-center text-muted py-4 small">No project items currently awaiting validation clearance metrics.</div>';
-        return;
-    }
-
-    listContainer.innerHTML = '';
-    pendingItems.forEach(item => {
-        const id = item._id || item.id;
-        const studentName = item.studentName || 'Jane Student';
-        const projectTitle = item.projectTitleSubmit || 'Web Application Development Task';
-        const projectUrl = item.projectUrlSubmit || 'Url to project repository';
-
-        const panelCardNode = `
-            <div class="inner-item-bubble d-flex flex-column gap-2" id="pending-item-card-${id}">
-                <div class="d-flex justify-content-between align-items-start">
-                    <span class="fw-bold text-dark small"># ${studentName}</span>
-                    <div class="bg-white px-3 py-2 rounded border shadow-sm flex-grow-1 ms-3">
-                        <div class="fw-bold text-dark small mb-0">${projectTitle}</div>
-                        <small class="text-muted text-truncate d-block" style="font-size:0.75rem;">${projectUrl}</small>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end gap-2 pt-1 border-top border-light border-opacity-10">
-                    <button class="status-toggle-btn px-3 py-1 fw-bold" onclick="executeApproveProjectDirectly('${id}', true)">✓</button>
-                    <button class="status-toggle-btn btn-reject px-3 py-1 fw-bold" onclick="executeApproveProjectDirectly('${id}', false)">✕</button>
-                </div>
-            </div>`;
-        listContainer.insertAdjacentHTML('beforeend', panelCardNode);
-    });
-}
-
-/**
- * Push mutation metric transformations down to database controllers pipelines systematically
- */
-async function executeUpdateMetricState(recordId, categoryKey, flagValue) {
-    // Find item context index position rows elements configurations properties matches definitions flags
-    const recordItem = trackingEnrollmentRegistryCache.find(r => (r._id || r.id) === recordId);
-    if (!recordItem) return;
-
-    // Map mutations properties changes parameters structures schemas expectations requirements
-    const payload = {
-        metricField: categoryKey, // 'attendance', 'project', 'graduate'
-        statusValue: flagValue // true or false assertion metrics
-    };
-
+async function updateStatus(studentId, field, value) {
     try {
-        const response = await fetch(`/api/enrollments/update-status/${recordId}`, {
+        const response = await fetch(`${BASE_URL}/enrollments/update-status`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ studentId, [field]: value })
         });
 
         if (response.ok) {
-            // Update cache arrays model definitions safely locally inside workspace view configurations elements rows
-            if (categoryKey === 'attendance') recordItem.attendance = flagValue;
-            if (categoryKey === 'project') recordItem.projectStatus = flagValue ? 'Approved' : 'Failed';
-            if (categoryKey === 'graduate') recordItem.graduateStatus = flagValue ? 'Confirmed' : 'Pending';
-
-            // Re-render dataset matrix framework maps
-            executeClientSideRosterFilter();
+            fetchAllStudents(); // Refresh to show changes
         } else {
-            alert('Status amendment rejected by network server storage layers configuration guidelines.');
+            const err = await response.json();
+            alert(`Error: ${err.message}`);
         }
     } catch (err) {
-        // Fallback simulation layout update loop track execution routines
-        console.log('Local Sandbox Matrix configuration processing simulation update step.');
-        if (categoryKey === 'attendance') recordItem.attendance = flagValue;
-        if (categoryKey === 'project') recordItem.projectStatus = flagValue ? 'Approved' : 'Failed';
-        if (categoryKey === 'graduate') recordItem.graduateStatus = flagValue ? 'Confirmed' : 'Pending';
-        
-        executeClientSideRosterFilter();
+        console.error('Status update failed:', err);
     }
 }
 
 /**
- * Special handler mutation pathway managing processing actions routing across lower-left submission panels cards
+ * APPROVE: Logic to verify enrollment (Existing endpoint)
  */
-async function executeApproveProjectDirectly(recordId, isApproved) {
+async function approveEnrollment(studentId) {
+    if (!confirm("Are you sure you want to verify this student's enrollment?")) return;
+    
     try {
-        const response = await fetch(`/api/enrollments/approve-project/${recordId}`, {
-            method: 'POST',
+        const response = await fetch(`${BASE_URL}/enrollments/approvebystudentId`, {
+            method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ approved: isApproved })
+            body: JSON.stringify({ studentId })
         });
 
         if (response.ok) {
-            alert('Project deployment entry authorization verified cleanly.');
-            fetchMasterEnrollmentTrackerRecords();
+            fetchAllStudents();
         } else {
-            executeLocalProjectApprovalSimulation(recordId, isApproved);
+            const error = await response.json();
+            alert(`Error: ${error.message}`);
         }
     } catch (err) {
-        executeLocalProjectApprovalSimulation(recordId, isApproved);
+        console.error('Verification request failed:', err);
     }
-}
-
-function executeLocalProjectApprovalSimulation(id, isApproved) {
-    const item = trackingEnrollmentRegistryCache.find(r => (r._id || r.id) === id);
-    if (item) {
-        item.projectStatus = isApproved ? 'Approved' : 'Failed';
-        item.hasPendingSubmission = false;
-    }
-    populatePendingProjectsValidationCards(trackingEnrollmentRegistryCache);
-    executeClientSideRosterFilter();
 }
 
 /**
- * Filter operational management driver handling switching structural views parameters state filtering metrics definitions
- */
-function applyStructuralStateFilter(filterMode, controlElementNode) {
-    operationalActiveQueryFilterState = filterMode;
-
-    document.querySelectorAll('.filter-pill-btn').forEach(btn => {
-        btn.classList.remove('pill-active');
-    });
-    if (controlElementNode) {
-        controlElementNode.classList.add('pill-active');
-    }
-
-    executeClientSideRosterFilter();
-}
-
-/**
- * Computes sorting and text match extractions on active datastores cache streams
+ * SEARCH & FILTERING: Local UI Filtering
  */
 function executeClientSideRosterFilter() {
-    const textQuery = document.getElementById('tracker-search-input').value.toLowerCase().trim();
-    
-    let runtimeFilteredArray = [...trackingEnrollmentRegistryCache];
-
-    // Stage 1: Process Category Structural Context Filtering Modes Parameters Rules
-    if (operationalActiveQueryFilterState === 'cohort') {
-        // Sort items by grouping allocations keys tracking values tags fields parameters matches
-        runtimeFilteredArray.sort((a, b) => (a.cohortCode || '').localeCompare(b.cohortCode || ''));
-    } else if (operationalActiveQueryFilterState === 'attendance-low') {
-        runtimeFilteredArray = runtimeFilteredArray.filter(r => r.attendance === false || r.attendanceScore < 75);
-    } else if (operationalActiveQueryFilterState === 'project-pending') {
-        runtimeFilteredArray = runtimeFilteredArray.filter(r => r.projectStatus === 'Pending' || r.hasPendingSubmission === true);
-    } else if (operationalActiveQueryFilterState === 'graduated') {
-        runtimeFilteredArray = runtimeFilteredArray.filter(r => r.graduateStatus === true || r.graduateStatus === 'Confirmed');
-    }
-
-    // Stage 2: Process Text Search Queries Match Assertions Elements
-    if (textQuery.length > 0) {
-        runtimeFilteredArray = runtimeFilteredArray.filter(record => {
-            const name = (record.studentName || '').toLowerCase();
-            const idToken = (record.userIdSymbol || '').toLowerCase();
-            const chCode = (record.cohortCode || '').toLowerCase();
-            return name.includes(textQuery) || idToken.includes(textQuery) || chCode.includes(textQuery);
-        });
-    }
-
-    renderEnrollmentMatrixGridTable(runtimeFilteredArray);
+    const query = document.getElementById('tracker-search-input').value.toLowerCase();
+    const filtered = studentRegistryCache.filter(s => 
+        s.username.toLowerCase().includes(query) || 
+        s.email.toLowerCase().includes(query)
+    );
+    renderStudentTable(filtered);
 }
 
-/**
- * Design Fallback Engine Layer Structuring Visual Mock Indicators Setup Pipelines
- */
-function renderMockFallbackTrackerMatrixSchema() {
-    const mockRegistry = [
-        { id: 'en01', studentName: 'Jane', userIdSymbol: '007A4E', cohortCode: 'COGE11', attendance: true, projectStatus: 'Approved', graduateStatus: 'Confirmed', hasPendingSubmission: false },
-        { id: 'en02', studentName: 'Rose', userIdSymbol: '012B5A', cohortCode: 'COGE11', attendance: true, projectStatus: 'Pending', graduateStatus: 'Pending', hasPendingSubmission: true, projectTitleSubmit: 'Web Application.', projectUrlSubmit: 'Url to project' },
-        { id: 'en03', studentName: 'Sarah', userIdSymbol: '095C2B', cohortCode: 'COGE14', attendance: false, projectStatus: 'Failed', graduateStatus: 'Pending', attendanceScore: 62, hasPendingSubmission: false },
-        { id: 'en04', studentName: 'Laura', userIdSymbol: '034F9D', cohortCode: 'COGE12', attendance: true, projectStatus: 'Pending', graduateStatus: 'Pending', hasPendingSubmission: true, projectTitleSubmit: 'Mobile Application.', projectUrlSubmit: 'Url to project' }
-    ];
+function applyStructuralStateFilter(filterType, btnElement) {
+    // UI Update for buttons
+    document.querySelectorAll('.filter-pill-btn').forEach(btn => btn.classList.remove('pill-active'));
+    btnElement.classList.add('pill-active');
 
-    trackingEnrollmentRegistryCache = mockRegistry;
-    renderEnrollmentMatrixGridTable(mockRegistry);
-    populatePendingProjectsValidationCards(mockRegistry);
+    let filtered = [...studentRegistryCache];
+
+    switch(filterType) {
+        case 'attendance-low':
+            // Hypothetical logic if attendance was a percentage, 
+            // for booleans we might show those who are 'false'
+            filtered = studentRegistryCache.filter(s => !s.attendance);
+            break;
+        case 'project-pending':
+            filtered = studentRegistryCache.filter(s => s.projectsubmission === 'pending');
+            break;
+        case 'graduated':
+            filtered = studentRegistryCache.filter(s => s.graduate === true);
+            break;
+        case 'cohort':
+            // Logic to filter by the current active cohort
+            filtered = studentRegistryCache.filter(s => s.cohort);
+            break;
+    }
+
+    renderStudentTable(filtered);
 }

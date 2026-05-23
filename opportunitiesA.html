@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Manage Sisters' Opportunities</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-orange: #E39224;
+            --cq-burgundy: #C56C64;
+            --cq-cream: #FFF5E9;
+            --cq-cream-dark: #FCEFD2;
+            --cq-text-dark: #3A2312;
+            --cq-sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation Wrapper Design */
+        .sidebar-wrapper {
+            width: var(--cq-sidebar-width);
+            background-color: var(--cq-burgundy);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0 0 30px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            color: #FFFFFF;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+            list-style: none;
+            margin: 0;
+            width: 100%;
+        }
+
+        /* Fixed styling to ensure all words/icons are white */
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 600;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            color: #FFFFFF !important;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: #FFFFFF !important;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Sidebar Logout Button Styling */
+        .btn-logout-sidebar {
+            background-color: rgba(255, 255, 255, 0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: calc(100% - 40px);
+            margin: 0 auto;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout-sidebar:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            color: #FFFFFF;
+        }
+
+        /* Content Area Canvas Frames */
+        .main-content-pane {
+            margin-left: var(--cq-sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-cream);
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-label-headline {
+            color: var(--cq-orange);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 20px;
+        }
+
+        /* Custom Navigation Sub-Tabs Architecture */
+        .opp-nav-tab-btn {
+            background: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.25);
+            color: var(--cq-text-dark);
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .opp-nav-tab-btn:hover, .opp-nav-tab-btn.active {
+            background-color: var(--cq-cream-dark);
+            color: var(--cq-orange);
+            border-color: var(--cq-orange);
+        }
+
+        /* Dynamic Card Slots Layout */
+        .opportunity-display-card {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(58, 35, 18, 0.02);
+        }
+
+        .opp-image-frame-box {
+            background-color: var(--cq-cream);
+            border: 1px dashed rgba(197, 108, 100, 0.3);
+            border-radius: 14px;
+            width: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(58, 35, 18, 0.5);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .opp-image-frame-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Custom Buttons Configurations */
+        .btn-cq-orange {
+            background-color: var(--cq-orange);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-cq-orange:hover {
+            background-color: #cb801b;
+            color: #FFFFFF;
+        }
+
+        .btn-action-outline {
+            border: 1px solid rgba(197, 108, 100, 0.3);
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            border-radius: 6px;
+            font-size: 13px;
+            padding: 6px 16px;
+            font-weight: 600;
+        }
+
+        .btn-action-outline:hover {
+            background-color: var(--cq-cream-dark);
+        }
+
+        .approve-check-circle-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #28a745;
+            background-color: #FFFFFF;
+            color: #28a745;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.15s;
+        }
+
+        .approve-check-circle-btn:hover {
+            background-color: #28a745;
+            color: #FFFFFF;
+        }
+
+        /* Form Controls Overrides */
+        .form-control, .form-select {
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 8px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--cq-orange);
+            box-shadow: 0 0 0 0.25rem rgba(227, 146, 36, 0.15);
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-wrapper { left: -var(--cq-sidebar-width); }
+            .sidebar-wrapper.show { left: 0; }
+            .main-content-pane { margin-left: 0; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-wrapper" id="sidebarMenu">
+        <div>
+            <div class="sidebar-brand">
+                <h4 class="m-0 text-white fw-bold">CODEQUEEN</h4>
+                <small class="text-white-50">Alumni Administrative Space</small>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="admin.html" class="sidebar-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-award"></i> Badges</a></li>
+                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-users"></i> Cohorts</a></li>
+                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-id-card"></i> Enrollment</a></li>
+                <li><a href="directory.html" class="sidebar-link"><i class="fa-solid fa-address-book"></i> Alumni directory</a></li>
+                <li><a href="wallA.html" class="sidebar-link"><i class="fa-solid fa-crown"></i> Achievements</a></li>
+                <li><a href="electionsA.html" class="sidebar-link"><i class="fa-solid fa-check-to-slot"></i> Elections</a></li>
+                <li><a href="students.html" class="sidebar-link"><i class="fa-solid fa-graduation-cap"></i> Students</a></li>
+                <li><a href="partnersA.html" class="sidebar-link"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+                <li><a href="opportunitiesA.html" class="sidebar-link active"><i class="fa-solid fa-briefcase"></i> Opportunities</a></li>
+            </ul>
+        </div>
+
+        <button class="btn btn-logout-sidebar" id="btnSidebarSignout">
+            <i class="fa-solid fa-arrow-right-from-bracket text-white"></i> Logout !
+        </button>
+    </nav>
+
+    <main class="main-content-pane">
+        
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-lg-none me-3" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-briefcase text-muted fa-lg"></i>
+                    <h2 class="h4 m-0 fw-bold">Manage Sisters' Opportunities</h2>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-light border dropdown-toggle fw-bold" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="badge bg-danger rounded-circle p-1 me-2"><small>AD</small></span> Admin
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                    <li><a class="dropdown-item" href="#" id="btnTriggerLogout">Logout Session</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div class="d-flex gap-2">
+                <button class="opp-nav-tab-btn active" data-tab-target="current">
+                    <i class="fa-solid fa-plus"></i> Add Opportunity
+                </button>
+                <button class="opp-nav-tab-btn" data-tab-target="past">
+                    <i class="fa-solid fa-folder-open"></i> Past Opportunities
+                </button>
+                <button class="opp-nav-tab-btn" data-tab-target="pending">
+                    <i class="fa-solid fa-clock-history"></i> Pending Approvals
+                </button>
+            </div>
+            <div class="position-relative">
+                <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" class="form-control form-control-sm ps-5 py-2" id="searchBarFilter" placeholder="Search opportunities..." style="min-width: 240px;">
+            </div>
+        </div>
+
+        <div id="alertLayoutAnchor"></div>
+
+        <div id="opportunitiesViewWrapper">
+
+            <div class="tab-pane-container d-block" id="view-pane-current">
+                <h5 class="section-label-headline">Current Opportunities</h5>
+                <div id="currentOpportunitiesList">
+                    </div>
+
+                <div class="cq-container-card mt-5">
+                    <h5 class="fw-bold mb-4 text-dark text-capitalize">New Opportunity</h5>
+                    <form id="formOpportunitySubmission">
+                        <div class="row g-4">
+                            <div class="col-12 col-md-4">
+                                <div class="opp-image-frame-box p-3" id="dropPhotoZoneArea" onclick="document.getElementById('fileOpportunityImage').click();">
+                                    <i class="fa-regular fa-image fa-3x mb-2" id="iconBoxPlaceholder"></i>
+                                    <img id="imagePreviewContainer" src="" class="d-none" alt="Selected Preview">
+                                    <div class="text-center small" id="labelPreviewMeta">
+                                        <span class="fw-bold d-block text-dark">Add photo</span>
+                                        <span class="text-muted text-lowercase">png / jpg / jpeg</span>
+                                    </div>
+                                    <input type="file" id="fileOpportunityImage" accept=".png, .jpg, .jpeg" class="d-none">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold mb-1">Title :</label>
+                                        <input type="text" class="form-control form-control-sm" id="inputTitle" required placeholder="Enter title">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold mb-1">Description :</label>
+                                        <textarea class="form-control form-control-sm" id="inputDescription" rows="3" required placeholder="Enter description"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-bold mb-1">url :</label>
+                                        <input type="url" class="form-control form-control-sm" id="inputUrl" required placeholder="Enter platform redirection url link">
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label small fw-bold mb-1">category :</label>
+                                        <select class="form-select form-select-sm" id="selectCategory" required>
+                                            <option value="" disabled selected>Select category</option>
+                                            <option value="Internship">Internship</option>
+                                            <option value="Job Listing">Job Listing</option>
+                                            <option value="Grant Funding">Grant Funding</option>
+                                            <option value="Mentorship Slot">Mentorship Slot</option>
+                                            <option value="Bootcamp Training">Bootcamp Training</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label small fw-bold mb-1">deadline :</label>
+                                        <input type="date" class="form-control form-control-sm" id="inputDeadline" required>
+                                    </div>
+                                </div>
+                                <div class="text-end mt-4">
+                                    <button type="submit" class="btn btn-cq-orange px-4 py-2 text-white">
+                                        <i class="fa-solid fa-paper-plane me-1"></i> Publish <i class="fa-solid fa-chevron-up small ms-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-pane-container d-none" id="view-pane-past">
+                <h5 class="section-label-headline">Past Opportunities</h5>
+                <div id="pastOpportunitiesList">
+                    </div>
+            </div>
+
+            <div class="tab-pane-container d-none" id="view-pane-pending">
+                <h5 class="section-label-headline">Pending Approvals Queue</h5>
+                <div id="pendingOpportunitiesList">
+                    </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="opportunitiesA.js"></script>
+</body>
+</html>

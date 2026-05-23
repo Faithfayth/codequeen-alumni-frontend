@@ -147,7 +147,7 @@ async function handleSendNewComment(blogId) {
     if (!commentText) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/blogs/${blogId}/comment`, {
+        const response = await fetch(`${API_BASE_URL}/blogs/addcomment/${blogId}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

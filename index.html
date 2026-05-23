@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Your Sisterhood. Your Network. Your Launchpad.</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-orange: #E39224;
+            --cq-burgundy: #C56C64;
+            --cq-cream: #FFF5E9;
+            --cq-cream-dark: #FCEFD2;
+            --cq-text-dark: #3A2312;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--cq-text-dark);
+            background-color: #FFFFFF;
+        }
+
+        /* Navbar Layout Customization */
+        .cq-navbar {
+            background-color: #FFFFFF;
+            border-bottom: 2px solid var(--cq-cream);
+            padding: 15px 0;
+        }
+
+        .cq-nav-brand {
+            font-weight: 800;
+            color: var(--cq-burgundy) !important;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            color: var(--cq-text-dark) !important;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--cq-orange) !important;
+        }
+
+        /* Hero Section Wrapper with Dynamic Background Scrolling Grid */
+        .hero-carousel-wrapper {
+            position: relative;
+            height: 520px;
+            overflow: hidden;
+        }
+
+        .carousel-inner, .carousel-item {
+            height: 100%;
+        }
+
+        .hero-bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(35%);
+        }
+
+        /* Hero Content Overlay Card Layer */
+        .hero-overlay-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #FFFFFF;
+        }
+
+        .hero-headline {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        /* Interactive Custom Platform Button Tokens */
+        .btn-cq-orange {
+            background-color: var(--cq-orange);
+            color: #FFFFFF;
+            font-weight: 700;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 28px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .btn-cq-orange:hover {
+            background-color: #cb801b;
+            color: #FFFFFF;
+            transform: translateY(-2px);
+        }
+
+        .btn-cq-white-outline {
+            background-color: #FFFFFF;
+            color: var(--cq-burgundy);
+            font-weight: 700;
+            border: 2px solid #FFFFFF;
+            border-radius: 30px;
+            padding: 12px 28px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .btn-cq-white-outline:hover {
+            background-color: var(--cq-cream);
+            color: var(--cq-burgundy);
+            transform: translateY(-2px);
+        }
+
+        /* Grid Navigation Preview Blocks */
+        .preview-feature-card {
+            background-color: var(--cq-cream);
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            height: 100%;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .preview-feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(58, 35, 18, 0.05);
+        }
+
+        .preview-card-icon {
+            color: var(--cq-burgundy);
+            margin-bottom: 15px;
+        }
+
+        /* Section Headlines Styling */
+        .section-label-tag {
+            color: var(--cq-burgundy);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.85rem;
+        }
+
+        .section-title-main {
+            font-weight: 800;
+            color: var(--cq-text-dark);
+        }
+
+        /* Step Process Flow Layout */
+        .process-step-badge {
+            width: 40px;
+            height: 40px;
+            background-color: var(--cq-cream-dark);
+            color: var(--cq-orange);
+            font-weight: 800;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px auto;
+            font-size: 1.1rem;
+        }
+
+        /* Testimonial Block Scaffolding */
+        .testimonial-bubble {
+            background-color: var(--cq-cream);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            height: 100%;
+            border: 1px solid rgba(197, 108, 100, 0.1);
+        }
+
+        /* Call To Action Banner Footframe Card */
+        .cta-footer-banner {
+            background-color: var(--cq-cream-dark);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            border: 1px solid rgba(227, 146, 36, 0.2);
+        }
+
+        .crown-icon-brand {
+            color: var(--cq-orange);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Footer Meta Link Typography */
+        footer {
+            background-color: #FFFFFF;
+            border-top: 1px solid rgba(197, 108, 100, 0.15);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg cq-navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand cq-nav-brand text-uppercase" href="#">CodeQueen</a>
+            <button class="navbar-expand-lg navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#cqLandingNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="cqLandingNavMenu">
+                <ul class="navbar-nav ms-lg-5 gap-2 gap-lg-4 my-2 my-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Alumni</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Mentorship</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="login.html" class="btn btn-link text-decoration-none nav-link px-3 fw-bold">Sign in</a>
+                    <a href="#" class="btn btn-cq-orange shadow-sm">Join Community</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-carousel-wrapper">
+        <div id="heroBackgroundFlow" class="carousel slide carousel-fade h-100" data-bs-ride="carousel" data-bs-interval="4500">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="./images/images.jfif" class="hero-bg-img" alt="Tech Interaction Grid">
+                </div>
+                <div class="carousel-item">
+                    <img src="./images/images2.jfif" class="hero-bg-img" alt="Sisters Collaboration Workspace">
+                </div>
+                <div class="carousel-item">
+                    <img src="./images/images4.jfif" class="hero-bg-img" alt="Alumni Workshop Training Session">
+                </div>
+                <div class="carousel-item">
+                    <img src="./images/images3.jfif" class="hero-bg-img" alt="Alumni Workshop Training Session">
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-overlay-content">
+            <div class="container px-4">
+                <h1 class="hero-headline mb-3 text-capitalize">Your Sisterhood.<br>Your Network.<br>Your Launchpad.</h1>
+                <p class="fs-5 max-w-2xl mx-auto mb-4 text-white-50">A home for 1,000+ CodeQueen alumni across 15 cohorts — connect, grow, mentor, and build together.</p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="#" class="btn btn-cq-white-outline px-4 py-2"><i class="fa-solid fa-sparkles me-2"></i>Join your sisters</a>
+                    <a href="#howItWorksSection" class="btn btn-cq-white-outline px-4 py-2">See how it works</a>
+                </div>
+                <div class="mt-4 pt-2 small text-white-50 tracking-wide">
+                    <i class="fa-solid fa-circle-check text-warning me-1"></i> Already 1,024 alumni across 15 cohorts - and growing
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-5 my-3">
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-4">
+                <div class="preview-feature-card" onclick="location.href='#'">
+                    <i class="fa-solid fa-comments-alt fa-2x preview-card-icon"></i>
+                    <h5 class="fw-bold text-dark mb-2">Community Feed</h5>
+                    <p class="text-muted small m-0">Stay integrated with general chat notifications and updates shared across groups.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="preview-feature-card" onclick="location.href='directory.html'">
+                    <i class="fa-solid fa-map-location-dot fa-2x preview-card-icon"></i>
+                    <h5 class="fw-bold text-dark mb-2">Sisters Near You</h5>
+                    <p class="text-muted small m-0">Locate regional project cohorts to initiate networking assemblies instantly.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="preview-feature-card" onclick="location.href='#'">
+                    <i class="fa-solid fa-calendar-check fa-2x preview-card-icon"></i>
+                    <h5 class="fw-bold text-dark mb-2">Upcoming Events</h5>
+                    <p class="text-muted small m-0">Secure invitations to specialized engineering hackathons and masterclasses.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="container py-5 border-top" id="howItWorksSection">
+        <div class="text-center mb-5">
+            <span class="section-label-tag">How It Works</span>
+            <h2 class="section-title-main mt-1">Get started in minutes</h2>
+            <p class="text-muted">No forms to fill, no waiting. Join and you're home.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-md-4 text-center">
+                <div class="process-step-badge">1</div>
+                <h5 class="fw-bold mb-2 text-dark">Create your profile</h5>
+                <p class="text-muted small px-3">Add your cohort, tech skills, and what you're open to — mentoring, hiring, or collaborating on active production repos.</p>
+            </div>
+            <div class="col-12 col-md-4 text-center">
+                <div class="process-step-badge">2</div>
+                <h5 class="fw-bold mb-2 text-dark">Meet your sisters</h5>
+                <p class="text-muted small px-3">We'll show you alumni from your cohort and others who share your specialized development interests instantly.</p>
+            </div>
+            <div class="col-12 col-md-4 text-center">
+                <div class="process-step-badge">3</div>
+                <h5 class="fw-bold mb-2 text-dark">Grow together</h5>
+                <p class="text-muted small px-3">Join discussions, attend Sisterhood Fridays, find a design mentor, or post a new internship opportunity.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 border-top">
+        <div class="text-center mb-5">
+            <span class="section-label-tag">Sisters Speak</span>
+            <h2 class="section-title-main mt-1">From the community</h2>
+            <p class="text-muted">Real words from real CodeQueens.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-md-4">
+                <div class="testimonial-bubble d-flex flex-column justify-content-between">
+                    <p class="fst-italic text-secondary small">"Finding technical peers in Kampala who understand backend engineering and data schemas was a hurdle until I connected with this digital sisterhood. The mentoring access is unparalleled."</p>
+                    <div class="d-flex align-items-center gap-2 mt-3 pt-2 border-top">
+                        <div class="fw-bold small text-dark">Namutebi Sarah</div>
+                        <div class="text-muted small" style="font-size: 0.8rem;">• Cohort 12 Alumna</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="testimonial-bubble d-flex flex-column justify-content-between">
+                    <p class="fst-italic text-secondary small">"Through the system's opportunity feed board, I secured a partnership placement with an international software firm within weeks of uploading my project repository files."</p>
+                    <div class="d-flex align-items-center gap-2 mt-3 pt-2 border-top">
+                        <div class="fw-bold small text-dark">Akello Sandra</div>
+                        <div class="text-muted small" style="font-size: 0.8rem;">• Full-stack Developer</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="testimonial-bubble d-flex flex-column justify-content-between">
+                    <p class="fst-italic text-secondary small">"The structural democratic voting procedures enabled me to run as a candidate for representative. It’s truly built an alumni-led collaborative network ecosystem."</p>
+                    <div class="d-flex align-items-center gap-2 mt-3 pt-2 border-top">
+                        <div class="fw-bold small text-dark">Aisha Nabbosa</div>
+                        <div class="text-muted small" style="font-size: 0.8rem;">• Community Lead</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container my-5">
+        <div class="cta-footer-banner shadow-sm">
+            <i class="fa-solid fa-crown crown-icon-brand d-block"></i>
+            <h2 class="fw-bold text-dark mb-2">You belong here, Queen.</h2>
+            <p class="text-muted max-w-xl mx-auto mb-4 px-lg-5">Join over 1,000 alumni building their futures together. Your project cohort is waiting for you.</p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="#" class="btn btn-cq-orange px-4 py-2">Create your profile</a>
+                <a href="login.html" class="btn btn-cq-white-outline px-4 py-2 border">Already a member? Sign in</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-4">
+        <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 text-muted">
+            <div>
+                <strong>CodeQueen.</strong> Educating the Children.
+            </div>
+            <div class="d-flex gap-4">
+                <a href="#" class="text-decoration-none text-muted">About</a>
+                <a href="#" class="text-decoration-none text-muted">Privacy</a>
+                <a href="#" class="text-decoration-none text-muted">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

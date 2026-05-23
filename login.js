@@ -10,6 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', handleSystemLoginTransaction);
     }
+
+    // Interactive Action Loop for the Password Visibility Toggle
+    const togglePasswordBtn = document.getElementById('toggle-password-visibility');
+    if (togglePasswordBtn) {
+        togglePasswordBtn.addEventListener('click', () => {
+            const passwordInput = document.getElementById('input-user-password');
+            const eyeIcon = document.getElementById('password-eye-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+    }
 });
 
 /**
@@ -20,7 +39,6 @@ async function handleSystemLoginTransaction(event) {
 
     const emailInput = document.getElementById('input-user-email');
     const passwordInput = document.getElementById('input-user-password');
-    const confirmPasswordInput = document.getElementById('input-user-confirm-password');
     const errorBanner = document.getElementById('error-banner-view');
     const submitBtn = document.getElementById('submit-btn-spinner-target');
 
@@ -30,17 +48,10 @@ async function handleSystemLoginTransaction(event) {
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
 
     // 1. Frontend validation check for missing values
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password) {
         revealFormError("Please complete all required security credentials.");
-        return;
-    }
-
-    // 2. Client-side security verification match gate
-    if (password !== confirmPassword) {
-        revealFormError("Passwords do not match. Please verify your typing entry.");
         return;
     }
 

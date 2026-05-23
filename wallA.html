@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Wall of Fame Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-sidebar-bg: #C56C64;   /* Earthy rose / clay sidebar */
+            --cq-gold-bg: #E39224;      /* Gold accent tone */
+            --cq-orange: #E39224;       /* Explicit fallback alias mapping */
+            --cq-burgundy: #C56C64;     /* Explicit fallback alias mapping */
+            --cq-card-soft: #FFF5E9;    /* Warm cream container fill */
+            --cq-cream: #FFF5E9;        /* Explicit fallback alias mapping */
+            --cq-text-dark: #3A2312;    /* Soft deep dark typography */
+            --cq-bg-light: #FFFBF7;     /* Page background modifier */
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* MOBILE HEADER CONTAINER */
+        .mobile-admin-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* SIDEBAR COMPONENT SYSTEM */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-header-branding {
+            color: #FFFFFF;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .close-sidebar-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            border-radius: 6px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 2px 8px;
+        }
+
+        .sidebar-scrollable-menu {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-top: 15px;
+            padding-right: 4px;
+        }
+
+        /* Custom Scrollbar for Sidebar Navigation */
+        .sidebar-scrollable-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scrollable-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            border-radius: 8px;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        /* WORKSPACE PANELS AND CONTAINERS */
+        .admin-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-card-soft);
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-label-headline {
+            color: #C56C64;
+            font-weight: 700;
+            font-size: 1.42rem;
+            margin-bottom: 25px;
+        }
+
+        .honoree-showcase-card {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.18);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 4px 12 rgba(58, 35, 18, 0.02);
+        }
+
+        .avatar-laurel-frame {
+            position: relative;
+            display: inline-block;
+            margin: 0 auto 15px auto;
+        }
+
+        .honoree-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .ribbon-title-badge {
+            background-color: var(--cq-gold-bg);
+            color: #FFFFFF;
+            font-weight: 600;
+            padding: 6px 20px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .micro-badge-item {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #FFF5E9;
+            color: var(--cq-gold-bg);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            border: 1px solid rgba(227, 146, 36, 0.2);
+        }
+
+        .upload-dashed-placeholder {
+            background-color: #FFFFFF;
+            border: 2px dashed rgba(197, 108, 100, 0.3);
+            border-radius: 14px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(58, 35, 18, 0.6);
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.15s ease;
+        }
+
+        .upload-dashed-placeholder:hover {
+            border-color: var(--cq-gold-bg);
+        }
+
+        .btn-orange {
+            background-color: var(--cq-gold-bg);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-orange:hover {
+            background-color: #cb801b;
+            color: #FFFFFF;
+        }
+
+        .btn-action-outline {
+            border: 1px solid rgba(197, 108, 100, 0.3);
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            border-radius: 6px;
+            font-size: 13px;
+            padding: 5px 14px;
+            font-weight: 500;
+        }
+
+        .btn-action-outline:hover {
+            background-color: var(--cq-card-soft);
+        }
+
+        /* AUTO-COMPLETE SEARCH LAYOUT OVERRIDES */
+        .search-results-overlay {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.25);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 99;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        }
+
+        .search-results-overlay .dropdown-item:hover {
+            background-color: var(--cq-card-soft);
+            color: var(--cq-sidebar-bg) !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .mobile-admin-header {
+                display: flex;
+            }
+
+            .cq-sidebar {
+                transform: translateX(-100%);
+                box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+            }
+
+            .cq-sidebar.show-sidebar {
+                transform: translateX(0);
+            }
+
+            .close-sidebar-btn {
+                display: block;
+            }
+
+            .admin-workspace {
+                margin-left: 0;
+                padding: 90px 15px 40px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-admin-header">
+        <span class="text-white fw-bold">CQ Admin Management</span>
+        <button class="hamburger-btn" id="sidebar-open-toggle-trigger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="cq-sidebar" id="app-navigation-sidebar-container">
+        <div>
+            <div class="sidebar-header-branding">
+                <h5 class="fw-bold mb-0">CODEQUEEN</h5>
+                <small class="opacity-75">Alumni Administrative Space</small>
+                <button class="close-sidebar-btn" id="sidebar-close-toggle-trigger">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-scrollable-menu">
+                <nav class="nav flex-column">
+                    <a href="admin.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="badgesA.html" class="cq-nav-link"><i class="bi bi-award"></i> Badges</a>
+                    <a href="cohortsA.html" class="cq-nav-link"><i class="bi bi-people"></i> Cohorts</a>
+                    <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
+                    <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
+                    <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
+                    <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                    <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
+                    <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                    <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
+                    <a href="wallA.html" class="cq-nav-link active"><i class="bi bi-star"></i> Wall of Fame</a>
+                </nav>
+            </div>
+        </div>
+        
+        <button onclick="logoutSession()" class="btn btn-light text-danger w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 mt-3 shadow-sm border-0">
+            <i class="bi bi-box-arrow-left"></i> Logout !
+        </button>
+    </div>
+
+    <main class="admin-workspace">
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <h2 class="h4 m-0 fw-bold">Wall of Fame Manager</h2>
+            </div>
+            <div>
+                <span class="badge bg-warning text-dark px-2 py-1"><i class="fa-solid fa-star"></i> Admin Panel</span>
+            </div>
+        </header>
+
+        <div id="alertFeedbackAnchor"></div>
+
+        <section class="cq-container-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="section-label-headline m-0">Wall of Fame <i class="fa-solid fa-crown text-warning"></i></h5>
+                <button class="btn btn-sm btn-orange" id="btnScrollToForm">
+                    <i class="fa-solid fa-plus-circle"></i> Add Alumna
+                </button>
+            </div>
+
+            <div id="showcaseSpinner" class="text-center my-5">
+                <div class="spinner-border text-warning" role="status"></div>
+            </div>
+
+            <div id="noHonoreesPlaceholder" class="text-center py-5 text-muted d-none">
+                <i class="fa-solid fa-users-viewfinder fa-3x mb-3 text-black-50"></i>
+                <p class="m-0 fw-medium">No honorees have been published yet.</p>
+            </div>
+
+            <div class="row g-4" id="honoreesGridContainer"></div>
+        </section>
+
+        <section class="cq-container-card" id="formSectionAnchor">
+            <h5 class="section-label-headline" id="formHeaderTitle">Add Alumna to Wall of Fame</h5>
+            
+            <form id="formWallAction" enctype="multipart/form-data">
+                <input type="hidden" id="fieldHonoreeId">
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-4">
+                        <div class="upload-dashed-placeholder p-3" id="photoUploadContainer" onclick="document.getElementById('inputAlumnaFile').click();">
+                            <i class="fa-solid fa-user-astronaut fa-3x mb-2 text-muted" id="previewPhotoIcon"></i>
+                            <img id="previewPhotoImage" src="" class="img-fluid rounded mb-2 d-none shadow-sm" style="max-height: 140px; object-fit: cover; border-radius: 50%; width: 140px; height: 140px; border: 3px solid white;">
+                            
+                            <div class="text-center px-2" id="uploadLabelWrapper">
+                                <span class="d-block small fw-bold text-dark mb-1">Add alumna photo</span>
+                                <span class="d-block text-muted text-uppercase" style="font-size: 10px;">JPG, PNG (Max. 5MB)</span>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-light border text-muted mt-3 py-1 px-3" style="font-size: 12px;">
+                                <i class="fa-solid fa-upload me-1"></i> Upload Photo
+                            </button>
+
+                            <input type="file" id="inputAlumnaFile" accept=".jpg, .jpeg, .png" class="d-none">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-8">
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6 position-relative">
+                                <label class="form-label small fw-bold mb-1">Search Alumna Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted small"></i></span>
+                                    <input type="text" class="form-control border-start-0 text-dark" id="inputAlumnaSearch" placeholder="Loading alumnae directory..." disabled autocomplete="off" required>
+                                </div>
+                                <div class="search-results-overlay shadow d-none" id="searchSuggestionsContainer"></div>
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold mb-1">Category</label>
+                                <select class="form-select" id="selectCategory" required>
+                                    <option value="" disabled selected>Select category...</option>
+                                    <option value="Leadership">Leadership</option>
+                                    <option value="Innovation">Innovation</option>
+                                    <option value="Community Service">Community Service</option>
+                                    <option value="Technical Excellence">Technical Excellence</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1">Achievement</label>
+                                <textarea class="form-control" id="textareaAchievement" rows="3" placeholder="Enter achievement" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-sm btn-light border d-none" id="btnCancelUpdateMode">Cancel Reset</button>
+                            <button type="submit" class="btn btn-sm btn-orange px-4 py-2" id="btnSubmitForm">
+                                <i class="fa-solid fa-paper-plane"></i> Publish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="wallA.js"></script>
+</body>
+</html>

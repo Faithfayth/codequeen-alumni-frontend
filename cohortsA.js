@@ -1,7 +1,5 @@
-/**
- * Administrative Cohort Management Operations Controller Interceptor Engine
- * Ties Directly Into Users API Routers to Perform Synchronous Component Transactions
- */
+// Centralized API Configuration Base Endpoint Path
+const ENDPOINT_API_BASE = 'http://localhost:5000';
 
 // Memory layout context variables state arrays matching registry schemas
 let activeCohortsDirectoryCache = [];
@@ -52,16 +50,17 @@ function switchRightWorkspaceTab(tabId, trackingElementNode) {
 /**
  * Syncs up backend records dataset arrays matching created storage entity structures rows
  */
+// Syncs up backend records dataset arrays
+
 async function fetchActiveSystemCohortsCatalog() {
-    const listContainer = document.getElementById('cohorts-master-index-list');
-    
     try {
-        const response = await fetch('/api/cohorts', {
+        const response = await fetch(`${ENDPOINT_API_BASE}/cohort/getallcohorts`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
 
         if (response.ok) {
+            // The controller now sends a clean array [{}, {}]
             activeCohortsDirectoryCache = await response.json();
             renderCohortCatalogRows(activeCohortsDirectoryCache);
             populateCohortSelectionDropdownOptions(activeCohortsDirectoryCache);
@@ -69,11 +68,10 @@ async function fetchActiveSystemCohortsCatalog() {
             renderMockFallbackCohortMatrixData();
         }
     } catch (err) {
-        console.warn('API route path error to /api/cohorts fallback mockup array models activated safely.');
+        console.error("API Error:", err);
         renderMockFallbackCohortMatrixData();
     }
 }
-
 /**
  * Maps collections elements properties to build catalog structural item block loops
  */
@@ -120,34 +118,28 @@ function renderCohortCatalogRows(cohorts) {
 /**
  * Queries target contextual member rosters linked specifically to chosen category path keys entries data maps
  */
+// * Handles single cohort view
+//  */
 async function fetchCohortContextualProfile(cohortObject) {
-    const renderTargetBox = document.getElementById('cohort-data-profile-viewframe');
+    const frame = document.getElementById('cohort-data-profile-viewframe');
     const id = cohortObject._id || cohortObject.id;
 
-    renderTargetBox.innerHTML = `
-        <div class="text-center py-5 text-muted">
-            <div class="spinner-border spinner-border-sm text-clay mb-2"></div>
-            <div class="small">Compiling sub-tier distribution roster records...</div>
-        </div>`;
-
     try {
-        // Query route linking directly into filtering scopes on users collection controllers data sets arrays
-        const response = await fetch(`/api/cohorts/${id}/students`, {
+        // FIXED: Route changed from /cohorts/ to /cohort/ to match your backend
+        const response = await fetch(`${ENDPOINT_API_BASE}/cohort/getsinglecohort/${id}`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
 
         if (response.ok) {
-            const studentRoster = await response.json();
-            renderCohortDetailsTemplateCard(cohortObject, studentRoster);
-        } else {
-            renderCohortDetailsTemplateCard(cohortObject, getMockStudentsSubArray(cohortObject.name));
+            const dataResult = await response.json();
+            renderCohortDetailsTemplateCard(dataResult, dataResult.students || []);
         }
     } catch (err) {
-        renderCohortDetailsTemplateCard(cohortObject, getMockStudentsSubArray(cohortObject.name));
+        console.warn("Could not fetch real profile, using cached data.");
+        renderCohortDetailsTemplateCard(cohortObject, []);
     }
 }
-
 /**
  * Displays user roster elements and metadata details block metrics inside wireframe target frames
  */
@@ -208,14 +200,14 @@ function renderCohortDetailsTemplateCard(cohort, studentArray) {
 async function executeCohortCreationPipeline(event) {
     event.preventDefault();
     
-    const name = document.getElementById('new-cohort-name-field').value.trim();
-    const year = document.getElementById('new-cohort-year-field').value;
-    const graduationYear = document.getElementById('new-cohort-grad-field').value;
-
-    const payload = { name, year, graduationYear };
+    const payload = {
+        cohortname: document.getElementById('new-cohort-name-field').value.trim(),
+        year: document.getElementById('new-cohort-year-field').value,
+        graduationYear: document.getElementById('new-cohort-grad-field').value // Returns "YYYY-MM-DD"
+    };
 
     try {
-        const response = await fetch('/api/cohorts/create', {
+        const response = await fetch(`${ENDPOINT_API_BASE}/cohort/createcohort`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -225,47 +217,45 @@ async function executeCohortCreationPipeline(event) {
         });
 
         if (response.ok) {
-            alert('New cohort metadata profile mapped and established safely in system register tables data layers!');
+            alert('Cohort created successfully!');
             document.getElementById('form-create-cohort-record').reset();
             fetchActiveSystemCohortsCatalog();
-            switchRightWorkspaceTab('view-cohort', document.querySelector('[onclick*="view-cohort"]'));
         } else {
-            alert('Database write transaction dropped by operational structure controller constraint rules checks.');
+            const err = await response.json();
+            alert(`Error: ${err.message}`);
         }
     } catch (err) {
-        // Fallback simulation interface interaction behavior processing sequence execution loop
-        alert('Simulation execution complete. Local application view models state updated dynamically.');
-        const mockNewId = 'mck' + (activeCohortsDirectoryCache.length + 1);
-        activeCohortsDirectoryCache.push({ id: mockNewId, name, year, graduationYear });
-        renderCohortCatalogRows(activeCohortsDirectoryCache);
-        populateCohortSelectionDropdownOptions(activeCohortsDirectoryCache);
-        switchRightWorkspaceTab('view-cohort', document.querySelector('[onclick*="view-cohort"]'));
+        alert('Network error connecting to the server.');
     }
-}
-
+};
 /**
  * Handles account creations and tracking operations routing paths directly into the users architecture models stack layers
  */
 async function executeStudentRegistrationPipeline(event) {
     event.preventDefault();
     
+    // 1. Capture the raw input values
     const cohortTargetName = document.getElementById('assign-student-cohort-select').value;
-    const name = document.getElementById('student-register-name').value.trim();
-    const email = document.getElementById('student-register-email').value.trim();
-    const role = document.getElementById('student-register-role').value;
+    const nameInput = document.getElementById('student-register-name').value.trim();
+    const emailInput = document.getElementById('student-register-email').value.trim();
+    const roleInput = document.getElementById('student-register-role').value;
 
-    // Payload configuration mapping properties requirements expectations handled by your Auth/User Registration endpoints controllers
-    const registrationFormPayload = {
-        name: name,
-        email: email,
-        cohort: cohortTargetName, // Injecting active routing path value tag context fields safely
-        role: role,
-        password: "DefaultCQStudentPass123!" // Assigned standard temporary baseline account bypass key strings
+    // 2. Adjust keys to match the backend controller's destructuring:
+    // Backend expects: { username, email, password, confirmPassword, role, cohort }
+    const registrationFormPayload = { //the payload names have to match with the backend.
+        username: nameInput,        // Changed from 'name' to 'username'
+        email: emailInput,
+        cohort: cohortTargetName, 
+        role: roleInput,
+        password: "DefaultCQStudentPass123!",
+        confirmPassword: "DefaultCQStudentPass123!",
+        isMentor: false,            // Added explicit defaults for safety
+        isAdmin: false,
+        isleader: false
     };
 
     try {
-        // Calling authorization registry mapping handler from users router setup endpoint targets
-        const response = await fetch('/api/users/register', {
+        const response = await fetch(`${ENDPOINT_API_BASE}/users/register`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -274,23 +264,24 @@ async function executeStudentRegistrationPipeline(event) {
             body: JSON.stringify(registrationFormPayload)
         });
 
+        const responseData = await response.json();
+
         if (response.ok) {
-            alert(`Account created successfully! Student profile instantiated and connected to ${cohortTargetName} matrices configurations data chains.`);
+            alert(`Account created successfully! ${nameInput} is now part of Cohort ${cohortTargetName}.`);
             document.getElementById('form-register-assign-student').reset();
+            
+            // Refresh data views
             fetchActiveSystemCohortsCatalog();
             switchRightWorkspaceTab('view-cohort', document.querySelector('[onclick*="view-cohort"]'));
         } else {
-            const errorObj = await response.json();
-            alert(`Registration query route dropped by server controller modules pipeline logic: ${errorObj.message || 'Verification runtime error.'}`);
+            // Display the specific error message from your backend (e.g., "Email already belongs to user")
+            alert(`Registration Error: ${responseData.message}`);
         }
     } catch (err) {
-        console.error('Registration fetch trace paths context error state caught intercept loops logs:', err);
-        alert('Simulation student placement execution accepted locally within active UI viewframes.');
-        document.getElementById('form-register-assign-student').reset();
-        switchRightWorkspaceTab('view-cohort', document.querySelector('[onclick*="view-cohort"]'));
+        console.error('Network/Connection Error:', err);
+        alert('Failed to connect to the server. Please ensure the backend is running.');
     }
 }
-
 /**
  * Destructive row array pruning transaction pipeline executions commands routing routines configuration
  */
@@ -299,7 +290,8 @@ async function executeCohortDeletionPipeline(event, cohortId) {
     if (!confirm('Are you entirely confident you want to delete this cohort schema entry record permanently from database registers data streams catalogs maps layers?')) return;
 
     try {
-        const response = await fetch(`/api/cohorts/delete/${cohortId}`, {
+        // Connected using ENDPOINT_API_BASE pointing to deletecohort endpoint
+        const response = await fetch(`${ENDPOINT_API_BASE}/cohort/deletecohort/${cohortId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
@@ -329,7 +321,7 @@ function populateCohortSelectionDropdownOptions(cohorts) {
 
     cohorts.forEach(c => {
         const optionElement = document.createElement('option');
-        optionElement.value = c.name; // Linking via assignment name tracking parameters strings keys
+        optionElement.value = c.name; 
         optionElement.textContent = c.name;
         selectorNode.appendChild(optionElement);
     });

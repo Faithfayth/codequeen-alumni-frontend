@@ -8,7 +8,7 @@ const API_BASE_URL = 'http://localhost:5000'; // Adjust port to match your local
 
 // Memory layout global object store lists allocations tracking arrays
 let systemAchievementsRegistryCache = [];
-let attachedPhotoBinaryPayloadFile = null;
+// let attachedPhotoBinaryPayloadFile = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     // Mobilize slide panel mobile navigation links bindings routines

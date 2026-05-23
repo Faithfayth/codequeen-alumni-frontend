@@ -6,6 +6,9 @@
 // Active state reference for monitoring selected execution pipeline context queues
 let currentApprovalContext = 'enrollments';
 
+// System Gateway URI Base Constant matching your unified Node.js router ports
+const ENDPOINT_API_BASE = 'http://localhost:5000';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Mobilized Responsive Interface Display Trigger Registration Hooks
     initMobileSidebarNavigation();
@@ -72,6 +75,7 @@ function hydrateAdminSessionIdentity() {
 
 /**
  * Queries the Database Models Endpoint Collections via API Controllers Layer to Extract Total Item Counts
+ * Correctly targets individual collection paths to hydrate dashboard metadata dynamically.
  */
 async function fetchDashboardMetricCounters() {
     const metrics = ['opportunities', 'resources', 'projects', 'profiles'];
@@ -79,8 +83,21 @@ async function fetchDashboardMetricCounters() {
     // Loop mapping logic across items to populate visual element UI count cards dynamically
     for (const model of metrics) {
         try {
-            // API endpoints should map to your server controller routing definitions, e.g., `/api/admin/count/opportunities`
-            const response = await fetch(`/api/admin/count/${model}`, {
+            let urlTarget = '';
+            
+            // Map models smoothly to the precise routes matching your uploaded backend parameters
+            if (model === 'opportunities') {
+                urlTarget = `${ENDPOINT_API_BASE}/opportunities/getpcomingpportunities`;
+            } else if (model === 'resources') {
+                urlTarget = `${ENDPOINT_API_BASE}/resources/getallresources`;
+            } else if (model === 'projects') {
+                urlTarget = `${ENDPOINT_API_BASE}/projects/getallprojects`;
+            } else if (model === 'profiles') {
+                // Profiles metric maps directly into your partner network records
+                urlTarget = `${ENDPOINT_API_BASE}/partners/getapprovedpartners`;
+            }
+
+            const response = await fetch(urlTarget, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -92,15 +109,30 @@ async function fetchDashboardMetricCounters() {
                 const data = await response.json();
                 const counterElement = document.getElementById(`count-${model}`);
                 if (counterElement) {
-                    counterElement.textContent = data.count !== undefined ? data.count : 0;
+                    // Extract payload lists dynamically based on custom controller payload wrappings
+                    let activeList = [];
+                    if (Array.isArray(data)) {
+                        activeList = data;
+                    } else if (data.result && Array.isArray(data.result)) {
+                        activeList = data.result;
+                    } else if (data.opportunities && Array.isArray(data.opportunities)) {
+                        activeList = data.opportunities;
+                    } else if (data.resources && Array.isArray(data.resources)) {
+                        activeList = data.resources;
+                    } else if (data.projects && Array.isArray(data.projects)) {
+                        activeList = data.projects;
+                    } else if (data.partners && Array.isArray(data.partners)) {
+                        activeList = data.partners;
+                    }
+                    
+                    // Assign explicit length count or fallback safely to 0
+                    counterElement.textContent = activeList.length !== undefined ? activeList.length : 0;
                 }
             } else {
-                // Mock fallback placeholders values safely applied if connection interfaces are absent during build pipelines
                 document.getElementById(`count-${model}`).textContent = '0';
             }
         } catch (err) {
             console.warn(`Fallback execution activated for metric query stream context: [${model}]. Verify active controllers link.`);
-            // Set static zero indicator to preserve grid interface composition parameters elegantly
             const targetElement = document.getElementById(`count-${model}`);
             if (targetElement) targetElement.textContent = '0';
         }
@@ -139,17 +171,33 @@ async function loadPendingApprovalsQueue(category) {
         </div>`;
 
     try {
-        // Adjust endpoint construction context targeting mechanisms dynamically to route directly into corresponding router layers
-        const response = await fetch(`/api/admin/pending/${category}`, {
+        let urlTarget = '';
+
+        // Map categories dynamically into your active controller approval routing layers
+        if (category === 'opportunities') {
+            urlTarget = `${ENDPOINT_API_BASE}/opportunities/getunverifiedopportunities`;
+        } else if (category === 'enrollments') {
+            urlTarget = `${ENDPOINT_API_BASE}/enrollments/getpendingapprovals`;
+        } else if (category === 'partners') {
+            urlTarget = `${ENDPOINT_API_BASE}/partners/getpendingpartners`;
+        } else {
+            // Dynamic fallback path for unmapped tabs (events, resources, mentorship) to match original base structure
+            urlTarget = `${ENDPOINT_API_BASE}/api/admin/pending/${category}`;
+        }
+
+        const response = await fetch(urlTarget, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
             }
         });
 
         if (response.ok) {
             const dataset = await response.json();
-            renderQueueItems(dataset, category);
+            // Pull internal data array payload directly if backend serves nested wrappers
+            const trueItemsArray = dataset.result || dataset.opportunities || dataset.enrollments || dataset.partners || dataset;
+            renderQueueItems(Array.isArray(trueItemsArray) ? trueItemsArray : [], category);
         } else {
             renderMockFallbackPipeline(category);
         }
@@ -174,8 +222,8 @@ function renderQueueItems(items, type) {
     queueTray.innerHTML = ''; // Clean canvas layout context block
     
     items.forEach((item, index) => {
-        const itemTitle = item.title || item.name || `Request Entry Reference #${index + 1}`;
-        const itemSubtitle = item.subtitle || item.email || item.company || 'Pending review logs';
+        const itemTitle = item.title || item.name || item.studentId || `Request Entry Reference #${index + 1}`;
+        const itemSubtitle = item.subtitle || item.email || item.company || item.course || 'Pending review logs';
         const targetId = item._id || item.id || index;
 
         const rowMarkup = `
@@ -202,14 +250,43 @@ function renderQueueItems(items, type) {
  */
 async function processApprovalDecision(type, id, action) {
     try {
-        const response = await fetch(`/api/admin/decision/${type}/${id}`, {
-            method: 'POST',
+        let urlTarget = '';
+        let config = {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status: action === 'approve' ? 'approved' : 'rejected' })
-        });
+            }
+        };
+
+        // Determine method type and body arguments using matching backend criteria definitions
+        if (type === 'opportunities') {
+            if (action === 'approve') {
+                urlTarget = `${ENDPOINT_API_BASE}/opportunities/verifyopportunity/${id}`;
+                config.method = 'PUT';
+            } else {
+                urlTarget = `${ENDPOINT_API_BASE}/opportunities/deleteopportunity/${id}`;
+                config.method = 'DELETE';
+            }
+        } else if (type === 'enrollments') {
+            urlTarget = `${ENDPOINT_API_BASE}/enrollments/approvebystudentId`;
+            config.method = 'PUT';
+            config.body = JSON.stringify({ studentId: id, status: action === 'approve' ? 'approved' : 'rejected' });
+        } else if (type === 'partners') {
+            if (action === 'approve') {
+                urlTarget = `${ENDPOINT_API_BASE}/partners/verifypartnerstatus/${id}`;
+                config.method = 'PUT';
+            } else {
+                urlTarget = `${ENDPOINT_API_BASE}/partners/deletepartnerprofile/${id}`;
+                config.method = 'DELETE';
+            }
+        } else {
+            // General structure fallback setup mapping original code structures
+            urlTarget = `${ENDPOINT_API_BASE}/api/admin/decision/${type}/${id}`;
+            config.method = 'POST';
+            config.body = JSON.stringify({ status: action === 'approve' ? 'approved' : 'rejected' });
+        }
+
+        const response = await fetch(urlTarget, config);
 
         if (response.ok) {
             // Remove target element block dynamically from screen space layout framework tree mapping models

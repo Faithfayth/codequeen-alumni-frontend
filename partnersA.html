@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Manage Partners</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-orange: #E39224;
+            --cq-burgundy: #C56C64;
+            --cq-cream: #FFF5E9;
+            --cq-text-dark: #3A2312;
+            --cq-sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        .sidebar-wrapper {
+            width: var(--cq-sidebar-width);
+            background-color: var(--cq-burgundy);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            color: #FFFFFF;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .sidebar-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: #FFFFFF;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .main-content-pane {
+            margin-left: var(--cq-sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-cream);
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .partner-display-box {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo-placeholder-box {
+            background-color: #FFF2E2;
+            border: 1px dashed var(--cq-orange);
+            border-radius: 12px;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--cq-orange);
+            text-align: center;
+        }
+
+        .pending-item-card {
+            background-color: #FFFDFB;
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .pending-item-card:hover {
+            transform: translateX(4px);
+        }
+
+        .btn-orange {
+            background-color: var(--cq-orange);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .btn-orange:hover {
+            background-color: #cb801b;
+            color: #FFFFFF;
+        }
+
+        .btn-outline-burgundy {
+            border: 1px solid var(--cq-burgundy);
+            color: var(--cq-burgundy);
+            background: transparent;
+            border-radius: 8px;
+        }
+
+        .btn-outline-burgundy:hover {
+            background-color: var(--cq-burgundy);
+            color: #FFFFFF;
+        }
+
+        .section-label-headline {
+            color: #D34836;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-wrapper {
+                left: -var(--cq-sidebar-width);
+            }
+            .sidebar-wrapper.show {
+                left: 0;
+            }
+            .main-content-pane {
+                margin-left: 0;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-wrapper" id="sidebarMenu">
+        <div class="sidebar-brand">
+            <h4 class="m-0 text-white fw-bold">&lt; CodeQueen &gt;</h4>
+            <small class="text-white-50">Alumni Ecosystem</small>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="admin.html" class="sidebar-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-award"></i> Badges</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-users"></i> Cohorts</a></li>
+            <li><a href="#" class="sidebar-link"><i class="fa-solid fa-address-book"></i> Alumni Directory</a></li>
+            <li><a href="electionsA.html" class="sidebar-link"><i class="fa-solid fa-check-to-slot"></i> Elections</a></li>
+            <li><a href="partnersA.html" class="sidebar-link active"><i class="fa-solid fa-handshake"></i> Partners</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content-pane">
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-lg-none me-3" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h2 class="h4 m-0 fw-bold">Partners Network Hub</h2>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-orange" id="btnScrollToForm">
+                    <i class="fa-solid fa-plus"></i> Initialize Profile
+                </button>
+                <button class="btn btn-sm btn-outline-burgundy position-relative" id="btnJumpToPending">
+                    <i class="fa-solid fa-bell"></i> Verification Queue
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="badgePendingCount">0</span>
+                </button>
+            </div>
+        </header>
+
+        <div id="alertFeedbackAnchor"></div>
+
+        <section class="cq-container-card">
+            <h5 class="section-label-headline">Approved Enterprise Partners</h5>
+            
+            <div id="approvedSpinner" class="text-center my-4">
+                <div class="spinner-border text-warning spinner-border-sm" role="status"></div>
+            </div>
+
+            <div id="noApprovedPlaceholder" class="text-center py-4 text-muted d-none">
+                <i class="fa-solid fa-building-circle-exclamation mb-2 fa-2x"></i>
+                <p class="small m-0">No corporate partners have been verified or registered yet.</p>
+            </div>
+
+            <div id="approvedPartnersContainer"></div>
+        </section>
+
+        <section class="cq-container-card" id="formSectionAnchor">
+            <h5 class="section-label-headline" id="formHeaderTitle">Create Partner Profile</h5>
+            
+            <form id="formPartnerAction">
+                <input type="hidden" id="fieldPartnerId">
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <div class="logo-placeholder-box p-3 h-100 justify-content-center">
+                            <i class="fa-solid fa-building fa-3x mb-2" id="previewLogoIcon"></i>
+                            <img id="previewLogoImage" src="" class="img-fluid rounded mb-2 d-none" style="max-height: 120px; object-fit: contain;">
+                            <div class="w-100">
+                                <label class="form-label small text-muted text-uppercase fw-bold m-0" style="font-size: 10px;">Logo URL Link</label>
+                                <input type="url" class="form-control form-control-sm text-center" id="inputCompanyLogo" placeholder="https://example.com/logo.png">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-8">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1">Company Name</label>
+                                <input type="text" class="form-control form-control-sm" id="inputCompanyName" placeholder="Enter registration company name" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1">Corporate Profile Description</label>
+                                <textarea class="form-control form-control-sm" id="inputDescription" rows="2" placeholder="Describe core competencies or organizational mission..." required></textarea>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold mb-1">Contact Phone</label>
+                                <input type="tel" class="form-control form-control-sm" id="inputContact" placeholder="e.g., +256700000000" required>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold mb-1">Email Address</label>
+                                <input type="email" class="form-control form-control-sm" id="inputEmail" placeholder="corporate@example.com" required>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold mb-1">Website Link URL</label>
+                                <input type="url" class="form-control form-control-sm" id="inputWebsiteUrl" placeholder="https://example.com">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold mb-1">Operational Location</label>
+                                <input type="text" class="form-control form-control-sm" id="inputLocation" placeholder="e.g., Kampala, Uganda" required>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-sm btn-light border d-none" id="btnCancelUpdateMode">Cancel Reset</button>
+                            <button type="submit" class="btn btn-sm btn-orange px-4" id="btnSubmitForm">
+                                <i class="fa-solid fa-circle-check"></i> Dispatch Application
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <section class="cq-container-card" id="pendingSectionAnchor">
+            <h5 class="section-label-headline text-start"><i class="fa-solid fa-clock-rotate-left"></i> Administrative Pending Queue</h5>
+            
+            <div id="pendingSpinner" class="text-center my-3 d-none">
+                <div class="spinner-border text-secondary spinner-border-sm" role="status"></div>
+            </div>
+
+            <div id="noPendingPlaceholder" class="text-center py-3 text-muted small">
+                No profiles are currently awaiting verification checks.
+            </div>
+
+            <div id="pendingPartnersContainer"></div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="partnersA.js"></script>
+</body>
+</html>

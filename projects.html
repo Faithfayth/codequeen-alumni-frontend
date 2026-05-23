@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Portfolio Space</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-orange: #E39224;
+            --cq-burgundy: #C56C64;
+            --cq-cream: #FFF5E9;
+            --cq-cream-dark: #FCEFD2;
+            --cq-text-dark: #3A2312;
+            --cq-sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation Wrapper Design */
+        .sidebar-wrapper {
+            width: var(--cq-sidebar-width);
+            background-color: var(--cq-burgundy);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0 0 30px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            color: #FFFFFF;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+            list-style: none;
+            margin: 0;
+            width: 100%;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #FFFFFF !important;
+            text-decoration: none;
+            font-weight: 600;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            color: #FFFFFF !important;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--cq-burgundy) !important;
+            background-color: #FFFFFF !important;
+        }
+
+        .sidebar-link:hover i, .sidebar-link.active i {
+            color: var(--cq-burgundy) !important;
+        }
+
+        .btn-logout-sidebar {
+            background-color: #FFFFFF;
+            color: var(--cq-burgundy) !important;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: calc(100% - 40px);
+            margin: 0 auto;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout-sidebar i {
+            color: var(--cq-burgundy) !important;
+        }
+
+        .btn-logout-sidebar:hover {
+            background-color: var(--cq-cream);
+            border-color: var(--cq-cream);
+            color: var(--cq-burgundy) !important;
+        }
+
+        /* Content Area Setup */
+        .main-content-pane {
+            margin-left: var(--cq-sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-cream);
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-label-headline {
+            color: var(--cq-orange);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--cq-cream);
+            padding-bottom: 8px;
+        }
+
+        /* Project Display Item Feed Cards */
+        .project-display-card {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(58, 35, 18, 0.02);
+        }
+
+        .project-image-frame-box {
+            background-color: #FFFFFF;
+            border: 1px dashed rgba(197, 108, 100, 0.3);
+            border-radius: 14px;
+            width: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(58, 35, 18, 0.5);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .btn-cq-orange {
+            background-color: var(--cq-orange);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-cq-orange:hover {
+            background-color: #cb801b;
+            color: #FFFFFF;
+        }
+
+        .btn-action-outline {
+            border: 1px solid rgba(197, 108, 100, 0.3);
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            border-radius: 8px;
+            font-size: 13px;
+            padding: 6px 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-action-outline:hover {
+            background-color: var(--cq-cream-dark);
+        }
+
+        .form-control, .form-select {
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 8px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--cq-orange);
+            box-shadow: 0 0 0 0.25rem rgba(227, 146, 36, 0.15);
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-wrapper { left: -var(--cq-sidebar-width); }
+            .sidebar-wrapper.show { left: 0; }
+            .main-content-pane { margin-left: 0; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-wrapper" id="sidebarMenu">
+        <div>
+            <div class="sidebar-brand">
+                <h4 class="m-0 text-white fw-bold text-uppercase">CodeQueen</h4>
+                <small class="text-white-50" id="sidebarSubRoleLabel">Workspace</small>
+            </div>
+            <ul class="sidebar-menu" id="sidebarLinksDynamicContainer">
+                </ul>
+        </div>
+
+        <button class="btn btn-logout-sidebar" id="btnSidebarSignout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout !
+        </button>
+    </nav>
+
+    <main class="main-content-pane">
+        
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center w-100 justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-dark d-lg-none me-3" id="sidebarToggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fa-solid fa-laptop-code text-muted fa-lg"></i>
+                        <h2 class="h4 m-0 fw-bold" id="mainHeaderDisplayTitle">Portfolio Manager</h2>
+                        <button class="btn btn-sm btn-cq-orange px-3 py-1 text-white d-none" id="btnTopAddProjectAnchor">
+                            <i class="fa-solid fa-plus me-1"></i> Add Project
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center gap-2" style="min-width: 260px;">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-search"></i></span>
+                        <input type="text" id="txtSearchQuery" class="form-control border-start-0 ps-0" placeholder="Search Projects...">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="alertLayoutAnchor"></div>
+
+        <section class="mb-5">
+            <h5 class="section-label-headline text-uppercase tracking-wider">Uploaded Projects</h5>
+            <div id="projectsMasterListGrid">
+                <div class="text-center py-5 text-muted">
+                    <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
+                    Loading platform projects logs stream...
+                </div>
+            </div>
+        </section>
+
+        <section class="cq-container-card d-none" id="sectionAddProjectFormWorkspace">
+            <h5 class="fw-bold mb-4 text-dark text-capitalize"><i class="fa-solid fa-plus-circle text-warning me-2"></i>Add Project</h5>
+            <form id="formProjectSubmission">
+                <div class="row g-4">
+                    
+                    <div class="col-12 col-md-4">
+                        <div class="project-image-frame-box p-3" id="photoPreviewZone">
+                            <i class="fa-solid fa-image fa-3x mb-2 text-warning" id="iconThumbnailPlaceholder"></i>
+                            <img id="imageThumbnailPreview" src="" class="img-fluid rounded mb-2 d-none shadow-sm" style="max-height: 140px; object-fit: cover;">
+                            <div class="text-center small w-100 px-2">
+                                <span class="fw-bold d-block text-dark mb-1">Project Photo Link URL</span>
+                                <input type="url" class="form-control form-control-sm text-center" id="inputProjectThumbnail" placeholder="https://example.com/thumbnail.png">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-8">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">Add title :</label>
+                                <input type="text" class="form-control form-control-sm" id="inputTitle" required placeholder="Enter project title">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">Owner(s) :</label>
+                                <input type="text" class="form-control form-control-sm" id="inputOwner" required placeholder="Search owner(s) or type main lead name">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">Description :</label>
+                                <textarea class="form-control form-control-sm" id="inputDescription" rows="3" required placeholder="Enter project description"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">Demo link :</label>
+                                <input type="url" class="form-control form-control-sm" id="inputDemoLink" placeholder="https://colequeen.edu/projects/demo">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">Github link :</label>
+                                <input type="url" class="form-control form-control-sm" id="inputGithubLink" placeholder="https://github.com/colequeen/repo">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">participants (Comma separated values) :</label>
+                                <input type="text" class="form-control form-control-sm" id="inputParticipants" placeholder="e.g. Akello Sandra, John Kato, Sarah Namutebi">
+                            </div>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-cq-orange px-4 py-2 text-white text-uppercase tracking-wide">
+                                <i class="fa-solid fa-paper-plane me-2"></i>Publish
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="projects.js"></script>
+</body>
+</html>
