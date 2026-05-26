@@ -161,7 +161,8 @@ async function dispatchEventProposalPayload(e) {
         startdate: start.toISOString(),
         enddate: end.toISOString(),
         location: document.getElementById('eventLocation').value,
-        imageurl: document.getElementById('eventImageUrl').value || ""
+        imageurl: document.getElementById('eventImageUrl').value || "",
+        url: document.getElementById('eventUrl').value // MODIFICATION: Added URL assignment parsing extraction logic
     };
 
     try {
@@ -204,9 +205,13 @@ function renderEventsGridDeck(events, targetContainer, isHistoryMode = false, is
         
         let actionButtonsMarkup = '';
         
+        // MODIFICATION: Build anchor element string safely if a valid URL attribute payload profile string is registered
+        const eventUrlButton = event.url ? `<a href="${event.url}" target="_blank" class="btn btn-outline-secondary btn-sm px-3 me-2"><i class="bi bi-link-45deg"></i> View Event Link</a>` : '';
+
         if (isAdminMode) {
             // Context: Administrative Verification Queue Section
             actionButtonsMarkup = `
+                ${eventUrlButton}
                 <button class="btn btn-action-amber btn-sm px-3" onclick="executeVerificationRoutine('${event._id}')"><i class="bi bi-shield-check me-1"></i> Verify & Publish</button>
                 <button class="btn btn-action-rose btn-sm px-3" onclick="executeDeleteRoutine('${event._id}', true)"><i class="bi bi-trash3 me-1"></i> Reject & Delete</button>
             `;
@@ -216,6 +221,7 @@ function renderEventsGridDeck(events, targetContainer, isHistoryMode = false, is
         } else {
             // Context: Live Upcoming Events Stream
             actionButtonsMarkup = `
+                ${eventUrlButton}
                 <button class="btn btn-action-amber btn-sm px-3" onclick="executeEventRegistration('${event._id}')"><i class="bi bi-person-check me-1"></i> Register Attendee</button>
             `;
             

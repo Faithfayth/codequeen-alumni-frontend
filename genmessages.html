@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siders Space - CodeQueen</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --cq-sidebar-bg: #C56C64;   
+            --cq-gold-bg: #E39224;      
+            --cq-card-soft: #FFF5E9;    
+            --cq-text-dark: #3A2312;    
+            --cq-chat-bg: #FFFBF7;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* MOBILE HEADER / TOP BAR */
+        .mobile-top-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* FIXED SIDEBAR NAVIGATION PANEL */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-brand-area {
+            margin-bottom: 20px;
+        }
+
+        .close-btn-mock {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.6);
+            color: white;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 11px 16px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 3px;
+            border-radius: 8px;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        .logout-btn-box {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* MAIN WORKSPACE & CHAT STRUCTURE */
+        .dashboard-workspace {
+            margin-left: 260px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #FFFFFF;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .chat-container-card {
+            background-color: var(--cq-chat-bg);
+            border-radius: 24px;
+            margin: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(227, 146, 36, 0.2);
+        }
+
+        .chat-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(197, 108, 100, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #FFFFFF;
+        }
+
+        .chat-stream-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* MESSAGE BUBBLE LAYOUT MECHANICS */
+        .msg-wrapper {
+            display: flex;
+            gap: 12px;
+            max-width: 75%;
+        }
+
+        .msg-wrapper.incoming {
+            align-self: flex-start;
+        }
+
+        .msg-wrapper.outgoing {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--cq-sidebar-bg);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .msg-wrapper.outgoing .avatar-circle {
+            background-color: var(--cq-gold-bg);
+        }
+
+        .bubble-content-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-bubble {
+            padding: 14px 20px;
+            border-radius: 20px;
+            font-size: 0.98rem;
+            line-height: 1.5;
+            position: relative;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            color: var(--cq-text-dark);
+        }
+
+        .incoming .chat-bubble {
+            border-top-left-radius: 4px;
+            border: 1px solid rgba(197, 108, 100, 0.15);
+        }
+
+        .outgoing .chat-bubble {
+            border-top-right-radius: 4px;
+            background-color: #FFE6D1;
+            border: 1px solid rgba(227, 146, 36, 0.15);
+        }
+
+        .msg-meta-data {
+            font-size: 0.78rem;
+            color: #8C7A6B;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .incoming .msg-meta-data {
+            justify-content: flex-start;
+        }
+
+        .outgoing .msg-meta-data {
+            justify-content: flex-end;
+        }
+
+        .delete-msg-btn {
+            background: transparent;
+            border: none;
+            color: #C56C64;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.85rem;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .delete-msg-btn:hover {
+            opacity: 1;
+        }
+
+        .attached-chat-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-bottom: 5px;
+            object-fit: cover;
+        }
+
+        /* INPUT SHELF FORM CONTROL */
+        .chat-input-shelf {
+            padding: 16px 24px;
+            background-color: #FFFFFF;
+            border-top: 1px solid rgba(197, 108, 100, 0.1);
+        }
+
+        .input-bar-wrapper {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.3);
+            border-radius: 16px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .input-bar-wrapper:focus-within {
+            border-color: var(--cq-gold-bg);
+            box-shadow: 0 0 0 3px rgba(227, 146, 36, 0.15);
+        }
+
+        .chat-text-field {
+            border: none;
+            background: transparent;
+            flex-grow: 1;
+            color: var(--cq-text-dark);
+            outline: none;
+            padding: 6px 0;
+        }
+
+        .action-icon-trigger {
+            background: transparent;
+            border: none;
+            color: var(--cq-sidebar-bg);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .action-icon-trigger:hover {
+            transform: scale(1.1);
+            color: var(--cq-gold-bg);
+        }
+
+        .btn-send-message {
+            background-color: var(--cq-gold-bg);
+            color: #FFFFFF;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-send-message:hover {
+            background-color: var(--cq-sidebar-bg);
+        }
+
+        /* RESPONSIVE LAYOUT BREAKPOINTS */
+        @media (max-width: 991.98px) {
+            .mobile-top-header { display: flex; }
+            .cq-sidebar { transform: translateX(-100%); box-shadow: 4px 0 15px rgba(0,0,0,0.25); }
+            .cq-sidebar.show-sidebar { transform: translateX(0); }
+            .dashboard-workspace { margin-left: 0; padding-top: 60px; }
+            .chat-container-card { margin: 10px; height: calc(100vh - 80px); }
+            .msg-wrapper { max-width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-top-header">
+    <span class="text-white fw-bold fs-5">CodeQueen Ecosystem</span>
+    <button class="hamburger-toggle-btn" id="open-sidebar-trigger">
+        <i class="bi bi-list"></i>
+    </button>
+</div>
+
+<div class="cq-sidebar" id="main-application-sidebar">
+    <div>
+        <div class="sidebar-brand-area d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="m-0 text-white fw-bold text-uppercase">CodeQueen</h4>
+                <small class="text-white-50">Alumni Ecosystem Hub</small>
+            </div>
+            <button class="close-btn-mock d-lg-none" id="close-sidebar-trigger"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <nav class="nav flex-column mt-4">
+            <a href="alumni.html" class="cq-nav-link"><i class="bi bi-house-door"></i> HOME</a>
+            <a href="profiles.html" class="cq-nav-link"><i class="bi bi-person"></i> Profiles</a>
+            <a href="gallery.html" class="cq-nav-link"><i class="bi bi-image"></i> Gallery</a>
+            <a href="resources.html" class="cq-nav-link"><i class="bi bi-folder"></i> Resources</a>
+            <a href="projects.html" class="cq-nav-link"><i class="bi bi-briefcase"></i> Projects</a>
+            <a href="achievements.html" class="cq-nav-link"><i class="bi bi-award"></i> Achievements</a>
+            <a href="wall.html" class="cq-nav-link"><i class="bi bi-star"></i> Wall of fame</a>
+            <a href="partners.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+            <a href="elections.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+            <a href="mentors.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Mentors</a>
+            <a href="genmessages.html" class="cq-nav-link active"><i class="bi bi-chat-left-text"></i> General Chat</a>
+        </nav>
+    </div>
+    <button id="btnSidebarSignout" class="logout-btn-box shadow-sm">
+        <i class="bi bi-box-arrow-left"></i> Logout !
+    </button>
+</div>
+
+<div class="dashboard-workspace">
+    <div class="chat-container-card">
+        
+        <div class="chat-header">
+            <div class="d-flex align-items-center gap-2">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold m-0">Sisters Space</h5>
+                    <small class="text-muted">General Community Broadcast Channel</small>
+                </div>
+            </div>
+            <a href="mailto:alumni@codequeen.com" class="text-decoration-none text-muted fw-semibold small d-flex align-items-center gap-1">
+                email <i class="bi bi-envelope text-danger fs-5"></i>
+            </a>
+        </div>
+
+        <div class="chat-stream-area" id="chatStreamArea">
+            </div>
+
+        <div class="chat-input-shelf">
+            <form id="generalChatForm" class="m-0">
+                <div class="input-bar-wrapper">
+                    <button type="button" class="action-icon-trigger" id="mediaUploadClip" title="Attach Media Asset Url">
+                        <i class="bi bi-paperclip"></i>
+                    </button>
+                    
+                    <input type="text" class="chat-text-field" id="messageTextInput" placeholder="Text message..." autocomplete="off">
+                    
+                    <button type="submit" class="btn-send-message" id="sendMessageSubmitBtn">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="genmessages.js"></script>
+</body>
+</html>

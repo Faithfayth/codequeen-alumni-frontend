@@ -115,9 +115,16 @@ function configureRoleBasedInterfaceEngine() {
         if (formSection) formSection.classList.remove('d-none');
 
         linksContainer.innerHTML = `
-            <li><a href="alumni.html" class="sidebar-link"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-            <li><a href="directory.html" class="sidebar-link"><i class="fa-solid fa-address-book"></i> Alumni directory</a></li>
-            <li><a href="projects.html" class="sidebar-link active"><i class="fa-solid fa-laptop-code"></i> Projects</a></li>
+            <li><a href="alumni.html" class="sidebar-link"><i class="bi bi-house-door"></i> HOME</a></li>
+            <li><a href="profiles.html" class="sidebar-link"><i class="bi bi-person"></i> Profiles</a></li>
+            <li><a href="gallery.html" class="sidebar-link"><i class="bi bi-image"></i> Gallery</a></li>
+            <li><a href="resources.html" class="sidebar-link"><i class="bi bi-folder"></i> Resources</a></li>
+            <li><a href="projects.html" class="sidebar-link"><i class="bi bi-briefcase"></i> Projects</a></li>
+            <li><a href="achievements.html" class="sidebar-link"><i class="bi bi-award"></i> Achievements</a></li>
+            <li><a href="wall-of-fame.html" class="sidebar-link"><i class="bi bi-star"></i> Wall of fame</a></li>
+            <li><a href="partners.html" class="sidebar-link"><i class="bi bi-building"></i> Partners</a></li>
+            <li><a href="elections.html" class="sidebar-link"><i class="bi bi-box-seam"></i> Elections</a></li>
+            <li><a href="mentors.html" class="sidebar-link"><i class="bi bi-mortarboard"></i> Mentors</a></li>
         `;
     }
 }

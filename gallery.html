@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Gallery - CodeQueen Ecosystem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Custom Root System Colors mapped explicitly from the interface blueprint */
+        :root {
+            --brand-primary: #f26f21;
+            --brand-bg-light: #fffcf8;
+            --brand-border: #fcdcc5;
+            --brand-text-dark: #3a1c08;
+            --brand-input-bg: #fffbf7;
+            
+            /* Shared Sidebar Ecosystem Styling Tokens */
+            --cq-sidebar-bg: #C56C64;   
+            --cq-gold-bg: #E39224;      
+            --cq-card-soft: #FFF5E9;    
+            --cq-button-rose: #C56C64;  
+            --cq-text-dark: #3A2312;    
+        }
+
+        body {
+            background-color: #fef8f3;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--brand-text-dark);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* MOBILE HEADER / TOP BAR (Hidden on Desktop) */
+        .mobile-top-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* ECOSYSTEM INTEGRATED SIDEBAR PANEL STYLES */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-brand-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .close-btn-mock {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.6);
+            color: white;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn-mock:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 11px 16px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 3px;
+            border-radius: 8px;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        .logout-btn-box {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* MAIN BODY STRUCTURE CONTAINER WORKSPACE */
+        .dashboard-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* Master Mockup Main Card Canvas Wrapper */
+        .main-gallery-card {
+            background-color: var(--brand-bg-light);
+            border: 1px solid var(--brand-border);
+            border-radius: 28px;
+        }
+
+        /* Header Context Components Styling */
+        .gallery-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--brand-text-dark);
+        }
+
+        .close-btn {
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+        }
+        .close-btn:hover { color: #ffffff; opacity: 0.9; }
+
+        .email-link {
+            color: var(--brand-primary);
+            font-weight: 500;
+        }
+        .email-link .material-icons-outlined { font-size: 28px; }
+
+        /* Action Links and Utility Search Fields */
+        .add-gallery-trigger {
+            color: var(--brand-primary);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .search-input {
+            background-color: var(--brand-input-bg);
+            border: 1px solid var(--brand-border);
+            border-radius: 12px;
+            padding-left: 40px;
+            height: 44px;
+            color: var(--brand-text-dark);
+        }
+        .search-input:focus {
+            border-color: var(--brand-primary);
+            box-shadow: none;
+            background-color: #ffffff;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a89485;
+        }
+
+        /* Core Requirement: Display images with Curved Corners and WITHOUT Padding */
+        .gallery-card-wrapper {
+            position: relative;
+            border: 1px solid var(--brand-border);
+            border-radius: 20px;
+            overflow: hidden; 
+            background-color: #ffffff;
+            aspect-ratio: 4 / 5;
+        }
+
+        .gallery-display-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            padding: 0 !important; 
+            margin: 0 !important;
+        }
+
+        /* Core Requirement: Caption shows ONLY on Hover with Transparent Background */
+        .caption-overlay-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: transparent; 
+            opacity: 0; 
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+            pointer-events: none; 
+        }
+
+        /* Base Pill Shape Capsule representing design mockup style */
+        .caption-pill-box {
+            background-color: rgba(255, 251, 247, 0.92); 
+            border: 1px solid var(--brand-border);
+            border-radius: 50px;
+            padding: 6px 16px;
+            text-align: center;
+            color: var(--brand-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 4px 12 rgba(58, 28, 8, 0.06);
+        }
+
+        /* Hover Interactivity Triggers */
+        .gallery-card-wrapper:hover .caption-overlay-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ui-divider {
+            border-top: 1px dashed var(--brand-border);
+            opacity: 1;
+        }
+
+        /* Input / Upload Panel Form Layout */
+        .upload-panel {
+            border: 1px dashed var(--brand-border);
+            border-radius: 20px;
+            background-color: rgba(255, 251, 247, 0.5);
+        }
+
+        .panel-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--brand-primary);
+        }
+
+        .upload-dropzone {
+            border: 1px dashed var(--brand-primary);
+            border-radius: 16px;
+            background-color: var(--brand-input-bg);
+            cursor: pointer;
+            min-height: 180px;
+            transition: background-color 0.2s ease;
+        }
+        .upload-dropzone:hover {
+            background-color: #fdf2e9;
+        }
+
+        .upload-icon {
+            font-size: 42px;
+            color: var(--brand-primary);
+        }
+        .upload-main-text {
+            font-weight: 600;
+            color: var(--brand-text-dark);
+        }
+        .upload-sub-text {
+            font-size: 0.8rem;
+            color: #a89485;
+        }
+
+        .input-field-label {
+            font-weight: 500;
+            color: var(--brand-text-dark);
+        }
+
+        .UI-input {
+            background-color: #ffffff;
+            border: 1px solid var(--brand-border);
+            border-radius: 10px;
+            height: 40px;
+        }
+        .UI-input:focus {
+            border-color: var(--brand-primary);
+            box-shadow: none;
+        }
+
+        .submit-publish-btn {
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: opacity 0.2s ease;
+        }
+        .submit-publish-btn:hover {
+            color: #ffffff;
+            opacity: 0.9;
+        }
+        .send-icon {
+            transform: rotate(-25deg);
+            font-size: 18px;
+        }
+
+        .preview-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        /* RESPONSIVE LAYOUT TRANSLATIONS */
+        @media (max-width: 991.98px) {
+            .mobile-top-header {
+                display: flex; 
+            }
+
+            .cq-sidebar {
+                transform: translateX(-100%); 
+                box-shadow: 4px 0 15px rgba(0,0,0,0.25);
+            }
+
+            .cq-sidebar.show-sidebar {
+                transform: translateX(0);
+            }
+
+            .dashboard-workspace {
+                margin-left: 0;
+                padding: 85px 15px 30px 15px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-top-header">
+        <span class="text-white fw-bold fs-5">CodeQueen Ecosystem</span>
+        <button class="hamburger-toggle-btn" id="open-sidebar-trigger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="cq-sidebar" id="main-application-sidebar">
+        <div>
+            <div class="sidebar-brand-area">
+                <button class="close-btn-mock" id="close-sidebar-trigger"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <nav class="nav flex-column">
+                <a href="alumni.html" class="cq-nav-link"><i class="bi bi-house-door"></i> Home</a>
+                <a href="profiles.html" class="cq-nav-link"><i class="bi bi-person"></i> Profiles</a>
+                <a href="gallery.html" class="cq-nav-link active"><i class="bi bi-image"></i> Gallery</a>
+                <a href="resources.html" class="cq-nav-link"><i class="bi bi-folder"></i> Resources</a>
+                <a href="projects.html" class="cq-nav-link"><i class="bi bi-briefcase"></i> Projects</a>
+                <a href="achievements.html" class="cq-nav-link"><i class="bi bi-award"></i> Achievements</a>
+                <a href="wall-of-fame.html" class="cq-nav-link"><i class="bi bi-star"></i> Wall of fame</a>
+                <a href="partners.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                <a href="elections.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                <a href="mentors.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Mentors</a>
+            </nav>
+        </div>
+        <button onclick="logoutSession()" class="logout-btn-box shadow-sm">
+            <i class="bi bi-box-arrow-left"></i> Logout !
+        </button>
+    </div>
+
+    <div class="dashboard-workspace">
+        <div class="main-gallery-card p-4">
+            
+            <header class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn close-btn d-flex align-items-center justify-content-center" onclick="window.history.back()">
+                        <span class="material-icons-outlined">close</span>
+                    </button>
+                    <h1 class="gallery-title m-0">Our Gallery</h1>
+                </div>
+                <a href="mailto:admin@gmail.com" class="email-link d-flex align-items-center gap-1 text-decoration-none">
+                    <span class="email-text">email</span>
+                    <span class="material-icons-outlined">mail</span>
+                </a>
+            </header>
+
+            <div class="row align-items-center mb-4 g-3">
+                <div class="col-md-6">
+                    <a href="#upload-section" class="add-gallery-trigger text-decoration-none d-flex align-items-center gap-2">
+                        <span class="material-icons-outlined">add_circle_outline</span>
+                        <span>Add to gallery</span>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <div class="search-wrapper position-relative">
+                        <span class="material-icons-outlined search-icon">search</span>
+                        <input type="text" id="keywordSearch" class="form-control search-input" placeholder="Search keyword">
+                    </div>
+                </div>
+            </div>
+
+            <main class="row g-4 m-0 p-0" id="galleryGrid">
+                </main>
+
+            <hr class="ui-divider my-5">
+
+            <section id="upload-section" class="upload-panel p-4">
+                <h2 class="panel-title mb-4">Add to gallery</h2>
+                
+                <form id="galleryUploadForm" novalidate>
+                    <div class="row g-4">
+                        <div class="col-lg-4 col-md-5">
+                            <label for="imageFileInput" class="upload-dropzone d-flex flex-column align-items-center justify-content-center text-center p-3 w-100 h-100">
+                                <input type="file" id="imageFileInput" accept="image/*" class="d-none" required>
+                                <div id="dropzonePreview" class="d-flex flex-column align-items-center justify-content-center h-100 w-100">
+                                    <span class="material-icons-outlined upload-icon mb-2">add_photo_alternate</span>
+                                    <span class="upload-main-text">Add photo</span>
+                                    <span class="upload-sub-text mt-1">jpg, png, jpeg, ...</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="col-lg-8 col-md-7 d-flex flex-column justify-content-between">
+                            <div class="metadata-inputs-container mb-3">
+                                <div class="row align-items-center mb-3">
+                                    <label class="col-sm-3 col-form-label input-field-label">Caption:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="imageCaption" class="form-control UI-input" placeholder="Less than 10 words">
+                                    </div>
+                                </div>
+                                <div class="row align-items-center mb-3">
+                                    <label class="col-sm-3 col-form-label input-field-label">Keywords:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="imageKeywords" class="form-control UI-input" placeholder="e.g., girl, shoe">
+                                    </div>
+                                </div>
+                                <div class="row align-items-center">
+                                    <label class="col-sm-3 col-form-label input-field-label">Category:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="imageCategory" class="form-control UI-input">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-auto">
+                                <button type="submit" class="btn submit-publish-btn d-flex align-items-center gap-2 px-4 py-2">
+                                    <span class="material-icons-outlined send-icon">send</span>
+                                    <span>Publish</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="gallery.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('main-application-sidebar');
+            const openBtn = document.getElementById('open-sidebar-trigger');
+            const closeBtn = document.getElementById('close-sidebar-trigger');
+
+            if (openBtn && sidebar) {
+                openBtn.addEventListener('click', () => {
+                    sidebar.classList.add('show-sidebar');
+                });
+            }
+
+            if (closeBtn && sidebar) {
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.remove('show-sidebar');
+                });
+            }
+        });
+
+        function logoutSession() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

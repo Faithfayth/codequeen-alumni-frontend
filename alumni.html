@@ -209,6 +209,14 @@
             position: relative;
         }
 
+        .profile-workspace-box {
+            background-color: #FFFBF7;
+            border: 2px solid var(--cq-gold-bg);
+            border-radius: 24px;
+            padding: 24px;
+            display: none; /* Controlled dynamically by JS toggle logic */
+        }
+
         .btn-create-blog-trigger {
             position: absolute;
             top: 20px;
@@ -421,6 +429,9 @@
                     </div>
                     <div>
                         <h2 class="fw-bold mb-1" id="dom-user-name">Alumna</h2>
+                        <button type="button" class="btn text-white btn-sm fw-semibold mb-2 rounded-3 shadow-sm d-inline-flex align-items-center gap-1" id="btn-my-profile" style="background-color: var(--cq-gold-bg);">
+                            <i class="bi bi-person-gear"></i> My Profile
+                        </button>
                         <h5 class="text-muted mb-2">Cohort: <span id="dom-user-cohort" class="fw-semibold text-dark">...</span></h5>
                         <div class="d-flex align-items-center justify-content-center justify-content-sm-start gap-2 fw-semibold">
                             <span id="dom-user-role">Alumna</span>
@@ -430,7 +441,7 @@
                 </div>
                 <div class="d-flex gap-3 align-self-end mt-3 mt-sm-0">
                     <div class="action-circle-icon"><i class="bi bi-envelope fs-5"></i><div class="black-indicator-dot"></div></div>
-                    <div class="action-circle-icon"><i class="bi bi-people fs-5"></i><div class="black-indicator-dot"></div></div>
+                    <div class="action-circle-icon" onclick="window.location.href='genmessages.html'"><i class="bi bi-people fs-5"></i><div class="black-indicator-dot"></div></div>
                 </div>
             </div>
         </div>
@@ -448,7 +459,7 @@
     <div class="row g-4">
         
         <div class="col-lg-8">
-            <div class="blogs-wrapper-box">
+            <div class="blogs-wrapper-box mb-4">
                 <h3 class="fw-bold mb-4 text-center">Blogs</h3>
                 
                 <button class="btn-create-blog-trigger shadow" data-bs-toggle="modal" data-bs-target="#createBlogModal" title="Publish New Post">
@@ -458,6 +469,49 @@
                 <div id="blogs-rendered-list" class="text-start">
                     <div class="text-center text-muted py-3 small">Loading community blogs...</div>
                 </div>
+            </div>
+
+            <div id="profile-management-workspace" class="profile-workspace-box shadow-sm mb-4">
+                <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">
+                    <h4 class="fw-bold m-0 text-dark" id="profile-workspace-title"><i class="bi bi-sliders me-2 text-warning"></i>Manage Alumna Profile</h4>
+                    <button type="button" class="btn-close" onclick="document.getElementById('profile-management-workspace').style.display='none'"></button>
+                </div>
+                <form id="update-alumna-profile-form">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Full Name</label>
+                            <input type="text" class="form-control rounded-3" id="edit-profile-fullname" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Profile Image URL</label>
+                            <input type="url" class="form-control rounded-3" id="edit-profile-image">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Professional Bio</label>
+                            <textarea class="form-control rounded-3" id="edit-profile-bio" rows="3" required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">CV URL Link</label>
+                            <input type="url" class="form-control rounded-3" id="edit-profile-cv">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-uppercase">Portfolio Website Link</label>
+                            <input type="url" class="form-control rounded-3" id="edit-profile-portfolio">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-uppercase">Core Tech Skills (Comma Separated)</label>
+                            <input type="text" class="form-control rounded-3" id="edit-profile-skills" placeholder="Node.js, Express.js, MongoDB, JavaScript">
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2 border-top d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-danger px-4 rounded-3 fw-semibold" id="btn-delete-profile-exec" style="display: none;">
+                            <i class="bi bi-trash3 me-1"></i> Delete Profile
+                        </button>
+                        <button type="submit" class="btn text-white px-4 rounded-3 fw-semibold" style="background-color: var(--cq-gold-bg);">
+                            <i class="bi bi-cloud-arrow-up me-1"></i> <span id="submit-profile-btn-text">Save Updates</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 

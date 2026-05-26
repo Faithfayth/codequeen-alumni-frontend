@@ -116,9 +116,10 @@ function bindLiveUrlAssetPreviews() {
 }
 
 function getAuthorizationSecurityHeaders() {
+    const token = localStorage.getItem('token');
     return {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `Bearer ${token ? token.trim() : ''}`
     };
 }
 
@@ -160,7 +161,7 @@ async function executingOpportunityTransmission(e) {
             document.getElementById('oppPreviewImg').classList.add('d-none');
             document.getElementById('oppPlaceholderIcon').classList.remove('d-none');
         } else {
-            renderStatusBannerNotification(`Submission rejection: ${data.message}`, "danger");
+            renderStatusBannerNotification(`Submission rejection: ${data.message || 'Validation failed'}`, "danger");
         }
     } catch (err) {
         console.error(err);
@@ -181,6 +182,7 @@ async function executingEventTransmission(e) {
     const enddate = document.getElementById('inputEventEndDate').value;
     const location = document.getElementById('inputEventLocation').value.trim();
     const imageurl = document.getElementById('inputEventImageUrl').value.trim();
+    const url = document.getElementById('inputEventUrl').value.trim();
 
     // Operational Constraint Rule Validation: End Dates cannot occur sequentially before Start Dates
     if (new Date(enddate) < new Date(startdate)) {
@@ -188,7 +190,7 @@ async function executingEventTransmission(e) {
         return;
     }
 
-    const bodyPayload = { title, description, category, startdate, enddate, location, imageurl };
+    const bodyPayload = { title, description, category, startdate, enddate, location, imageurl, url };
 
     try {
         const response = await fetch(`${API_EVENTS_BASE}/createevent`, {
@@ -205,7 +207,7 @@ async function executingEventTransmission(e) {
             document.getElementById('eventPreviewImg').classList.add('d-none');
             document.getElementById('eventFallbackIcon').classList.remove('d-none');
         } else {
-            renderStatusBannerNotification(`Ecosystem rejection: ${data.message}`, "danger");
+            renderStatusBannerNotification(`Ecosystem rejection: ${data.message || 'Validation failed'}`, "danger");
         }
     } catch (err) {
         console.error(err);

@@ -4,6 +4,7 @@
  */
 
 const API_BASE_URL = 'http://localhost:5000';
+let currentAlumnaProfileId = null; // Tracks the user's logged-in ID (alumnaID) to safely check for profile existence
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Verify session security token before compiling information models
@@ -28,6 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const createBlogForm = document.getElementById('create-blog-form');
     if (createBlogForm) {
         createBlogForm.addEventListener('submit', (e) => handlePostNewBlog(e, storedToken));
+    }
+
+    // --- ADJUSTED PROFILE EVENT HANDLERS ---
+    const myProfileBtn = document.getElementById('btn-my-profile');
+    if (myProfileBtn) {
+        myProfileBtn.addEventListener('click', () => handleToggleAndFetchProfile(storedToken, cachedUserData));
+    }
+
+    const updateProfileForm = document.getElementById('update-alumna-profile-form');
+    if (updateProfileForm) {
+        updateProfileForm.addEventListener('submit', (e) => handleUpdateOrSaveProfile(e, storedToken));
+    }
+
+    const deleteProfileBtn = document.getElementById('btn-delete-profile-exec');
+    if (deleteProfileBtn) {
+        deleteProfileBtn.addEventListener('click', () => handleDeleteProfile(storedToken));
     }
 });
 
@@ -57,6 +74,175 @@ function renderUserProfileDetails(cachedUserData) {
 }
 
 /**
+ * FIXED: Fetches single profile based on logged-in user ID saved as alumnaID
+ */
+async function handleToggleAndFetchProfile(token, cachedUserData) {
+    const workspace = document.getElementById('profile-management-workspace');
+    if (!workspace) return;
+
+    // Toggle Visibility
+    if (workspace.style.display === 'block') {
+        workspace.style.display = 'none';
+        return;
+    }
+
+    workspace.style.display = 'block';
+    workspace.scrollIntoView({ behavior: 'smooth' });
+
+    try {
+        const userObj = JSON.parse(cachedUserData);
+        // Extract the absolute logged in User ID and save it as our trackable state value
+        const loggedInAlumnaId = userObj._id || userObj.id;
+        currentAlumnaProfileId = loggedInAlumnaId; 
+
+        // Utilizing backend route structure matching: /getsingleprofile/:id passing the loggedInAlumnaId
+        const response = await fetch(`${API_BASE_URL}/profiles/getsingleprofile/${loggedInAlumnaId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const profileWorkspaceTitle = document.getElementById('profile-workspace-title');
+        const submitProfileBtnText = document.getElementById('submit-profile-btn-text');
+        const deleteProfileBtn = document.getElementById('btn-delete-profile-exec');
+
+        // Capture if a profile container explicitly exists for this alumnaID
+        if (response.ok) {
+            const myProfile = await response.json();
+
+            // Populate form inputs with current profile structural details
+            document.getElementById('edit-profile-fullname').value = myProfile.fullname || '';
+            document.getElementById('edit-profile-image').value = myProfile.profileimage || '';
+            document.getElementById('edit-profile-bio').value = myProfile.bio || '';
+            document.getElementById('edit-profile-cv').value = myProfile.cvUrl || '';
+            document.getElementById('edit-profile-portfolio').value = myProfile.portfoliolink || '';
+            document.getElementById('edit-profile-skills').value = Array.isArray(myProfile.skills) ? myProfile.skills.join(', ') : '';
+
+            // Update UI components for existing state (Update mode)
+            if (profileWorkspaceTitle) profileWorkspaceTitle.innerHTML = `<i class="bi bi-sliders me-2 text-warning"></i>Update Profile`;
+            if (submitProfileBtnText) submitProfileBtnText.textContent = 'Save Update';
+            if (deleteProfileBtn) deleteProfileBtn.style.display = 'inline-block';
+            
+            // Mark the form layout state context data attribute to accurately point matching handlers
+            document.getElementById('update-alumna-profile-form').setAttribute('data-profile-exists', 'true');
+
+        } else if (response.status === 404) {
+            // No profile found for this alumnaID - Prepare inputs to connect with profile creator engine
+            document.getElementById('update-alumna-profile-form').reset();
+            document.getElementById('edit-profile-fullname').value = userObj.name || userObj.username || '';
+
+            // Update UI components for creation state
+            if (profileWorkspaceTitle) profileWorkspaceTitle.innerHTML = `<i class="bi bi-person-plus me-2 text-warning"></i>Create Your Profile`;
+            if (submitProfileBtnText) submitProfileBtnText.textContent = 'Publish Profile';
+            if (deleteProfileBtn) deleteProfileBtn.style.display = 'none';
+            
+            // Mark form state context attribute to false
+            document.getElementById('update-alumna-profile-form').setAttribute('data-profile-exists', 'false');
+        } else {
+            throw new Error('Server returned an unexpected status code.');
+        }
+    } catch (error) {
+        console.error("Failed fetching context from adjusted single profile route:", error);
+    }
+}
+
+/**
+ * FIXED: Dispatches updates to updateprofile route or saves new via createprofile route using alumnaID tracking
+ */
+async function handleUpdateOrSaveProfile(e, token) {
+    e.preventDefault();
+
+    if (!currentAlumnaProfileId) {
+        alert("Session context error. Unable to identify active user.");
+        return;
+    }
+
+    const formElement = document.getElementById('update-alumna-profile-form');
+    const profileExists = formElement.getAttribute('data-profile-exists') === 'true';
+
+    const payload = {
+        alumnaID: currentAlumnaProfileId, // Explicitly pass current logged-in identity tracking reference
+        fullname: document.getElementById('edit-profile-fullname').value.trim(),
+        profileimage: document.getElementById('edit-profile-image').value.trim(),
+        bio: document.getElementById('edit-profile-bio').value.trim(),
+        cvUrl: document.getElementById('edit-profile-cv').value.trim(),
+        portfoliolink: document.getElementById('edit-profile-portfolio').value.trim(),
+        skills: document.getElementById('edit-profile-skills').value.split(',').map(s => s.trim()).filter(Boolean)
+    };
+
+    try {
+        let response;
+        if (profileExists) {
+            // Profile verified as existing - route payload to: PUT /updateprofile/:id
+            response = await fetch(`${API_BASE_URL}/profiles/updateprofile/${currentAlumnaProfileId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            // Profile does not exist - route data securely to: POST /createprofile
+            response = await fetch(`${API_BASE_URL}/profiles/createprofile`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        const data = await response.json();
+        if (response.ok) {
+            alert(data.message || "Profile synchronization complete!");
+            workspace.style.display = 'none';
+            // Force reset state attribute tracking layout context
+            formElement.removeAttribute('data-profile-exists');
+        } else {
+            alert(data.message || "Action failed. Verify endpoint structures.");
+        }
+    } catch (error) {
+        console.error("Critical profile lifecycle breakdown:", error);
+        alert("An error occurred trying to connect upstream.");
+    }
+}
+
+/**
+ * FIXED: Core elimination pointing directly to DELETE /deleteprofile/:id matching target user
+ */
+async function handleDeleteProfile(token) {
+    if (!currentAlumnaProfileId) return;
+
+    if (!confirm("Are you certain you want to delete your profile permanently? This cannot be undone.")) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/profiles/deleteprofile/${currentAlumnaProfileId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            alert(data.message || "Profile record erased.");
+            document.getElementById('update-alumna-profile-form').reset();
+            document.getElementById('update-alumna-profile-form').removeAttribute('data-profile-exists');
+            document.getElementById('profile-management-workspace').style.display = 'none';
+        } else {
+            alert(data.message || "Erasing profile process rejected.");
+        }
+    } catch (error) {
+        console.error("Delete call dropped execution:", error);
+    }
+}
+
+/**
  * Automatically fetches active community updates from backend controllers
  */
 async function fetchCommunityBlogs(token) {
@@ -79,7 +265,6 @@ async function fetchCommunityBlogs(token) {
             return;
         }
 
-        // Render iterative HTML elements directly inside the target dashboard workspace
         listContainer.innerHTML = blogs.map(blog => {
             const commentsHtml = blog.comments && blog.comments.length > 0 
                 ? blog.comments.map(c => `

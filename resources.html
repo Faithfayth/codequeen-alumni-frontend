@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Alumni Resources Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cq-orange: #E39224;
+            --cq-burgundy: #C56C64;
+            --cq-cream: #FFF5E9;
+            --cq-cream-dark: #FCEFD2;
+            --cq-text-dark: #3A2312;
+            --cq-sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Sidebar Navigation Wrapper Design */
+        .sidebar-wrapper {
+            width: var(--cq-sidebar-width);
+            background-color: var(--cq-burgundy);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0 0 30px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            color: #FFFFFF;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 15px 0;
+            list-style: none;
+            margin: 0;
+            width: 100%;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #FFFFFF !important;
+            text-decoration: none;
+            font-weight: 600;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            color: #FFFFFF !important;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: #FFFFFF !important;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Sidebar Logout Button Styling */
+        .btn-logout-sidebar {
+            background-color: #FFFFFF;
+            color: var(--cq-burgundy) !important;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+            font-weight: 700;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: calc(100% - 40px);
+            margin: 0 auto;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout-sidebar i {
+            color: var(--cq-burgundy) !important;
+        }
+
+        .btn-logout-sidebar:hover {
+            background-color: var(--cq-cream);
+            border-color: var(--cq-cream);
+            color: var(--cq-burgundy) !important;
+        }
+
+        /* Content Area Canvas Frames */
+        .main-content-pane {
+            margin-left: var(--cq-sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-cream);
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-label-headline {
+            color: var(--cq-orange);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--cq-cream);
+            padding-bottom: 8px;
+        }
+
+        /* Dynamic Resource Feed Cards */
+        .resource-display-card {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(58, 35, 18, 0.02);
+        }
+
+        .resource-image-frame-box {
+            background-color: var(--cq-cream);
+            border: 1px dashed rgba(197, 108, 100, 0.3);
+            border-radius: 14px;
+            width: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(58, 35, 18, 0.5);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Custom Button Extensions */
+        .btn-cq-orange {
+            background-color: var(--cq-orange);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-cq-orange:hover {
+            background-color: #cb801b;
+            color: #FFFFFF;
+        }
+
+        .btn-action-outline {
+            border: 1px solid rgba(197, 108, 100, 0.3);
+            background-color: #FFFFFF;
+            color: var(--cq-text-dark);
+            border-radius: 8px;
+            font-size: 13px;
+            padding: 6px 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-action-outline:hover {
+            background-color: var(--cq-cream-dark);
+        }
+
+        /* Form Custom Overrides */
+        .form-control, .form-select {
+            border: 1px solid rgba(197, 108, 100, 0.2);
+            border-radius: 8px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--cq-orange);
+            box-shadow: 0 0 0 0.25rem rgba(227, 146, 36, 0.15);
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar-wrapper { left: -var(--cq-sidebar-width); }
+            .sidebar-wrapper.show { left: 0; }
+            .main-content-pane { margin-left: 0; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar-wrapper" id="sidebarMenu">
+        <div>
+            <div class="sidebar-brand">
+                <h4 class="m-0 text-white fw-bold text-uppercase">CodeQueen</h4>
+                <small class="text-white-50">Alumni Ecosystem Hub</small>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="alumni.html" class="sidebar-link"><i class="bi bi-house-door"></i> HOME</a></li>
+            <li><a href="profiles.html" class="sidebar-link"><i class="bi bi-person"></i> Profiles</a></li>
+            <li><a href="gallery.html" class="sidebar-link"><i class="bi bi-image"></i> Gallery</a></li>
+            <li><a href="resources.html" class="sidebar-link active"><i class="bi bi-folder"></i> Resources</a></li>
+            <li><a href="projects.html" class="sidebar-link"><i class="bi bi-briefcase"></i> Projects</a></li>
+            <li><a href="achievements.html" class="sidebar-link"><i class="bi bi-award"></i> Achievements</a></li>
+            <li><a href="wall.html" class="sidebar-link"><i class="bi bi-star"></i> Wall of fame</a></li>
+            <li><a href="partners.html" class="sidebar-link"><i class="bi bi-building"></i> Partners</a></li>
+            <li><a href="elections.html" class="sidebar-link"><i class="bi bi-box-seam"></i> Elections</a></li>
+            <li><a href="mentors.html" class="sidebar-link"><i class="bi bi-mortarboard"></i> Mentors</a></li>
+        </ul>
+        </div>
+
+        <button class="btn btn-logout-sidebar" id="btnSidebarSignout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout !
+        </button>
+    </nav>
+
+    <main class="main-content-pane">
+        
+        <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-lg-none me-3" id="sidebarToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-muted fa-lg"></i>
+                    <h2 class="h4 m-0 fw-bold">Alumni Shared Resources</h2>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" class="btn btn-sm btn-cq-orange d-flex align-items-center gap-2 px-3 py-2" id="shortcutAddResourceBtn">
+                    <i class="fa-solid fa-circle-plus fa-lg"></i> Add Resource
+                </button>
+                
+                <div class="dropdown">
+                    <button class="btn btn-light border dropdown-toggle fw-bold" type="button" id="alumnaDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="badge bg-warning rounded-circle p-1 me-2"><small class="text-dark">SIS</small></span> Hey sister.
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="alumnaDropdown">
+                        <li><a class="dropdown-item" href="#" id="btnTopBarLogout">Logout Session</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div id="alertLayoutAnchor"></div>
+
+        <section class="mb-5">
+            <h5 class="section-label-headline text-uppercase tracking-wider">Resources Feed</h5>
+            <div id="alumniResourcesList">
+                <div class="text-center py-5 text-muted">
+                    <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
+                    Synchronizing network asset data rows...
+                </div>
+            </div>
+        </section>
+
+        <section class="cq-container-card" id="resourceSubmissionSection">
+            <h5 class="fw-bold mb-4 text-dark text-capitalize"><i class="fa-solid fa-plus-circle text-warning me-2"></i>Add Resource Asset</h5>
+            <form id="formResourceSubmission" enctype="multipart/form-data">
+                <div class="row g-4">
+                    
+                    <div class="col-12 col-md-4">
+                        <div class="resource-image-frame-box p-3" id="dropFileZone" onclick="document.getElementById('fileResourceAsset').click();">
+                            <i class="fa-solid fa-cloud-arrow-up fa-3x mb-2 text-warning"></i>
+                            <div class="text-center small" id="filePlaceholderMeta">
+                                <span class="fw-bold d-block text-dark">Add image / document file</span>
+                                <span class="text-muted text-lowercase">png / jpg / jpeg / pdf / docx (Max 10MB)</span>
+                            </div>
+                            <div class="text-center small d-none" id="fileSelectedFeedback">
+                                <i class="fa-solid fa-circle-check text-success fa-2x mb-2"></i>
+                                <span class="fw-bold d-block text-success text-truncate" id="lblAttachedFileName" style="max-width:200px;">Resource file attached!</span>
+                            </div>
+                            <input type="file" id="fileResourceAsset" name="resourceFile" class="d-none">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-8">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">Title :</label>
+                                <input type="text" class="form-control form-control-sm" id="inputTitle" required placeholder="Alumni Handbook 2026">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">Description :</label>
+                                <textarea class="form-control form-control-sm" id="inputDescription" rows="3" required placeholder="A comprehensive guide or toolkit summary for community members."></textarea>
+                            </div>
+                            <div class="col-12" id="urlInputContainerBlock">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">url :</label>
+                                <input type="url" class="form-control form-control-sm" id="inputUrl" placeholder="https://codequeen.org/resources/handbook">
+                                <small class="text-muted" style="font-size: 11px;">*Leave empty if you attached a local file above instead.</small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold mb-1 text-uppercase">category :</label>
+                                <select class="form-select form-select-sm" id="selectCategory" required>
+                                    <option value="" disabled selected>Select category</option>
+                                    <option value="Documentation">Documentation</option>
+                                    <option value="Guide">Guide</option>
+                                    <option value="E-Book">E-Book</option>
+                                    <option value="Curriculum Resource">Curriculum Resource</option>
+                                    <option value="Template File">Template File</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-cq-orange px-4 py-2 text-white text-uppercase tracking-wide">
+                                <i class="fa-solid fa-paper-plane me-2"></i>Publish Asset
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="resources.js"></script>
+</body>
+</html>
