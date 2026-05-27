@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQueen - Events Platform Space</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* CSS Palette and Variable Configuration matching Alumna Profile Dashboard */
+        :root {
+            --cq-sidebar-bg: #C56C64;   /* Matching layout sidebar tone */
+            --cq-gold-bg: #E39224;      /* Layout gold accent panel color */
+            --cq-card-soft: #FFF5E9;    /* Off-white soft container fill */
+            --cq-button-rose: #C56C64;  /* Accent buttons */
+            --cq-text-dark: #3A2312;    /* Soft deep dark typography font */
+            
+            --cq-orange: #f26f21;
+            --cq-cream: #fffdf9;
+            --cq-card-inner: #fff5eb;
+            --cq-border: #fcdcc5;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* MOBILE HEADER / TOP BAR (Hidden on Desktop) */
+        .mobile-top-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* SIDEBAR PANEL NAVIGATION STYLE PACK */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-brand-area {
+            display: flex;
+            align-items: center;
+            padding: 4px 16px 20px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 15px;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 11px 16px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 3px;
+            border-radius: 8px;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        .logout-btn-box {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* MAIN BODY STRUCTURE CONTAINER WORKSPACE */
+        .dashboard-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .main-events-card {
+            background-color: var(--cq-cream);
+            border: 1px solid var(--cq-border);
+            border-radius: 28px;
+            box-shadow: 0 4px 20px rgba(58, 28, 8, 0.02);
+        }
+
+        /* Top Header Area Configurations */
+        .header-icon-badge {
+            background-color: var(--cq-gold-bg);
+            color: #ffffff;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+        }
+
+        .gallery-title {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--cq-text-dark);
+        }
+
+        .email-link {
+            color: var(--cq-gold-bg);
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        .email-link:hover {
+            opacity: 0.8;
+        }
+        .email-link i { font-size: 1.4rem; vertical-align: middle; }
+
+        /* Custom Tab Bar System Overrides */
+        .nav-tabs-cq {
+            border-bottom: 2px solid var(--cq-border);
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .nav-tabs-cq .nav-link {
+            border: none;
+            color: var(--cq-text-dark);
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 10px 20px;
+            background: transparent;
+            border-bottom: 3px solid transparent;
+            border-radius: 0;
+            transition: all 0.2s;
+        }
+
+        .nav-tabs-cq .nav-link:hover {
+            color: var(--cq-gold-bg);
+        }
+
+        .nav-tabs-cq .nav-link.active {
+            color: var(--cq-gold-bg);
+            background: transparent;
+            border-bottom: 3px solid var(--cq-gold-bg);
+        }
+
+        /* Card Content Rows and Mockup Layout Grids */
+        .event-row-container {
+            background-color: #ffffff;
+            border: 1px solid var(--cq-border);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .event-graphic-thumbnail {
+            background-color: var(--cq-card-soft);
+            border: 1px solid var(--cq-border);
+            border-radius: 18px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
+            max-width: 150px;
+        }
+
+        .event-graphic-thumbnail i {
+            font-size: 3rem;
+            color: var(--cq-gold-bg);
+        }
+
+        .event-graphic-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .event-wireframe-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .event-wireframe-table td {
+            padding: 8px 4px;
+            vertical-align: top;
+            color: var(--cq-text-dark);
+            font-size: 0.95rem;
+        }
+
+        .event-wireframe-table td.property-label {
+            font-weight: 600;
+            width: 110px;
+        }
+
+        .event-wireframe-table td.property-divider {
+            width: 25px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .event-wireframe-table td.property-value {
+            color: #594030;
+        }
+
+        .btn-register-action {
+            border: 1px solid var(--cq-gold-bg);
+            background-color: #ffffff;
+            color: var(--cq-gold-bg);
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 8px 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-register-action:hover:not(:disabled) {
+            background-color: var(--cq-card-soft);
+            color: var(--cq-gold-bg);
+        }
+
+        .btn-register-action:disabled {
+            border-color: #dcd4cc;
+            color: #a3958a;
+            background-color: #f7f4f0;
+            cursor: not-allowed;
+        }
+
+        .cq-spinner {
+            color: var(--cq-gold-bg);
+        }
+
+        /* RESPONSIVE MEDIA BREAKPOINTS */
+        @media (max-width: 991.98px) {
+            .mobile-top-header {
+                display: flex;
+            }
+            .cq-sidebar {
+                transform: translateX(-100%);
+                box-shadow: 4px 0 15px rgba(0,0,0,0.25);
+            }
+            .cq-sidebar.show-sidebar {
+                transform: translateX(0);
+            }
+            .dashboard-workspace {
+                margin-left: 0;
+                padding: 85px 15px 30px 15px;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .event-graphic-thumbnail {
+                max-width: 120px;
+                margin: 0 auto;
+            }
+            .event-wireframe-table td.property-label {
+                width: 95px;
+            }
+            .btn-register-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-top-header">
+        <span class="text-white fw-bold fs-5">CodeQueen Ecosystem</span>
+        <button class="hamburger-toggle-btn" id="open-sidebar-trigger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="cq-sidebar" id="main-application-sidebar">
+        <div>
+            <div class="sidebar-brand-area">
+                <span class="text-white fw-bold fs-5">Alumni Ecosystem</span>
+            </div>
+            <nav class="nav flex-column">
+                <a href="alumni.html" class="cq-nav-link"><i class="bi bi-house-door"></i> Home</a>
+                <a href="profiles.html" class="cq-nav-link"><i class="bi bi-person"></i> Profiles</a>
+                <a href="gallery.html" class="cq-nav-link"><i class="bi bi-image"></i> Gallery</a>
+                <a href="resources.html" class="cq-nav-link"><i class="bi bi-folder"></i> Resources</a>
+                <a href="projects.html" class="cq-nav-link"><i class="bi bi-briefcase"></i> Projects</a>
+                <a href="achievements.html" class="cq-nav-link"><i class="bi bi-award"></i> Achievements</a>
+                <a href="wall-of-fame.html" class="cq-nav-link"><i class="bi bi-star"></i> Wall of fame</a>
+                <a href="partners.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                <a href="elections.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                <a href="mentors.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Mentors</a>
+                <a href="events.html" class="cq-nav-link active"><i class="bi bi-calendar-event"></i> Events</a>
+            </nav>
+        </div>
+        <button onclick="logoutSession()" class="logout-btn-box shadow-sm">
+            <i class="bi bi-box-arrow-left"></i> Logout !
+        </button>
+    </div>
+
+    <div class="dashboard-workspace">
+        <div class="container-fluid main-events-card p-4">
+            
+            <header class="d-flex justify-content-between align-items-center mb-4 pb-2">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon-badge d-flex align-items-center justify-content-center">
+                        <i class="bi bi-calendar-check fs-5"></i>
+                    </div>
+                    <h2 class="gallery-title m-0">Events are here!!!</h2>
+                </div>
+                <a href="mailto:admin@gmail.com" class="email-link d-flex align-items-center gap-2 text-decoration-none">
+                    <span class="small">email</span>
+                    <i class="bi bi-envelope"></i>
+                </a>
+            </header>
+
+            <ul class="nav nav-tabs nav-tabs-cq border-0" id="eventsFilterTabs">
+                <li class="nav-item">
+                    <button class="nav-link active" id="tabUpcoming" type="button">Upcoming Events</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tabPast" type="button">Past Events</button>
+                </li>
+            </ul>
+
+            <div id="asyncLoadingSpinner" class="text-center py-5 d-none">
+                <div class="spinner-border cq-spinner" role="status"></div>
+            </div>
+
+            <section id="eventsDisplayDeck" class="d-flex flex-column gap-4">
+                </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="events.js"></script>
+</body>
+</html>

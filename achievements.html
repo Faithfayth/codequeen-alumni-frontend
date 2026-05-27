@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Community Achievements</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --cq-clay: #C56C64;
+            --cq-gold: #E39224;
+            --cq-cream: #FFF5E9;
+            --cq-dark: #3A2312;
+            --cq-light: #FFFBF7;
+            --cq-orange-tint: #FFF0E4;
+            --cq-border-orange: #FCD8BD;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-dark);
+        }
+
+        /* Mobile Header Top Navigation Band */
+        .mobile-header {
+            display: none;
+            background-color: var(--cq-clay);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* App Persistent Left Sidebar Navigation Drawer Frame */
+        .cq-sidebar {
+            background-color: var(--cq-clay);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-clay);
+            font-weight: 600;
+        }
+
+        .main-workspace {
+            margin-left: 260px;
+            padding: 40px;
+        }
+
+        /* UI/UX Wireframe Interface Container Card */
+        .interface-canvas-card {
+            background-color: var(--cq-light);
+            border: 2px solid var(--cq-border-orange);
+            border-radius: 28px;
+            padding: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+            box-shadow: 0 4px 24px rgba(58, 35, 18, 0.03);
+        }
+
+        /* Wireframe Top Header Row */
+        .canvas-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 35px;
+        }
+
+        .canvas-title-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .icon-dismiss-orange {
+            background-color: var(--cq-gold);
+            color: #FFFFFF;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .icon-dismiss-orange:hover {
+            transform: scale(1.05);
+        }
+
+        .canvas-title {
+            font-weight: 700;
+            color: var(--cq-dark);
+            margin: 0;
+            font-size: 1.65rem;
+        }
+
+        .canvas-email-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--cq-gold);
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .canvas-email-link:hover {
+            opacity: 0.85;
+            color: var(--cq-gold);
+        }
+
+        .envelope-icon-box {
+            font-size: 1.75rem;
+            color: var(--cq-gold);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Search Filter Module Block */
+        .canvas-search-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .canvas-search-box {
+            background-color: #FFFFFF;
+            border: 1.5px solid var(--cq-border-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 6px 14px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .canvas-search-box .bi-search {
+            color: var(--cq-gold);
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        .canvas-search-box input {
+            border: none;
+            background: transparent;
+            color: var(--cq-dark);
+            font-size: 0.95rem;
+            width: 100%;
+        }
+
+        .canvas-search-box input:focus {
+            outline: none;
+        }
+
+        /* Achievements Data Matrix Row View Items */
+        .wireframe-achievement-row {
+            background-color: transparent;
+            border-bottom: 1.5px solid var(--cq-border-orange);
+            padding: 24px 0;
+            display: flex;
+            gap: 30px;
+        }
+
+        .wireframe-achievement-row:last-child {
+            border-bottom: none;
+        }
+
+        .wireframe-photo-thumbnail {
+            width: 140px;
+            height: 140px;
+            background-color: var(--cq-orange-tint);
+            border: 2px dashed var(--cq-border-orange);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cq-gold);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .wireframe-photo-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wireframe-photo-thumbnail .bi-image {
+            font-size: 2.5rem;
+            opacity: 0.7;
+        }
+
+        .wireframe-meta-details {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .meta-line-item {
+            display: flex;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(252, 216, 189, 0.4);
+            padding-bottom: 6px;
+        }
+
+        .meta-line-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .meta-label {
+            width: 110px;
+            font-weight: 600;
+            color: var(--cq-dark);
+            font-size: 0.95rem;
+        }
+
+        .meta-value {
+            color: var(--cq-dark);
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        .meta-value.title-bold {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .meta-value.category-tag {
+            display: inline-block;
+            color: var(--cq-gold);
+            font-weight: 600;
+        }
+
+        @media (max-width: 767.98px) {
+            .mobile-header { display: flex; }
+            .cq-sidebar { transform: translateX(-100%); }
+            .cq-sidebar.show-sidebar { transform: translateX(0); }
+            .main-workspace { margin-left: 0; padding: 20px; padding-top: 80px; }
+            .wireframe-achievement-row { flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+            .meta-line-item { flex-direction: column; align-items: center; gap: 2px; }
+            .meta-label { width: auto; text-decoration: underline; }
+            .canvas-search-wrapper { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-header">
+        <span class="text-white fw-bold">Our Achievements</span>
+        <button class="btn text-white fs-3 p-0" id="mobile-sidebar-toggle"><i class="bi bi-list"></i></button>
+    </div>
+
+    <div class="cq-sidebar" id="app-sidebar">
+        <div>
+            <div class="text-center pb-3 mb-3 border-bottom border-light border-opacity-25">
+                <h5 class="fw-bold text-white mb-0">CODEQUEEN</h5>
+                <small class="text-white opacity-75">Sisterhood Ecosystem</small>
+            </div>
+            <nav class="nav flex-column gap-1">
+                <a href="dashboard.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                <a href="gallery.html" class="cq-nav-link"><i class="bi bi-images"></i> Gallery</a>
+                <a href="achievements.html" class="cq-nav-link active"><i class="bi bi-trophy"></i> Achievements</a>
+                <a href="events.html" class="cq-nav-link"><i class="bi bi-calendar-event"></i> Events</a>
+                <a href="directory.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Directory</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="main-workspace">
+        <div class="interface-canvas-card">
+            
+            <div class="canvas-header">
+                <div class="canvas-title-group">
+                    <button class="icon-dismiss-orange" onclick="window.history.back()" title="Go Back">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    <h2 class="canvas-title">Our Community Achievements</h2>
+                </div>
+                <a href="mailto:admin@gmail.com" class="canvas-email-link" title="Contact Admin Framework Pipeline">
+                    <span>email</span>
+                    <div class="envelope-icon-box">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                </a>
+            </div>
+
+            <div class="canvas-search-wrapper">
+                <div class="canvas-search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="user-achievements-search" placeholder="Search" onkeyup="executeClientSideSearchIndex()">
+                </div>
+            </div>
+
+            <div id="user-achievements-display-pipeline">
+                <div class="text-center py-5 text-muted">
+                    <div class="spinner-border spinner-border-sm text-warning mb-2"></div>
+                    <div>Streaming community achievements matrix entries...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="achievements.js"></script>
+</body>
+</html>
