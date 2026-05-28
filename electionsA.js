@@ -3,7 +3,7 @@
  * Converts frontend JavaScript object variables to raw serialized JSON text strings.
  */
 
-const BACKEND_API_ROOT = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const BACKEND_API_ROOT = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 let activeElectionId = null;
 
 // Overlay References Definitions

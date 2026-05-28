@@ -1,7 +1,7 @@
 /**
  * CodeQueen Alumnae Profiles System Pipeline Controller
  */
-const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 const CONFIG_API_BASE = `${API_BASE_URL}/profiles`; // Linked exactly to profiles path
 
 document.addEventListener('DOMContentLoaded', () => {

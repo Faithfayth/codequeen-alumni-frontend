@@ -2,7 +2,7 @@
  * Frontend Control Logic Architecture for CodeQueen Corporate Projects Portfolio Manager
  * Wireframe synced seamlessly with underlying REST endpoints
  */
-const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 const BASE_API_ROUTE = `${API_BASE_URL}/projects`;
 
 document.addEventListener('DOMContentLoaded', async () => {

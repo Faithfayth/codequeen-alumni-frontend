@@ -1,7 +1,7 @@
 /**
  * CodeQueen Alumnae Event Pipeline controller module
  */
-const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 const CONFIG_API_BASE = `${API_BASE_URL}/events`;
 
 // Keep track of the current user's role globally for conditional rendering

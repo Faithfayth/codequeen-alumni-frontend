@@ -5,7 +5,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     // 1. App Configuration Context
-    const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+    const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
     const BASE_API_ROUTE = `${API_BASE_URL}/users`; // Linked exactly to alumdirectory path
     const token = localStorage.getItem("adminToken"); 
     const currentAdminUser = JSON.parse(localStorage.getItem("adminUser") || "{}");

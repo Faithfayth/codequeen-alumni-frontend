@@ -4,7 +4,7 @@
  */
 
 // System Gateway URI Base Constant matching your unified Node.js router ports
-const ENDPOINT_API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const ENDPOINT_API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 
 // Active persistent arrays state tracking caches
 let systemBadgesListCache = [];

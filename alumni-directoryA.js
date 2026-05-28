@@ -3,7 +3,7 @@
  * Governs active profile indexing matrices and locks down student editing access configurations
  */
 
-const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 // Memory layout global arrays storage directory matrix cache structures
 let alumniDirectoryRegistryCache = [];
 let operationalActiveSortingKeyField = 'name';

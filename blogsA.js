@@ -3,7 +3,7 @@
  * Maps precisely to backend standard port schema mapping endpoints: http://localhost:5000/blogs/<routename>
  */
 
-const BACKEND_API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const BACKEND_API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 let localCachedBlogsStream = [];
 let processingUserId = null;
 

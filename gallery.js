@@ -1,5 +1,5 @@
 // Base API configuration route path prefix
-const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://cq-a-bckd.onrender.com'; // Production live Render URL
 const BASE_API_ROUTE = `${API_BASE_URL}/gallery`; // Route template configuration set to explicitly capture prefix targets 
 let localGalleryCache = [];
 
