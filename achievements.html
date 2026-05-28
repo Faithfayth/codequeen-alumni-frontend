@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Community Achievements</title>
+    <title>Our Community Achievements - CodeQueen</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="icon" type="image/png" href="images/codequeen logo.png">
     
     <style>
         :root {
+            --cq-sidebar-bg: #C56C64;   /* Matching layout sidebar tone */
+            --cq-gold-bg: #E39224;      /* Layout gold accent panel color */
+            --cq-card-soft: #FFF5E9;    /* Off-white soft container fill */
+            --cq-text-dark: #3A2312;    /* Soft deep dark typography font */
             --cq-clay: #C56C64;
             --cq-gold: #E39224;
             --cq-cream: #FFF5E9;
@@ -24,31 +29,65 @@
             color: var(--cq-dark);
         }
 
-        /* Mobile Header Top Navigation Band */
-        .mobile-header {
+        /* MOBILE HEADER / TOP BAR (Hidden on Desktop) */
+        .mobile-top-header {
             display: none;
-            background-color: var(--cq-clay);
+            background-color: var(--cq-sidebar-bg);
             padding: 12px 20px;
             position: fixed;
             top: 0; left: 0; right: 0;
-            z-index: 1050;
+            z-index: 999;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* App Persistent Left Sidebar Navigation Drawer Frame */
+        .hamburger-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* SIDEBAR PANEL NAVIGATION STYLE PACK */
         .cq-sidebar {
-            background-color: var(--cq-clay);
+            background-color: var(--cq-sidebar-bg);
             width: 260px;
             height: 100vh;
             position: fixed;
             left: 0; top: 0;
-            padding: 20px 14px;
+            padding: 24px 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            z-index: 1040;
+            z-index: 1000;
             transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-brand-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .close-btn-mock {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.6);
+            color: white;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn-mock:hover {
+            background-color: rgba(255,255,255,0.2);
         }
 
         .cq-nav-link {
@@ -56,21 +95,41 @@
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
+            gap: 15px;
+            padding: 11px 16px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 3px;
             border-radius: 8px;
-            transition: all 0.2s;
         }
 
         .cq-nav-link:hover, .cq-nav-link.active {
             background-color: #FFFFFF;
-            color: var(--cq-clay);
+            color: var(--cq-sidebar-bg);
             font-weight: 600;
         }
 
-        .main-workspace {
+        .logout-btn-box {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* MAIN BODY STRUCTURE CONTAINER */
+        .dashboard-workspace {
             margin-left: 260px;
-            padding: 40px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
         }
 
         /* UI/UX Wireframe Interface Container Card */
@@ -263,11 +322,29 @@
             font-weight: 600;
         }
 
-        @media (max-width: 767.98px) {
-            .mobile-header { display: flex; }
-            .cq-sidebar { transform: translateX(-100%); }
-            .cq-sidebar.show-sidebar { transform: translateX(0); }
-            .main-workspace { margin-left: 0; padding: 20px; padding-top: 80px; }
+        /* ==========================================================================
+           RESPONSIVE BREAKPOINTS (MEDIA QUERIES)
+           ========================================================================== */
+        @media (max-width: 991.98px) {
+            .mobile-top-header {
+                display: flex; /* Reveal mobile top navbar bar */
+            }
+
+            .cq-sidebar {
+                transform: translateX(-100%); /* Displace menu completely off-screen layout */
+                box-shadow: 4px 0 15px rgba(0,0,0,0.25);
+            }
+
+            /* Visible class applied dynamic toggle hooks */
+            .cq-sidebar.show-sidebar {
+                transform: translateX(0);
+            }
+
+            .dashboard-workspace {
+                margin-left: 0;
+                padding: 85px 15px 30px 15px; /* Added spacing top context offset for header positioning */
+            }
+            
             .wireframe-achievement-row { flex-direction: column; gap: 16px; align-items: center; text-align: center; }
             .meta-line-item { flex-direction: column; align-items: center; gap: 2px; }
             .meta-label { width: auto; text-decoration: underline; }
@@ -277,28 +354,43 @@
 </head>
 <body>
 
-    <div class="mobile-header">
-        <span class="text-white fw-bold">Our Achievements</span>
-        <button class="btn text-white fs-3 p-0" id="mobile-sidebar-toggle"><i class="bi bi-list"></i></button>
+    <div class="mobile-top-header">
+        <span class="text-white fw-bold fs-5">CodeQueen Ecosystem</span>
+        <button class="hamburger-toggle-btn" id="open-sidebar-trigger">
+            <i class="bi bi-list"></i>
+        </button>
     </div>
 
-    <div class="cq-sidebar" id="app-sidebar">
+    <div class="cq-sidebar" id="main-application-sidebar">
         <div>
-            <div class="text-center pb-3 mb-3 border-bottom border-light border-opacity-25">
-                <h5 class="fw-bold text-white mb-0">CODEQUEEN</h5>
-                <small class="text-white opacity-75">Sisterhood Ecosystem</small>
+            <div class="sidebar-brand-area justify-content-between align-items-center">
+                <div>
+                    <h4 class="m-0 text-white fw-bold text-uppercase">CodeQueen</h4>
+                    <small class="text-white-50">Alumni Ecosystem Hub</small>
+                </div>
+                <button class="close-btn-mock d-lg-none" id="close-sidebar-trigger" onclick="document.getElementById('main-application-sidebar').classList.remove('show-sidebar')">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
-            <nav class="nav flex-column gap-1">
-                <a href="dashboard.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                <a href="gallery.html" class="cq-nav-link"><i class="bi bi-images"></i> Gallery</a>
-                <a href="achievements.html" class="cq-nav-link active"><i class="bi bi-trophy"></i> Achievements</a>
-                <a href="events.html" class="cq-nav-link"><i class="bi bi-calendar-event"></i> Events</a>
-                <a href="directory.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Directory</a>
+            <nav class="nav flex-column">
+                <a href="alumni.html" class="cq-nav-link"><i class="bi bi-house-door"></i> Home</a>
+                <a href="profiles.html" class="cq-nav-link"><i class="bi bi-person"></i> Profiles</a>
+                <a href="gallery.html" class="cq-nav-link"><i class="bi bi-image"></i> Gallery</a>
+                <a href="resources.html" class="cq-nav-link"><i class="bi bi-folder"></i> Resources</a>
+                <a href="projects.html" class="cq-nav-link"><i class="bi bi-briefcase"></i> Projects</a>
+                <a href="achievements.html" class="cq-nav-link active"><i class="bi bi-award"></i> Achievements</a>
+                <a href="wall-of-fame.html" class="cq-nav-link"><i class="bi bi-star"></i> Wall of fame</a>
+                <a href="partners.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                <a href="elections.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                <a href="mentors.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Mentors</a>
             </nav>
         </div>
+        <button onclick="logoutSession()" class="logout-btn-box shadow-sm">
+            <i class="bi bi-box-arrow-left"></i> Logout !
+        </button>
     </div>
 
-    <div class="main-workspace">
+    <div class="dashboard-workspace">
         <div class="interface-canvas-card">
             
             <div class="canvas-header">
@@ -335,5 +427,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="achievements.js"></script>
+    <script>
+        // Simple script to wire up the sidebar drawer on tablet/mobile views
+        document.getElementById('open-sidebar-trigger')?.addEventListener('click', function() {
+            document.getElementById('main-application-sidebar').classList.add('show-sidebar');
+        });
+    </script>
 </body>
 </html>

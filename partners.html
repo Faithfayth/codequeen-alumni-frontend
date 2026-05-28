@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Partner Network - CodeQueen</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/png" href="images/CQimg1.jfif">
+    <style>
+        :root {
+            --cq-sidebar-bg: #C56C64;   
+            --cq-gold-bg: #E39224;      
+            --cq-card-soft: #FFF5E9;    
+            --cq-button-rose: #C56C64;  
+            --cq-text-dark: #3A2312;    
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-text-dark);
+            margin: 0;
+        }
+
+        /* MOBILE HEADER / TOP BAR */
+        .mobile-top-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* SIDEBAR STRUCTURE MATCHING SHARED LAYOUT CLASSES */
+        .sidebar-wrapper {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-brand {
+            padding: 0 12px 24px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg) !important;
+            font-weight: 600;
+        }
+
+        .btn-logout-sidebar {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-logout-sidebar:hover {
+            opacity: 0.9;
+            background-color: #FFF5E9;
+        }
+
+        /* MAIN BODY LAYOUT ADJUSTMENT */
+        .dashboard-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .cq-container-card {
+            background-color: var(--cq-card-soft);
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        .partner-display-box {
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .partner-display-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: var(--cq-gold-bg);
+        }
+
+        .partner-workspace-box {
+            background-color: #FFFBF7;
+            border: 2px solid var(--cq-gold-bg);
+            border-radius: 24px;
+            padding: 24px;
+            display: none;
+        }
+
+        .text-orange {
+            color: var(--cq-gold-bg) !important;
+        }
+
+        .search-input-group {
+            background: #FFFFFF;
+            border: 1px solid rgba(197, 108, 100, 0.25);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .search-input-group .form-control {
+            border: none;
+            box-shadow: none;
+            padding: 10px 12px;
+        }
+
+        .search-input-group .input-group-text {
+            background: transparent;
+            border: none;
+            color: var(--cq-sidebar-bg);
+            padding-left: 15px;
+        }
+
+        @media (max-width: 991.98px) {
+            .mobile-top-header {
+                display: flex;
+            }
+
+            .sidebar-wrapper {
+                transform: translateX(-100%);
+                box-shadow: 4px 0 15px rgba(0,0,0,0.25);
+            }
+
+            .sidebar-wrapper.show-sidebar {
+                transform: translateX(0);
+            }
+
+            .dashboard-workspace {
+                margin-left: 0;
+                padding: 85px 15px 30px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-top-header">
+    <span class="text-white fw-bold fs-5">CodeQueen Ecosystem</span>
+    <button class="hamburger-toggle-btn" id="open-sidebar-trigger">
+        <i class="bi bi-list"></i>
+    </button>
+</div>
+
+<div id="sidebar-injection-target"></div>
+
+<div class="dashboard-workspace">
+    <header class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom flex-wrap gap-3">
+        <div>
+            <h2 class="fw-bold m-0 text-dark">Enterprise Partner Network</h2>
+            <p class="text-muted small m-0">Connect and explore organizations collaborating with the CodeQueen Ecosystem.</p>
+        </div>
+        <button type="button" class="btn text-white fw-semibold rounded-3 shadow-sm d-none align-items-center gap-1" id="btn-manage-partner" style="background-color: var(--cq-sidebar-bg);">
+            <i class="bi bi-sliders"></i> My Company Profile
+        </button>
+    </header>
+
+    <div id="alertFeedbackAnchor"></div>
+
+    <div id="partner-management-workspace" class="partner-workspace-box shadow-sm mb-4">
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">
+            <h4 class="fw-bold m-0 text-dark" id="partner-workspace-title"><i class="bi bi-building-add me-2 text-warning"></i>Manage Enterprise Profile</h4>
+            <button type="button" class="btn-close" onclick="document.getElementById('partner-management-workspace').style.display='none'"></button>
+        </div>
+        <form id="update-partner-profile-form">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase">Company Name</label>
+                    <input type="text" class="form-control rounded-3" id="edit-partner-name" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase">Logo Asset URL</label>
+                    <input type="url" class="form-control rounded-3" id="edit-partner-logo" placeholder="https://example.com/logo.png">
+                </div>
+                <div class="col-12">
+                    <label class="form-label small fw-bold text-uppercase">Enterprise Description & Value Statement</label>
+                    <textarea class="form-control rounded-3" id="edit-partner-desc" rows="3" required placeholder="Describe what opportunities your organization offers to the network..."></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase">Official Website URL</label>
+                    <input type="url" class="form-control rounded-3" id="edit-partner-website" placeholder="https://company.com">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase">Location / Operating Base</label>
+                    <input type="text" class="form-control rounded-3" id="edit-partner-location" placeholder="e.g., Kampala, Uganda" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase">Primary Point of Contact Name</label>
+                    <input type="text" class="form-control rounded-3" id="edit-partner-contact" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-uppercase">Corporate Communications Email</label>
+                    <input type="email" class="form-control rounded-3" id="edit-partner-email" required>
+                </div>
+            </div>
+            <div class="mt-4 pt-2 border-top d-flex gap-2 justify-content-end">
+                <button type="button" class="btn btn-danger px-4 rounded-3 fw-semibold" id="btn-delete-partner-exec" style="display: none;">
+                    <i class="bi bi-trash3 me-1"></i> Delete Profile
+                </button>
+                <button type="submit" class="btn text-white px-4 rounded-3 fw-semibold" style="background-color: var(--cq-gold-bg);">
+                    <i class="bi bi-cloud-arrow-up me-1"></i> <span id="submit-partner-btn-text">Publish Profile</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="input-group search-input-group shadow-sm">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" id="partnerSearchInput" class="form-control" placeholder="Search by name or location...">
+            </div>
+        </div>
+    </div>
+
+    <section class="cq-container-card shadow-sm">
+        <div id="approvedSpinner" class="text-center my-5">
+            <div class="spinner-border text-warning spinner-border-sm me-2" role="status"></div>
+            <span class="small text-muted">Syncing registry stream...</span>
+        </div>
+
+        <div id="noApprovedPlaceholder" class="text-center py-5 text-muted d-none">
+            <i class="bi bi-building-exclamation mb-3 d-block text-secondary" style="font-size: 3rem;"></i>
+            <h5>No Partners Available</h5>
+            <p class="small text-secondary mx-auto" style="max-width: 350px;">There are currently no verified enterprise networks matching this context layout filter.</p>
+        </div>
+
+        <div id="approvedPartnersContainer"></div>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="partners.js"></script>
+</body>
+</html>

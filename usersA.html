@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Community Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="images/CQimg1.jfif">
+    <style>
+        :root {
+            --cq-sidebar-bg: #C56C64;   /* Earthy rose / clay sidebar */
+            --cq-gold-bg: #E39224;      /* Gold accent tone */
+            --cq-card-soft: #FFF5E9;    /* Warm cream container fill */
+            --cq-text-dark: #3A2312;    /* Soft deep dark typography */
+            --cq-bg-light: #FFFBF7;     /* Page background modifier */
+            --primary-orange: #f26522;
+        }
+        body {
+            background-color: var(--cq-bg-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* MOBILE HEADER CONTAINER */
+        .mobile-admin-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* SIDEBAR BRANDING */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar-header-branding {
+            color: #FFFFFF;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+        .close-sidebar-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            border-radius: 6px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 2px 8px;
+        }
+        .sidebar-scrollable-menu {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-top: 15px;
+            padding-right: 4px;
+        }
+        .sidebar-scrollable-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scrollable-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            border-radius: 8px;
+        }
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        /* WORKSPACE CONTENT AREA */
+        .admin-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+        .dashboard-header {
+            background-color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--cq-card-soft);
+            padding: 15px 30px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            color: #666;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            color: var(--cq-sidebar-bg);
+            border-bottom-color: var(--cq-sidebar-bg);
+            font-weight: bold;
+        }
+        .table-container {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--cq-card-soft);
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(197, 108, 100, 0.03);
+        }
+        .custom-table th {
+            background-color: var(--cq-card-soft);
+            color: var(--cq-text-dark);
+            font-weight: 600;
+            text-transform: capitalize;
+            font-size: 0.95rem;
+        }
+
+        /* RESPONSIVE LAYOUT SYSTEM QUERY OVERRIDES */
+        @media (max-width: 991.98px) {
+            .mobile-admin-header {
+                display: flex;
+            }
+            .cq-sidebar {
+                transform: translateX(-100%);
+                box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+            }
+            .cq-sidebar.show-sidebar {
+                transform: translateX(0);
+            }
+            .close-sidebar-btn {
+                display: block;
+            }
+            .admin-workspace {
+                margin-left: 0;
+                padding: 90px 15px 40px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-admin-header">
+        <span class="text-white fw-bold">CQ Admin Management</span>
+        <button class="hamburger-btn" id="sidebar-open-toggle-trigger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="cq-sidebar" id="app-navigation-sidebar-container">
+        <div>
+            <div class="sidebar-header-branding">
+                <h5 class="fw-bold mb-0">CODEQUEEN</h5>
+                <small class="opacity-75">Alumni Administrative Space</small>
+                <button class="close-sidebar-btn" id="sidebar-close-toggle-trigger"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <div class="sidebar-scrollable-menu">
+                <nav class="nav flex-column">
+                    <a href="admin.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="badgesA.html" class="cq-nav-link"><i class="bi bi-award"></i> Badges</a>
+                    <a href="cohortsA.html" class="cq-nav-link"><i class="bi bi-people"></i> Cohorts</a>
+                    <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
+                    <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
+                    <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
+                    <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                    <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
+                    <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                    <a href="usersA.html" class="cq-nav-link active"><i class="bi bi-person-gear"></i> Users</a>
+                </nav>
+            </div>
+        </div>
+        
+        <button onclick="logoutSession()" class="btn btn-light text-danger w-100 py-2 rounded-3 mt-3">
+            <i class="bi bi-box-arrow-left me-2"></i>Logout
+        </button>
+    </div>
+
+    <div class="admin-workspace">
+        <header class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <span class="fs-4 fw-bold text-dark">Ecosystem Users Directory</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small" id="adminEmailDisplay">loading admin...</span>
+                <div class="border p-2 rounded-circle bg-light d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
+                    <i class="bi bi-envelope text-muted"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2 flex-wrap gap-3">
+                <div class="d-flex gap-2" id="directoryTabs">
+                    <button class="tab-btn" data-target="alumni"><i class="bi bi-people-fill me-1"></i> Alumni</button>
+                    <button class="tab-btn" data-target="partners"><i class="bi bi-handshake me-1"></i> Partners</button>
+                    <button class="tab-btn" data-target="students"><i class="bi bi-mortarboard me-1"></i> Students</button>
+                    <button class="tab-btn" data-target="admin"><i class="bi bi-shield-lock me-1"></i> Admin</button>
+                </div>
+                <div class="position-relative" style="width: 280px;">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="text" id="directorySearch" class="form-control ps-5 border-light-subtle" placeholder="Search directory records...">
+                </div>
+            </div>
+
+            <div class="table-container data-section d-none" id="section-alumni">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle custom-table m-0">
+                        <thead>
+                            <tr>
+                                <th>Alumni ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Cohort</th>
+                                <th>Cohort History</th>
+                                <th>Mentor</th>
+                                <th>Leader</th>
+                                <th>Admin Status</th>
+                                <th>Badges</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alumniTableBody">
+                            <tr><td colspan="10" class="text-center text-muted py-4">Click "Alumni" tab to fetch database records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container data-section d-none" id="section-partners">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle custom-table m-0">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Company Name</th>
+                                <th>Location</th>
+                                <th>Description</th>
+                                <th>Website Target</th>
+                                <th>Logo Ref</th>
+                                <th>Contact Details</th>
+                                <th>Email Address</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partnersTableBody">
+                            <tr><td colspan="9" class="text-center text-muted py-4">Click "Partners" tab to fetch database records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container data-section d-none" id="section-students">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle custom-table m-0">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Email Address</th>
+                                <th>Current Cohort</th>
+                                <th>Cohort History</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <tr><td colspan="6" class="text-center text-muted py-4">Click "Students" tab to fetch database records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-container data-section d-none" id="section-admin">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle custom-table m-0">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username Log</th>
+                                <th>Email Address</th>
+                                <th>Authorization Flag</th>
+                                <th>Admin Serial No</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <tr><td colspan="5" class="text-center text-muted py-4">Click "Admin" tab to fetch database records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="usersA.js"></script>
+</body>
+</html>

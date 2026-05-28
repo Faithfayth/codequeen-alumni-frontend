@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeQueen - Alumnae Profiles Manager</title>
+    <title>CodeQueen - Alumnae Profiles Directory</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" type="image/png" href="images/CQimg1.jfif">
     <style>
         :root {
@@ -22,10 +23,11 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             color: var(--cq-text-dark);
             overflow-x: hidden;
+            margin: 0;
         }
 
         /* MOBILE HEADER ACTION */
-        .mobile-admin-header {
+        .mobile-top-header {
             display: none;
             background-color: var(--cq-sidebar-bg);
             padding: 12px 20px;
@@ -39,7 +41,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .hamburger-btn {
+        .hamburger-toggle-btn {
             background: transparent;
             border: none;
             color: #FFFFFF;
@@ -49,14 +51,14 @@
         }
 
         /* STRUCTURAL NAVIGATION SIDEBAR */
-        .cq-sidebar {
+        .sidebar-wrapper {
             background-color: var(--cq-sidebar-bg);
             width: 260px;
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            padding: 20px 14px;
+            padding: 24px 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -64,68 +66,80 @@
             transition: transform 0.3s ease-in-out;
         }
 
-        .sidebar-header-branding {
-            color: #FFFFFF;
-            text-align: center;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
+        .sidebar-brand {
+            padding: 0 12px 24px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
+            text-align: left;
         }
 
-        .close-sidebar-btn {
-            display: none;
-            background: transparent;
-            border: 1px solid rgba(255,255,245,0.4);
-            color: white;
-            border-radius: 6px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 2px 8px;
-        }
-
-        .sidebar-scrollable-menu {
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
             overflow-y: auto;
             flex-grow: 1;
-            margin-top: 15px;
-            padding-right: 4px;
-            margin-bottom: 20px;
         }
 
-        .sidebar-scrollable-menu::-webkit-scrollbar { width: 4px; }
-        .sidebar-scrollable-menu::-webkit-scrollbar-thumb {
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb {
             background: rgba(255,255,255,0.2);
             border-radius: 4px;
         }
 
-        .cq-nav-link {
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link {
             color: #FFFFFF;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
+            gap: 15px;
+            padding: 12px 16px;
             font-size: 1rem;
             font-weight: 400;
             transition: all 0.2s;
-            margin-bottom: 4px;
             border-radius: 8px;
         }
 
-        .cq-nav-link:hover, .cq-nav-link.active {
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
             background-color: #FFFFFF;
-            color: var(--cq-sidebar-bg);
+            color: var(--cq-sidebar-bg) !important;
             font-weight: 600;
         }
 
-        /* SIDEBAR BOTTOM LOGOUT CONTAINER */
-        .sidebar-footer-action {
+        .btn-logout-sidebar {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: opacity 0.2s;
+            margin-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.15);
-            padding-top: 15px;
+        }
+
+        .btn-logout-sidebar:hover {
+            opacity: 0.9;
+            background-color: #FFF5E9;
         }
 
         /* CORE APPLICATION WORKSPACE */
-        .admin-workspace {
+        .dashboard-workspace {
             margin-left: 260px;
             padding: 30px;
             transition: margin-left 0.3s ease-in-out;
@@ -134,7 +148,7 @@
         /* COMPACT PROFILE INTERFACE CARDS */
         .profile-manager-canvas {
             background-color: #FFFFFF;
-            border-radius: 20px;
+            border-radius: 24px;
             border: 1px solid var(--cq-border-color);
             padding: 25px;
             box-shadow: 0 4px 20px rgba(58, 35, 18, 0.02);
@@ -149,6 +163,7 @@
             padding: 8px 16px;
             font-size: 0.95rem;
             transition: all 0.2s;
+            text-decoration: none;
         }
 
         .btn-action-pill:hover {
@@ -160,7 +175,7 @@
             background-color: #FFFFFF;
             border: 1px solid var(--cq-border-color);
             border-radius: 12px;
-            padding: 4px 12px;
+            padding: 8px 14px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -176,7 +191,7 @@
             width: 100%;
         }
 
-        /* MINI CARDS VARIANT WRAPPER */
+        /* LIST CARD LAYOUT STYLES */
         .profile-entry-card {
             background: #FFFFFF;
             border: 1px solid var(--cq-border-color);
@@ -185,6 +200,12 @@
             margin-bottom: 16px;
             position: relative;
             box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .profile-entry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 35, 18, 0.04);
         }
 
         .profile-avatar-wrapper {
@@ -260,102 +281,48 @@
             pointer-events: none;
         }
 
-        .btn-card-update {
-            border: 1px solid var(--cq-gold-bg);
-            background: #FFFFFF;
-            color: var(--cq-gold-bg);
-            border-radius: 6px;
-            font-weight: 600;
-            padding: 4px 14px;
-            font-size: 0.85rem;
-        }
-        .btn-card-update:hover { background: var(--cq-card-soft); }
-
-        .btn-card-delete {
-            border: 1px solid #C56C64;
-            background: #FFFFFF;
-            color: #C56C64;
-            border-radius: 6px;
-            font-weight: 600;
-            padding: 4px 14px;
-            font-size: 0.85rem;
-        }
-        .btn-card-delete:hover { background: #FDF1F0; }
-
         @media (max-width: 991.98px) {
-            .mobile-admin-header { display: flex; }
-            .cq-sidebar { transform: translateX(-100%); box-shadow: 4px 0 15px rgba(0,0,0,0.15); }
-            .cq-sidebar.show-sidebar { transform: translateX(0); }
-            .close-sidebar-btn { display: block; }
-            .admin-workspace { margin-left: 0; padding: 90px 15px 40px 15px; }
+            .mobile-top-header { display: flex; }
+            .sidebar-wrapper { transform: translateX(-100%); box-shadow: 4px 0 15px rgba(0,0,0,0.15); }
+            .sidebar-wrapper.show-sidebar { transform: translateX(0); }
+            .dashboard-workspace { margin-left: 0; padding: 90px 15px 40px 15px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="mobile-admin-header">
-        <span class="text-white fw-bold">CQ Admin Management</span>
-        <button class="hamburger-btn" id="sidebar-open-toggle-trigger">
+    <div class="mobile-top-header">
+        <span class="text-white fw-bold">CodeQueen Ecosystem</span>
+        <button class="hamburger-toggle-btn" id="open-sidebar-trigger">
             <i class="bi bi-list"></i>
         </button>
     </div>
 
-    <div class="cq-sidebar" id="app-navigation-sidebar-container">
-        <div>
-            <div class="sidebar-header-branding">
-                <h5 class="fw-bold mb-0">CODEQUEEN</h5>
-                <small class="opacity-75">Alumni Administrative Space</small>
-                <button class="close-sidebar-btn" id="sidebar-close-toggle-trigger"><i class="bi bi-x-lg"></i></button>
-            </div>
-            
-            <div class="sidebar-scrollable-menu">
-                <nav class="nav flex-column">
-                    <a href="admin.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    <a href="badgesA.html" class="cq-nav-link"><i class="bi bi-award"></i> Badges</a>
-                    <a href="cohortsA.html" class="cq-nav-link"><i class="bi bi-people"></i> Cohorts</a>
-                    <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
-                    <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
-                    <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
-                    <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
-                    <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
-                    <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
-                    <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
-                    <a href="profilesA.html" class="cq-nav-link active"><i class="bi bi-person-vcard"></i> Profiles</a>
-                </nav>
-            </div>
-        </div>
-        
-        <div class="sidebar-footer-action">
-            <button onclick="logoutSession()" class="btn btn-light text-danger w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm border-0">
-                <i class="bi bi-box-arrow-left"></i> Logout !
-            </button>
-        </div>
-    </div>
+    <div id="sidebar-injection-target"></div>
 
-    <main class="admin-workspace">
+    <main class="dashboard-workspace">
         <div class="profile-manager-canvas">
             
             <div class="row align-items-center mb-4 g-3">
                 <div class="col-12 col-md-6">
                     <h4 class="fw-bold m-0 d-flex align-items-center gap-2" style="color: var(--cq-text-dark)">
-                        <i class="bi bi-gem" style="color: var(--cq-gold-bg)"></i> Queens' Profiles' Manager
+                        <i class="bi bi-gem" style="color: var(--cq-gold-bg)"></i> Queens' Community Directory
                     </h4>
+                    <p class="text-muted small m-0 mt-1">Discover, connect, and collaborate with alumnae inside the network.</p>
                 </div>
                 <div class="col-12 col-md-6 d-flex flex-wrap justify-content-md-end gap-3 align-items-center">
-                    <button class="btn btn-action-pill" id="action-my-profile">
-                        <i class="bi bi-person-plus me-1"></i> My Profile
-                    </button>
-                    <div class="search-input-group">
+                    <div class="search-input-group shadow-sm">
                         <i class="bi bi-search text-muted"></i>
-                        <input type="text" id="profileQuerySearch" placeholder="Search profiles...">
+                        <input type="text" id="profileQuerySearch" placeholder="Search profiles by name or skill...">
                     </div>
                 </div>
             </div>
 
-            <h5 class="fw-bold mb-4" style="color: var(--cq-gold-bg)">Alumnae Profiles</h5>
+            <hr class="my-4" style="border-color: var(--cq-border-color);">
 
             <div id="loadingStatusSpinner" class="text-center my-5">
                 <div class="spinner-border text-warning" role="status"></div>
+                <p class="small text-muted mt-2">Loading profiles directory...</p>
             </div>
 
             <div id="profilesRenderContainer"></div>
@@ -364,6 +331,6 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="profilesA.js"></script>
+    <script src="profiles.js"></script>
 </body>
 </html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Blog - CodeQueen Alumnae</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="icon" type="image/png" href="images/CQimg1.jfif">
+    <style>
+        :root {
+            --cq-sidebar-bg: #C56C64;   /* Earthy rose / clay sidebar */
+            --cq-gold-bg: #E39224;      /* Gold accent tone */
+            --cq-card-soft: #FFF5E9;    /* Warm cream container fill */
+            --cq-text-dark: #3A2312;    /* Soft deep dark typography */
+            --cq-bg-light: #FFFBF7;     /* Page background modifier */
+            --cq-border-orange: rgba(227, 146, 36, 0.3);
+        }
+
+        body {
+            background-color: #FFFFFF;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: var(--cq-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* MOBILE HEADER CONTAINER */
+        .mobile-admin-header {
+            display: none;
+            background-color: var(--cq-sidebar-bg);
+            padding: 12px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* SIDEBAR COMPONENT SYSTEM */
+        .cq-sidebar {
+            background-color: var(--cq-sidebar-bg);
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1040;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-header-branding {
+            color: #FFFFFF;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .close-sidebar-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            border-radius: 6px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 2px 8px;
+        }
+
+        .sidebar-scrollable-menu {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-top: 15px;
+            padding-right: 4px;
+        }
+
+        .sidebar-scrollable-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scrollable-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
+        .cq-nav-link {
+            color: #FFFFFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            border-radius: 8px;
+        }
+
+        .cq-nav-link:hover, .cq-nav-link.active {
+            background-color: #FFFFFF;
+            color: var(--cq-sidebar-bg);
+            font-weight: 600;
+        }
+
+        /* MAIN MASTER WORKSPACE */
+        .admin-workspace {
+            margin-left: 260px;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* CARD AND BLOG LAYOUTS MATCHING DESIGN INTERFACE SYSTEM */
+        .header-layout-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ECECEC;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header-title-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-close-circle {
+            width: 32px;
+            height: 32px;
+            background-color: var(--cq-gold-bg);
+            color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .header-title-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .action-add-trigger {
+            color: var(--cq-gold-bg);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-add-trigger:hover {
+            color: var(--cq-sidebar-bg);
+        }
+
+        .search-wrapper-panel {
+            max-width: 300px;
+            position: relative;
+        }
+
+        .search-icon-inside {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #A0A0A0;
+        }
+
+        .search-input-field {
+            padding-left: 36px;
+            border: 1px solid var(--cq-gold-bg);
+            border-radius: 10px;
+            color: var(--cq-text-dark);
+        }
+
+        .blog-editor-card {
+            background-color: var(--cq-card-soft);
+            border: 1px solid var(--cq-border-orange);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+        }
+
+        .editor-row-item {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .editor-label-text {
+            width: 140px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--cq-text-dark);
+            padding-top: 8px;
+        }
+
+        .editor-input-payload {
+            flex-grow: 1;
+            border: 1px solid rgba(227, 146, 36, 0.4);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 1rem;
+            color: var(--cq-text-dark);
+            background-color: #FFFFFF;
+        }
+
+        .editor-input-payload:focus {
+            outline: none;
+            border-color: var(--cq-sidebar-bg);
+            box-shadow: 0 0 0 2px rgba(197, 108, 100, 0.15);
+        }
+
+        .editor-actions-strip {
+            display: flex;
+            gap: 15px;
+            padding-left: 140px;
+            margin-top: 10px;
+        }
+
+        .btn-action-comment {
+            background-color: var(--cq-gold-bg);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 28px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action-comment:hover {
+            background-color: var(--cq-sidebar-bg);
+            color: #FFFFFF;
+        }
+
+        .btn-action-delete {
+            background: #FFFFFF;
+            color: #D94141;
+            border: 1px solid rgba(217, 65, 65, 0.4);
+            padding: 10px 24px;
+            font-weight: 600;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action-delete:hover {
+            background-color: #FFF2F2;
+            color: #D94141;
+        }
+
+        /* PUBLIC POSTS STREAMS PIPELINE ELEMENTS */
+        .blog-post-item-view {
+            border: 1px solid #EAEAEA;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .post-meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #F0F0F0;
+            padding-bottom: 8px;
+        }
+
+        .post-author-badge {
+            font-weight: 700;
+            color: var(--cq-sidebar-bg);
+        }
+
+        .post-time-stamp {
+            font-size: 0.85rem;
+            color: #8C8C8C;
+        }
+
+        .post-main-title {
+            font-weight: 700;
+            color: var(--cq-text-dark);
+            margin-bottom: 10px;
+        }
+
+        .post-body-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #4A4A4A;
+            margin-bottom: 15px;
+        }
+
+        .post-image-preview {
+            max-width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* COMMENTS TIMELINE DISPLAY TREE */
+        .comments-section-wrapper {
+            background-color: #FAF6F2;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 15px;
+        }
+
+        .comment-node-item {
+            border-left: 3px solid var(--cq-gold-bg);
+            padding-left: 12px;
+            margin-bottom: 12px;
+            background: #FFFFFF;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .comment-node-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .comment-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .commenter-name-string {
+            font-weight: 700;
+            color: var(--cq-text-dark);
+        }
+
+        .commenter-time-string {
+            color: #9C9C9C;
+        }
+
+        .comment-text-payload {
+            font-size: 0.95rem;
+            color: #444444;
+            margin: 0;
+        }
+
+        .inline-comment-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 991.98px) {
+            .mobile-admin-header { display: flex; }
+            .cq-sidebar { transform: translateX(-100%); box-shadow: 4px 0 15px rgba(0,0,0,0.15); }
+            .cq-sidebar.show-sidebar { transform: translateX(0); }
+            .close-sidebar-btn { display: block; }
+            .admin-workspace { margin-left: 0; padding: 90px 15px 40px 15px; }
+            .editor-row-item { flex-direction: column; }
+            .editor-label-text { width: 100%; padding-bottom: 6px; }
+            .editor-actions-strip { padding-left: 0; width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-admin-header">
+        <span class="text-white fw-bold">CQ Admin Management</span>
+        <button class="hamburger-btn" id="sidebar-open-toggle-trigger">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="cq-sidebar" id="app-navigation-sidebar-container">
+        <div>
+            <div class="sidebar-header-branding">
+                <h5 class="fw-bold mb-0">CODEQUEEN</h5>
+                <small class="opacity-75">Alumni Administrative Space</small>
+                <button class="close-sidebar-btn" id="sidebar-close-toggle-trigger"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <div class="sidebar-scrollable-menu">
+                <nav class="nav flex-column">
+                    <a href="admin.html" class="cq-nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="badgesA.html" class="cq-nav-link"><i class="bi bi-award"></i> Badges</a>
+                    <a href="cohortsA.html" class="cq-nav-link"><i class="bi bi-people"></i> Cohorts</a>
+                    <a href="enrollmentsA.html" class="cq-nav-link"><i class="bi bi-file-earmark-text"></i> Enrollment</a>
+                    <a href="alumni-directoryA.html" class="cq-nav-link"><i class="bi bi-journal-bookmark"></i> Alumni directory</a>
+                    <a href="achievementsA.html" class="cq-nav-link"><i class="bi bi-trophy"></i> Achievements</a>
+                    <a href="electionsA.html" class="cq-nav-link"><i class="bi bi-box-seam"></i> Elections</a>
+                    <a href="studentsA.html" class="cq-nav-link"><i class="bi bi-mortarboard"></i> Students</a>
+                    <a href="partnersA.html" class="cq-nav-link"><i class="bi bi-building"></i> Partners</a>
+                    <a href="usersA.html" class="cq-nav-link"><i class="bi bi-person-gear"></i> Users</a>
+                    <a href="blogsA.html" class="cq-nav-link active"><i class="bi bi-chat-right-quote"></i> Blogs</a>
+                </nav>
+            </div>
+        </div>
+        
+        <button onclick="logoutSession()" class="btn btn-light text-danger w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 mt-3 shadow-sm border-0">
+            <i class="bi bi-box-arrow-left"></i> Logout !
+        </button>
+    </div>
+
+    <div class="admin-workspace">
+        
+        <div class="header-layout-panel">
+            <div class="header-title-box">
+                <a href="admin.html" class="header-close-circle"><i class="bi bi-x"></i></a>
+                <h3 class="header-title-text">Community Blog</h3>
+            </div>
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+                <a href="#" class="action-add-trigger" id="focus-editor-shortcut">
+                    <i class="bi bi-plus-circle"></i> Add Blog
+                </a>
+                <div class="search-wrapper-panel">
+                    <i class="bi bi-search search-icon-inside"></i>
+                    <input type="text" class="form-control search-input-field" id="blog-search-box" placeholder="Search">
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-danger d-none p-2 mb-3 text-center" id="global-error-display"></div>
+        <div class="alert alert-success d-none p-2 mb-3 text-center" id="global-success-display"></div>
+
+        <div class="blog-editor-card shadow-sm">
+            <form id="blog-workspace-form">
+                <input type="hidden" id="target-active-blog-id" value="">
+
+                <div class="editor-row-item">
+                    <div class="editor-label-text">Title</div>
+                    <input type="text" class="editor-input-payload" id="blog-title-input" placeholder="Enter blog title" required>
+                </div>
+
+                <div class="editor-row-item">
+                    <div class="editor-label-text">Description</div>
+                    <textarea class="editor-input-payload" id="blog-content-input" rows="5" placeholder="Enter blog description" required></textarea>
+                </div>
+
+                <div class="editor-row-item">
+                    <div class="editor-label-text">Image URL</div>
+                    <input type="url" class="editor-input-payload" id="blog-image-url-input" placeholder="e.g., https://example.com/image.jpg">
+                </div>
+
+                <div class="editor-actions-strip">
+                    <button type="submit" class="btn-action-comment" id="btn-submit-main-payload">
+                        <i class="bi bi-chat-right-quote"></i> Publish
+                    </button>
+                    <button type="button" class="btn-action-delete d-none" id="btn-cancel-edit-mode">
+                        Cancel Edit
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <h5 class="fw-bold mb-4 text-uppercase text-muted small tracking-wider">Published Articles Feed</h5>
+        <div id="blog-posts-feed-stream-target">
+            <div class="text-center py-5 text-muted">
+                <div class="spinner-border spinner-border-sm text-secondary mb-2" role="status"></div>
+                <div class="small">Assembling latest codequeen narrative streams...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="blogsA.js"></script>
+</body>
+</html>
