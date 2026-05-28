@@ -4,7 +4,8 @@
  */
 
 const API_BASE_URL = 'http://localhost:5000';
-let currentAlumnaProfileId = null; // Tracks the user's logged-in ID (alumnaID) to safely check for profile existence
+let loggedInUserId = null;       // Tracks the authenticated user's ID (req.user.id counterpart)
+let currentProfileDatabaseId = null; // Tracks the actual Profile document _id for PUT/DELETE updates
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Verify session security token before compiling information models
@@ -16,6 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Session token or user data missing. Redirecting to entry login space...");
         window.location.href = 'login.html';
         return;
+    }
+
+    try {
+        const userObj = JSON.parse(cachedUserData);
+        loggedInUserId = userObj._id || userObj.id;
+    } catch (e) {
+        console.error("Critical: Failed to parse user object from localStorage", e);
     }
 
     // 2. Hydrate user identity details into DOM targets straight out of localStorage cache
@@ -31,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createBlogForm.addEventListener('submit', (e) => handlePostNewBlog(e, storedToken));
     }
 
-    // --- ADJUSTED PROFILE EVENT HANDLERS ---
+    // --- PROFILE EVENT HANDLERS ---
     const myProfileBtn = document.getElementById('btn-my-profile');
     if (myProfileBtn) {
         myProfileBtn.addEventListener('click', () => handleToggleAndFetchProfile(storedToken, cachedUserData));
@@ -74,7 +82,7 @@ function renderUserProfileDetails(cachedUserData) {
 }
 
 /**
- * FIXED: Fetches single profile based on logged-in user ID saved as alumnaID
+ * Fetches single profile based on logged-in user ID passed as route param
  */
 async function handleToggleAndFetchProfile(token, cachedUserData) {
     const workspace = document.getElementById('profile-management-workspace');
@@ -90,13 +98,13 @@ async function handleToggleAndFetchProfile(token, cachedUserData) {
     workspace.scrollIntoView({ behavior: 'smooth' });
 
     try {
-        const userObj = JSON.parse(cachedUserData);
-        // Extract the absolute logged in User ID and save it as our trackable state value
-        const loggedInAlumnaId = userObj._id || userObj.id;
-        currentAlumnaProfileId = loggedInAlumnaId; 
+        if (!loggedInUserId) {
+            const userObj = JSON.parse(cachedUserData);
+            loggedInUserId = userObj._id || userObj.id;
+        }
 
-        // Utilizing backend route structure matching: /getsingleprofile/:id passing the loggedInAlumnaId
-        const response = await fetch(`${API_BASE_URL}/profiles/getsingleprofile/${loggedInAlumnaId}`, {
+        // Backend route structure matches: /getsingleprofile/:id (where :id is the alumnaID query key)
+        const response = await fetch(`${API_BASE_URL}/profiles/getsingleprofile/${loggedInUserId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -107,10 +115,14 @@ async function handleToggleAndFetchProfile(token, cachedUserData) {
         const profileWorkspaceTitle = document.getElementById('profile-workspace-title');
         const submitProfileBtnText = document.getElementById('submit-profile-btn-text');
         const deleteProfileBtn = document.getElementById('btn-delete-profile-exec');
+        const formElement = document.getElementById('update-alumna-profile-form');
 
         // Capture if a profile container explicitly exists for this alumnaID
         if (response.ok) {
             const myProfile = await response.json();
+            
+            // CRITICAL FIX: Capture the profile document's absolute MongoDB unique id (_id) for later PUT/DELETE operations
+            currentProfileDatabaseId = myProfile._id; 
 
             // Populate form inputs with current profile structural details
             document.getElementById('edit-profile-fullname').value = myProfile.fullname || '';
@@ -126,11 +138,14 @@ async function handleToggleAndFetchProfile(token, cachedUserData) {
             if (deleteProfileBtn) deleteProfileBtn.style.display = 'inline-block';
             
             // Mark the form layout state context data attribute to accurately point matching handlers
-            document.getElementById('update-alumna-profile-form').setAttribute('data-profile-exists', 'true');
+            formElement.setAttribute('data-profile-exists', 'true');
 
         } else if (response.status === 404) {
             // No profile found for this alumnaID - Prepare inputs to connect with profile creator engine
-            document.getElementById('update-alumna-profile-form').reset();
+            currentProfileDatabaseId = null;
+            formElement.reset();
+            
+            const userObj = JSON.parse(cachedUserData);
             document.getElementById('edit-profile-fullname').value = userObj.name || userObj.username || '';
 
             // Update UI components for creation state
@@ -139,7 +154,7 @@ async function handleToggleAndFetchProfile(token, cachedUserData) {
             if (deleteProfileBtn) deleteProfileBtn.style.display = 'none';
             
             // Mark form state context attribute to false
-            document.getElementById('update-alumna-profile-form').setAttribute('data-profile-exists', 'false');
+            formElement.setAttribute('data-profile-exists', 'false');
         } else {
             throw new Error('Server returned an unexpected status code.');
         }
@@ -149,21 +164,16 @@ async function handleToggleAndFetchProfile(token, cachedUserData) {
 }
 
 /**
- * FIXED: Dispatches updates to updateprofile route or saves new via createprofile route using alumnaID tracking
+ * Dispatches updates to updateprofile route or saves new via createprofile route
  */
 async function handleUpdateOrSaveProfile(e, token) {
     e.preventDefault();
 
-    if (!currentAlumnaProfileId) {
-        alert("Session context error. Unable to identify active user.");
-        return;
-    }
-
     const formElement = document.getElementById('update-alumna-profile-form');
     const profileExists = formElement.getAttribute('data-profile-exists') === 'true';
 
+    // Form payload construction 
     const payload = {
-        alumnaID: currentAlumnaProfileId, // Explicitly pass current logged-in identity tracking reference
         fullname: document.getElementById('edit-profile-fullname').value.trim(),
         profileimage: document.getElementById('edit-profile-image').value.trim(),
         bio: document.getElementById('edit-profile-bio').value.trim(),
@@ -175,8 +185,12 @@ async function handleUpdateOrSaveProfile(e, token) {
     try {
         let response;
         if (profileExists) {
-            // Profile verified as existing - route payload to: PUT /updateprofile/:id
-            response = await fetch(`${API_BASE_URL}/profiles/updateprofile/${currentAlumnaProfileId}`, {
+            if (!currentProfileDatabaseId) {
+                alert("Missing Profile target key identifier. Try refreshing your workspace layout.");
+                return;
+            }
+            // Profile verified as existing - route payload safely using backend document ID tracking: PUT /updateprofile/:id
+            response = await fetch(`${API_BASE_URL}/profiles/updateprofile/${currentProfileDatabaseId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -199,9 +213,9 @@ async function handleUpdateOrSaveProfile(e, token) {
         const data = await response.json();
         if (response.ok) {
             alert(data.message || "Profile synchronization complete!");
-            workspace.style.display = 'none';
-            // Force reset state attribute tracking layout context
+            document.getElementById('profile-management-workspace').style.display = 'none';
             formElement.removeAttribute('data-profile-exists');
+            currentProfileDatabaseId = null;
         } else {
             alert(data.message || "Action failed. Verify endpoint structures.");
         }
@@ -212,15 +226,18 @@ async function handleUpdateOrSaveProfile(e, token) {
 }
 
 /**
- * FIXED: Core elimination pointing directly to DELETE /deleteprofile/:id matching target user
+ * Core elimination pointing directly to DELETE /deleteprofile/:id matching target record reference
  */
 async function handleDeleteProfile(token) {
-    if (!currentAlumnaProfileId) return;
+    if (!currentProfileDatabaseId) {
+        alert("No verified active record detected to clear.");
+        return;
+    }
 
     if (!confirm("Are you certain you want to delete your profile permanently? This cannot be undone.")) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/profiles/deleteprofile/${currentAlumnaProfileId}`, {
+        response = await fetch(`${API_BASE_URL}/profiles/deleteprofile/${currentProfileDatabaseId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -234,6 +251,7 @@ async function handleDeleteProfile(token) {
             document.getElementById('update-alumna-profile-form').reset();
             document.getElementById('update-alumna-profile-form').removeAttribute('data-profile-exists');
             document.getElementById('profile-management-workspace').style.display = 'none';
+            currentProfileDatabaseId = null;
         } else {
             alert(data.message || "Erasing profile process rejected.");
         }
@@ -247,6 +265,7 @@ async function handleDeleteProfile(token) {
  */
 async function fetchCommunityBlogs(token) {
     const listContainer = document.getElementById('blogs-rendered-list');
+    if (!listContainer) return;
     
     try {
         const response = await fetch(`${API_BASE_URL}/blogs/getallblogs`, {
@@ -321,7 +340,7 @@ async function fetchCommunityBlogs(token) {
 }
 
 /**
- * Dispatches a comment payload upstream using structured data maps
+ * FIXED: Dispatches a comment payload upstream containing the expected JSON text value
  */
 async function handleSendNewComment(blogId) {
     const token = localStorage.getItem('token');
@@ -332,12 +351,14 @@ async function handleSendNewComment(blogId) {
     if (!commentText) return;
 
     try {
+        // FIXED: Added missing headers structural object mappings and body data parameter logic configurations
         const response = await fetch(`${API_BASE_URL}/blogs/addcomment/${blogId}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ text: commentText }) 
         });
 
         if (!response.ok) throw new Error('Transmission request denied.');
@@ -359,6 +380,7 @@ async function handleSendNewComment(blogId) {
  */
 async function fetchVerifiedOpportunities(token) {
     const listContainer = document.getElementById('opportunities-list-box');
+    if (!listContainer) return;
 
     try {
         const response = await fetch(`${API_BASE_URL}/opportunities/getpcomingpportunities`, {

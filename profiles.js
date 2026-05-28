@@ -242,9 +242,9 @@ function renderAlumnaeProfileGrid(profiles) {
 
                     <div class="col-12 col-md-3 col-lg-2 text-md-end">
                         <div class="d-flex flex-row flex-md-column justify-content-center gap-2 mt-2 mt-md-0">
-                            ${cvLocation ? `
-                            <a href="${cvLocation}" target="_blank" class="btn btn-action-pill btn-sm py-2 px-2 d-inline-flex align-items-center justify-content-center gap-1 w-100" style="font-size: 0.85rem;">
-                                <i class="bi bi-file-earmark-pdf"></i> View Resume
+                            ${portfolio ? `
+                            <a href="${portfolio}" target="_blank" class="btn btn-action-pill btn-sm py-2 px-2 d-inline-flex align-items-center justify-content-center gap-1 w-100" style="font-size: 0.85rem;">
+                                <i class="bi bi-file-earmark-pdf"></i> View Portfolio
                             </a>` : `
                             <button class="btn btn-light btn-sm py-2 px-2 text-muted w-100" style="font-size: 0.85rem;" disabled>
                                 <i class="bi bi-file-earmark-x"></i> No CV Shared
