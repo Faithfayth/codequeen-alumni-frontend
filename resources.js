@@ -3,8 +3,9 @@
  * Interlaces natively with backing platform document repositories securely.
  */
 
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 // Centralized Base Endpoint configuration reflecting backend routing structures
-const BACKEND_BASE_URL = 'http://localhost:5000/resources';
+const BACKEND_BASE_URL = `${API_BASE_URL}/resources`;
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Structural layout sidebar expansion toggle controller setup

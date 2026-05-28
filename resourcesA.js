@@ -4,7 +4,8 @@
  */
 
 // Centralized Base Endpoint configuration reflecting your exact root routing structure
-const BACKEND_BASE_URL = 'http://localhost:5000/resources';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const BACKEND_BASE_URL = `${API_BASE_URL}/resources`;
 
 // Dynamic Bootstrap modal helper reference holder
 let bootstrapUpdateModalInstance = null;

@@ -1,5 +1,6 @@
 // Base API configuration route path prefix
-const API_BASE_URL = 'http://localhost:5000/gallery'; 
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const BASE_API_ROUTE = `${API_BASE_URL}/gallery`; // Route template configuration set to explicitly capture prefix targets 
 let localGalleryCache = [];
 
 // Appends explicit local user tokens to request pipelines
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 1. GET ALL IMAGES DISPATCH CONTROLLER
 async function fetchGalleryStream() {
     try {
-        const response = await fetch(`${API_BASE_URL}/getallimages`, {
+        const response = await fetch(`${BASE_API_ROUTE}/getallimages`, {
             method: 'GET',
             headers: getAuthHeaders()
         });
@@ -111,7 +112,7 @@ function setupFormEventListeners() {
         formData.append('category', document.getElementById('imageCategory').value.trim());
 
         try {
-            const response = await fetch(`${API_BASE_URL}/addimage`, {
+            const response = await fetch(`${BASE_API_ROUTE}/addimage`, {
                 method: 'POST',
                 headers: getAuthHeaders(), 
                 body: formData

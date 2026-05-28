@@ -1,7 +1,8 @@
 /**
  * Dynamic Operations and Network Integration Module for CodeQueen Events Platform Hub
  */
-const BASE_API_ROUTE = 'http://localhost:5000/events'; // Route template configuration set to explicitly capture prefix targets
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const BASE_API_ROUTE = `${API_BASE_URL}/events`; // Route template configuration set to explicitly capture prefix targets
 let CURRENT_VIEW_CONTEXT = 'upcoming';
 
 // Execute content rendering workflows after initialization processes complete

@@ -2,7 +2,8 @@
  * Synchronized Frontend Client Engine for CodeQueen Partners Network
  */
 
-const API_BASE_URL = 'http://localhost:5000/partners';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const API_PARTNERS_BASE = `${API_BASE_URL}/partners`; // Route template configuration set to explicitly capture prefix targets
 let cachedEcosystemRegistry = [];
 let targetActiveProfileId = null; 
 

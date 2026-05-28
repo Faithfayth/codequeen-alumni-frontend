@@ -1,5 +1,5 @@
 // Centralized API Configuration Base Endpoint Path
-const ENDPOINT_API_BASE = 'http://localhost:5000';
+const ENDPOINT_API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 
 // Memory layout context variables state arrays matching registry schemas
 let activeCohortsDirectoryCache = [];

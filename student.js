@@ -3,7 +3,7 @@
  * Binds active profile states, toggles interactive tabs, and loads course resources
  */
 
-const BACKEND_BASE_URL = 'http://localhost:5000';
+const BACKEND_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Check user session details before execution

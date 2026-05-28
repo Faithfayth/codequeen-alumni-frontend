@@ -3,7 +3,7 @@
  * Standardizes security payloads, tracks active tabs, and parses network asset objects
  */
 
-const BACKEND_BASE_URL = 'http://localhost:5000';
+const BACKEND_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 
 let currentLoadedActiveTabCode = 'current';
 let comprehensiveGlobalRegistry = [];

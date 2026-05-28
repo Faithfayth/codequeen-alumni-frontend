@@ -2,9 +2,9 @@
  * Frontend Control Pipeline Architecture for CodeQueen Corporate Partners Workspace
  * Integrates directly with defined REST Opportunities & Events engine topologies
  */
-
-const API_OPPORTUNITIES_BASE = 'http://localhost:5000/opportunities';
-const API_EVENTS_BASE = 'http://localhost:5000/events';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const API_OPPORTUNITIES_BASE = `${API_BASE_URL}/opportunities`;
+const API_EVENTS_BASE = `${API_BASE_URL}/events`;
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check validation frameworks

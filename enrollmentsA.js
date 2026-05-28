@@ -4,7 +4,7 @@
  */
 
 let studentRegistryCache = [];
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 
 document.addEventListener('DOMContentLoaded', () => {
     initResponsiveMobileToggle();

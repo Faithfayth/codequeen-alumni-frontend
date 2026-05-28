@@ -3,7 +3,7 @@
  * Synchronizes sessions, parses system permissions, and hydrates local application caches.
  */
 
-const ENDPOINT_API_BASE = 'http://localhost:5000';
+const ENDPOINT_API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('login-form-element');

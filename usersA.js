@@ -5,7 +5,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     // 1. App Configuration Context
-    const API_BASE_URL = "http://localhost:5000/users";
+    const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+    const BASE_API_ROUTE = `${API_BASE_URL}/users`; // Linked exactly to alumdirectory path
     const token = localStorage.getItem("adminToken"); 
     const currentAdminUser = JSON.parse(localStorage.getItem("adminUser") || "{}");
 
@@ -91,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4"><div class="spinner-border text-warning spinner-border-sm"></div> Indexing Database Records...</td></tr>`;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/getallalumnae`, { headers: getHeaders() });
+            const response = await fetch(`${BASE_API_ROUTE}/getallalumnae`, { headers: getHeaders() });
             const data = await response.json();
             
             if (!response.ok) throw new Error(data.message || "Failed to load directory execution pool.");
@@ -161,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-warning spinner-border-sm"></div> Compiling Active Registers...</td></tr>`;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/getallstudents`, { headers: getHeaders() });
+            const response = await fetch(`${BASE_API_ROUTE}/getallstudents`, { headers: getHeaders() });
             const data = await response.json();
             
             if (!response.ok) throw new Error(data.message || "Failed running verification sequence lookup.");
@@ -193,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-warning spinner-border-sm"></div> Parsing Security Protocols...</td></tr>`;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/getalladmin`, { headers: getHeaders() });
+            const response = await fetch(`${BASE_API_ROUTE}/getalladmin`, { headers: getHeaders() });
             const data = await response.json();
             
             if (!response.ok) throw new Error(data.message || "System failure reading security clearance logs.");
@@ -225,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.deleteUserRecord = async (id, contextTab) => {
         if (!confirm("Are you absolutely sure you want to completely erase this user account? This cannot be undone.")) return;
         try {
-            const response = await fetch(`${API_BASE_URL}/delete/${id}`, { 
+            const response = await fetch(`${BASE_API_ROUTE}/delete/${id}`, { 
                 method: "DELETE",
                 headers: getHeaders() 
             });
@@ -242,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.deletePartnerProfileRecord = async (profileId) => {
         if (!confirm("Wipe this company registry entry clean from ecosystem network stream metrics?")) return;
         try {
-            const response = await fetch(`http://localhost:5000/partners/deletepartnerprofile/${profileId}`, {
+            const response = await fetch(`${API_BASE_URL}/partners/deletepartnerprofile/${profileId}`, {
                 method: "DELETE",
                 headers: getHeaders()
             });

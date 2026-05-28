@@ -3,6 +3,7 @@
  * Governs active profile indexing matrices and locks down student editing access configurations
  */
 
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 // Memory layout global arrays storage directory matrix cache structures
 let alumniDirectoryRegistryCache = [];
 let operationalActiveSortingKeyField = 'name';
@@ -33,7 +34,7 @@ function initMobileDrawerNavigationLinks() {
  */
 async function fetchMasterAlumniDirectoryDataset() {
     try {
-        const response = await fetch('/api/alumni-directory', {
+        const response = await fetch(`${API_BASE_URL}/alumni-directory`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
@@ -45,7 +46,7 @@ async function fetchMasterAlumniDirectoryDataset() {
             renderMockFallbackDirectoryMatrixData();
         }
     } catch (err) {
-        console.warn('API link path dropped on /api/alumni-directory; fallback mock framework loaded.');
+        console.warn('API link path dropped on /alumni-directory; fallback mock framework loaded.');
         renderMockFallbackDirectoryMatrixData();
     }
 }
@@ -105,7 +106,7 @@ async function executeToggleAccessLockPipeline(event, profileId) {
     const cachedProfile = alumniDirectoryRegistryCache.find(p => (p._id || p.id) === profileId);
     
     try {
-        const response = await fetch(`/api/alumni-directory/toggle-lock/${profileId}`, {
+        const response = await fetch(`${API_BASE_URL}/alumni-directory/toggle-lock/${profileId}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,

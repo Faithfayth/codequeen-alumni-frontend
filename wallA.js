@@ -3,7 +3,7 @@
  * Automatically streams existing badges directly via backend data joins
  */
 
-const BACKEND_BASE_URL = 'http://localhost:5000';
+const BACKEND_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 const WALL_API_BASE = `${BACKEND_BASE_URL}/walloffame`;
 
 let internalHonoreeRegistry = [];

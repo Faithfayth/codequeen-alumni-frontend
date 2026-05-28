@@ -2,8 +2,8 @@
  * Frontend Control Logic Architecture for CodeQueen Corporate Projects Portfolio Manager
  * Wireframe synced seamlessly with underlying REST endpoints
  */
-
-const BASE_API_ROUTE = 'http://localhost:5000/projects';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const BASE_API_ROUTE = `${API_BASE_URL}/projects`;
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Intercept mobile responsive layout drawer toggles

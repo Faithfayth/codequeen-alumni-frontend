@@ -7,7 +7,7 @@
 let currentApprovalContext = 'enrollments';
 
 // System Gateway URI Base Constant matching your unified Node.js router ports
-const ENDPOINT_API_BASE = 'http://localhost:5000';
+const ENDPOINT_API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Mobilized Responsive Interface Display Trigger Registration Hooks

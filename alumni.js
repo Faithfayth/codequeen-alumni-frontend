@@ -3,7 +3,7 @@
  * Automatically parses active session states, fetches verified blogs, and lists active job listings.
  */
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
 let loggedInUserId = null;       // Tracks the authenticated user's ID (req.user.id counterpart)
 let currentProfileDatabaseId = null; // Tracks the actual Profile document _id for PUT/DELETE updates
 

@@ -4,7 +4,7 @@
  */
 
 // Global Base API Path Route
-const API_BASE_URL = 'http://localhost:5000'; // Adjust port to match your local Node.js environment
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000'; // Adjust port to match your local Node.js environment
 
 // Memory layout global object store lists allocations tracking arrays
 let systemAchievementsRegistryCache = [];

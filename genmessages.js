@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. ENVIRONMENT CONFIGURATION & STATE
-    const API_BASE_URL = 'http://localhost:5000/generalmessages';
-    const socket = io('http://localhost:5000'); // Real-time Engine Connection
+    const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+    const BASE_API_ROUTE = `${API_BASE_URL}/generalmessages`; // Route template configuration set to explicitly capture prefix targets
+    const socket = io(API_BASE_URL); // Real-time Engine Connection
+
+    // const socket = io('http://localhost:5000'); // Real-time Engine Connection
     
     // Fallback Mock profile extraction - Replace with your actual local session management data hook
     // 1. Fetch the raw separate items from local storage
@@ -124,7 +127,7 @@ const CURRENT_USER = {
             throw new Error("Missing authentication token. Please log in again.");
         }
 
-        const response = await fetch(`${API_BASE_URL}/getallmessages`, {
+        const response = await fetch(`${BASE_API_ROUTE}/getallmessages`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${CURRENT_USER.token}`,
@@ -159,7 +162,7 @@ window.executeMessageDeletion = async function(messageID) {
     if (!confirm("Are you certain you wish to purge this message from history logs?")) return;
     
     try {
-        const response = await fetch(`${API_BASE_URL}/deletemessage/${messageID}`, {
+        const response = await fetch(`${BASE_API_ROUTE}/deletemessage/${messageID}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${CURRENT_USER.token}`,
@@ -184,7 +187,7 @@ window.executeMessageDeletion = async function(messageID) {
         if (!textPayload && !activeMediaUrl) return;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/sendmessage`, {
+            const response = await fetch(`${BASE_API_ROUTE}/sendmessage`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${CURRENT_USER.token}`,
@@ -234,7 +237,7 @@ window.executeMessageDeletion = async function(messageID) {
         if (!confirm("Are you certain you wish to purge this message from history logs?")) return;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/deletemessage/${messageID}`, {
+            const response = await fetch(`${BASE_API_ROUTE}/deletemessage/${messageID}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${CURRENT_USER.token}`,

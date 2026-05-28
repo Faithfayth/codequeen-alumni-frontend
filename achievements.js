@@ -4,7 +4,8 @@
  */
 
 // Global Path Allocation to match port parameters of local Node.js server environments
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+    
 
 // Global runtime context caching allocations array tracking historical collection streams
 let localAchievementsCollectionCache = [];

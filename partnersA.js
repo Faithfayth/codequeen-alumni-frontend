@@ -2,8 +2,8 @@
  * Synchronized Frontend Client for CodeQueen Partners Architecture
  * Targets the /partners base route pattern using verified field parameters
  */
-
-const COMPONENT_API_BASE = 'http://localhost:5000/partners';
+const API_BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'https://cq-a-bckd.onrender.com' : 'http://localhost:5000';
+const COMPONENT_API_BASE = `${API_BASE_URL}/partners`;
 
 let activeApprovedRegistry = [];
 let activePendingRegistry = [];
