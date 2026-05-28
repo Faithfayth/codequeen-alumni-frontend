@@ -131,7 +131,7 @@ function setupMobileSidebarInteractions() {
 }
 
 /**
- * Validates structural credentials before enabling corporate workspace widgets
+ * Elevates workspace controls if account role is authorized
  */
 function evaluatePartnerPermissionsWorkspace(userObj, token) {
     const activeRole = userObj.role ? userObj.role.toLowerCase() : '';
@@ -158,11 +158,12 @@ function evaluatePartnerPermissionsWorkspace(userObj, token) {
 
 /**
  * Loads the main public dashboard feed content
+ * FIXED: Uses API_PARTNERS_BASE to prevent 404 tracking errors
  */
 async function pullApprovedPartnersRegistry(token) {
     toggleInterfaceContentLoader(true);
     try {
-        const networkResponse = await fetch(`${API_BASE_URL}/getapprovedpartners`, {
+        const networkResponse = await fetch(`${API_PARTNERS_BASE}/getapprovedpartners`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -186,6 +187,7 @@ async function pullApprovedPartnersRegistry(token) {
 
 /**
  * Controls profile visibility status maps inside workspace layout forms
+ * FIXED: Uses API_PARTNERS_BASE to pull data registry sets safely
  */
 async function toggleAndFetchPartnerWorkspace(token, userObj) {
     const container = document.getElementById('partner-management-workspace');
@@ -200,7 +202,7 @@ async function toggleAndFetchPartnerWorkspace(token, userObj) {
     container.scrollIntoView({ behavior: 'smooth' });
 
     try {
-        const response = await fetch(`${API_BASE_URL}/getapprovedpartners`, {
+        const response = await fetch(`${API_PARTNERS_BASE}/getapprovedpartners`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -249,6 +251,7 @@ async function toggleAndFetchPartnerWorkspace(token, userObj) {
 
 /**
  * Manages post streams updates executions
+ * FIXED: Re-routed endpoints precisely behind API_PARTNERS_BASE path rule brackets
  */
 async function handlePublishOrSavePartnerProfile(event, token) {
     event.preventDefault();
@@ -265,11 +268,11 @@ async function handlePublishOrSavePartnerProfile(event, token) {
         email: document.getElementById('edit-partner-email').value
     };
 
-    let requestUrl = `${API_BASE_URL}/createpartnerprofile`;
+    let requestUrl = `${API_PARTNERS_BASE}/createpartnerprofile`;
     let requestMethod = 'POST';
 
     if (profileExists && targetActiveProfileId) {
-        requestUrl = `${API_BASE_URL}/updatepartnerprofile/${targetActiveProfileId}`;
+        requestUrl = `${API_PARTNERS_BASE}/updatepartnerprofile/${targetActiveProfileId}`;
         requestMethod = 'PUT';
     }
 
@@ -300,6 +303,7 @@ async function handlePublishOrSavePartnerProfile(event, token) {
 
 /**
  * Handles account entries destruction requests
+ * FIXED: Uses API_PARTNERS_BASE to reach out to the server framework paths securely
  */
 async function handleDeletePartnerProfileCard(token) {
     if (!targetActiveProfileId) return;
@@ -308,7 +312,7 @@ async function handleDeletePartnerProfileCard(token) {
     if (!confirmationPrompt) return;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/deletepartnerprofile/${targetActiveProfileId}`, {
+        const response = await fetch(`${API_PARTNERS_BASE}/deletepartnerprofile/${targetActiveProfileId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -330,7 +334,6 @@ async function handleDeletePartnerProfileCard(token) {
 
 /**
  * Converts response datasets directly into structured list cards
- * INCLUDES ANTI-LOOP IMAGE FIX (this.onerror=null)
  */
 function renderEcosystemGridCards(dataSubsetCollection) {
     const interactionDisplayMount = document.getElementById('approvedPartnersContainer');
